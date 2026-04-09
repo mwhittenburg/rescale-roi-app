@@ -27,6 +27,15 @@ function formatMonths(value) {
   return `${value.toFixed(1)} months`;
 }
 
+function formatCompactCurrency(value) {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    notation: "compact",
+    maximumFractionDigits: 1,
+  }).format(value);
+}
+
 function downloadFile(name, content, type) {
   const blob = new Blob([content], { type });
   const url = URL.createObjectURL(blob);
@@ -119,6 +128,11 @@ function App() {
   );
 
   const activeMetrics = metrics[activeScenario];
+  const strongestScenario = scenarioKeys.reduce(
+    (best, scenario) =>
+      metrics[scenario].yearOneRoi > metrics[best].yearOneRoi ? scenario : best,
+    "conservative",
+  );
 
   useEffect(() => {
     document.documentElement.style.setProperty(
@@ -221,6 +235,25 @@ function App() {
               Reset defaults
             </button>
           </div>
+
+          <section className="hero-proof">
+            <div className="proof-card proof-card-accent">
+              <span className="metric-label">Current Recommendation</span>
+              <strong>{scenarioLabels[activeScenario]} scenario</strong>
+              <p>
+                {formatPercent(activeMetrics.yearOneRoi)} year-one ROI with{" "}
+                {formatMonths(activeMetrics.paybackPeriod)} payback.
+              </p>
+            </div>
+            <div className="proof-card">
+              <span className="metric-label">Best Case In Model</span>
+              <strong>{scenarioLabels[strongestScenario]}</strong>
+              <p>
+                Peaks at {formatPercent(metrics[strongestScenario].yearOneRoi)} ROI
+                and {formatCompactCurrency(metrics[strongestScenario].threeYearNpv)} NPV.
+              </p>
+            </div>
+          </section>
         </div>
 
         <section className="hero-card">
@@ -394,6 +427,25 @@ function App() {
             />
           </section>
 
+          <section className="proposal-banner">
+            <div>
+              <span className="metric-label">Executive takeaway</span>
+              <h3>
+                {branding.companyName} can unlock{" "}
+                {formatCompactCurrency(activeMetrics.totalBenefits)} in annual value
+                while recovering{" "}
+                {Math.round(activeMetrics.adminHoursRecovered).toLocaleString()} admin
+                hours per year.
+              </h3>
+            </div>
+            <div className="proposal-banner-chip">
+              <span>TTM</span>
+              <strong>
+                {activeMetrics.values.includeTtm ? "Included" : "Excluded"}
+              </strong>
+            </div>
+          </section>
+
           <section className="results-grid">
             <MetricPanel
               title="Benefit breakdown"
@@ -457,6 +509,31 @@ function App() {
                 ],
               ]}
             />
+          </section>
+
+          <section className="comparison-panel">
+            <div className="panel-mini-header">
+              <h3>Scenario comparison</h3>
+              <p>Use this when you want a faster executive readout across all cases.</p>
+            </div>
+            <div className="comparison-grid">
+              {scenarioKeys.map((scenario) => (
+                <article
+                  key={scenario}
+                  className={`comparison-card${
+                    activeScenario === scenario ? " active" : ""
+                  }`}
+                >
+                  <span className="metric-label">{scenarioLabels[scenario]}</span>
+                  <strong>{formatPercent(metrics[scenario].yearOneRoi)}</strong>
+                  <p>{formatCompactCurrency(metrics[scenario].netAnnualBenefit)} net annual benefit</p>
+                  <div className="comparison-meta">
+                    <span>{formatMonths(metrics[scenario].paybackPeriod)} payback</span>
+                    <span>{formatCompactCurrency(metrics[scenario].threeYearNpv)} NPV</span>
+                  </div>
+                </article>
+              ))}
+            </div>
           </section>
         </section>
       </main>

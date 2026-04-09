@@ -52,9 +52,10 @@ button {
   border: 0;
   border-radius: 999px;
   padding: 11px 16px;
-  background: var(--accent);
+  background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 64%, #3f1b12));
   color: white;
   cursor: pointer;
+  box-shadow: 0 10px 22px color-mix(in srgb, var(--accent) 22%, transparent);
 }
 
 button.ghost {
@@ -111,6 +112,20 @@ p {
   grid-template-columns: minmax(0, 1.4fr) minmax(280px, 0.85fr);
   gap: 24px;
   padding: 28px;
+  overflow: hidden;
+  position: relative;
+}
+
+.hero::after {
+  content: "";
+  position: absolute;
+  right: -120px;
+  top: -120px;
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--accent) 18%, white), transparent 65%);
+  pointer-events: none;
 }
 
 .hero-badge {
@@ -155,11 +170,39 @@ p {
   gap: 10px;
 }
 
+.hero-proof {
+  margin-top: 22px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.proof-card {
+  padding: 18px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.56);
+  display: grid;
+  gap: 8px;
+}
+
+.proof-card strong {
+  font-size: 1.3rem;
+}
+
+.proof-card-accent {
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--accent) 16%, white),
+    rgba(255, 255, 255, 0.76)
+  );
+}
+
 .hero-card,
 .support-card,
 .input-card,
 .summary-card {
-  background: rgba(255, 255, 255, 0.64);
+  background: rgba(255, 255, 255, 0.68);
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
 }
@@ -283,12 +326,23 @@ p {
 
 .summary-card {
   min-height: 134px;
+  position: relative;
+  overflow: hidden;
 }
 
 .summary-value {
   display: block;
   margin: 16px 0 10px;
   font-size: clamp(1.6rem, 2.2vw, 2.3rem);
+}
+
+.summary-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto auto 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, var(--accent), transparent);
 }
 
 .summary-note {
@@ -298,6 +352,80 @@ p {
 
 .results-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.proposal-banner,
+.comparison-panel {
+  margin-bottom: 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.proposal-banner {
+  padding: 18px 20px;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+}
+
+.proposal-banner h3 {
+  margin-top: 8px;
+  max-width: 18ch;
+  font-size: clamp(1.3rem, 2vw, 2rem);
+  line-height: 1.05;
+}
+
+.proposal-banner-chip {
+  min-width: 120px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--accent) 12%, white);
+  display: grid;
+  gap: 6px;
+  text-align: center;
+}
+
+.comparison-panel {
+  padding: 18px;
+}
+
+.comparison-grid {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.comparison-card {
+  padding: 16px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid var(--line);
+  display: grid;
+  gap: 10px;
+}
+
+.comparison-card strong {
+  font-size: 1.7rem;
+}
+
+.comparison-card.active {
+  border-color: color-mix(in srgb, var(--accent) 35%, var(--line));
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--accent) 10%, white),
+    rgba(255, 255, 255, 0.78)
+  );
+}
+
+.comparison-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 0.92rem;
 }
 
 .metric-stack,
@@ -355,15 +483,22 @@ p {
 @media (max-width: 1200px) {
   .layout,
   .hero,
+  .hero-proof,
   .summary-strip,
   .results-grid,
   .lower-grid,
   .input-grid,
-  .meta-row {
+  .meta-row,
+  .comparison-grid {
     grid-template-columns: 1fr;
   }
 
   .panel-header {
+    flex-direction: column;
+    align-items: start;
+  }
+
+  .proposal-banner {
     flex-direction: column;
     align-items: start;
   }
