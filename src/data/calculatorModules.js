@@ -10,6 +10,9 @@ import { evBatteryThermalPackOptimization } from "../calculators/automotive-mobi
 import { cmcProcessModeling } from "../calculators/pharma-biopharma/cmc-process-modeling";
 import { molecularDynamics } from "../calculators/pharma-biopharma/molecular-dynamics";
 import { virtualScreeningDocking } from "../calculators/pharma-biopharma/virtual-screening-docking";
+import { drillingProductionOptimization } from "../calculators/oil-gas/drilling-production-optimization";
+import { reservoirSimulationFieldDevelopmentPlanning } from "../calculators/oil-gas/reservoir-simulation-field-development-planning";
+import { seismicProcessingImaging } from "../calculators/oil-gas/seismic-processing-imaging";
 import { designVerification } from "../calculators/semiconductor/design-verification";
 import { edaBurstCompute } from "../calculators/semiconductor/eda-burst-compute";
 import { yieldOptimization } from "../calculators/semiconductor/yield-optimization";
@@ -34,4 +37,8 @@ export const calculatorModules = {
   "aerospace-defense/structural-fea": structuralFea,
   "aerospace-defense/multidisciplinary-design-exploration":
     multidisciplinaryDesignExploration,
+  "oil-gas/reservoir-simulation-field-development-planning":
+    reservoirSimulationFieldDevelopmentPlanning,
+  "oil-gas/seismic-processing-imaging": seismicProcessingImaging,
+  "oil-gas/drilling-production-optimization": drillingProductionOptimization,
 };

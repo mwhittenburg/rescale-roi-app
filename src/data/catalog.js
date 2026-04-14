@@ -101,5 +101,26 @@ export const platformCatalog = {
         },
       ],
     },
+    {
+      id: "oil-gas",
+      name: "Oil & Gas",
+      summary:
+        "ROI paths for subsurface decision speed, seismic turnaround, field planning, and drilling or production optimization.",
+      useCases: [
+        {
+          id: "reservoir-simulation-field-development-planning",
+          moduleKey:
+            "oil-gas/reservoir-simulation-field-development-planning",
+        },
+        {
+          id: "seismic-processing-imaging",
+          moduleKey: "oil-gas/seismic-processing-imaging",
+        },
+        {
+          id: "drilling-production-optimization",
+          moduleKey: "oil-gas/drilling-production-optimization",
+        },
+      ],
+    },
   ],
 };
