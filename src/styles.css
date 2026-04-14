@@ -75,7 +75,6 @@ p {
 .industry-grid,
 .use-case-grid,
 .content-grid,
-.entry-grid,
 .guidance-grid {
   display: grid;
   gap: 20px;
@@ -103,6 +102,17 @@ p {
 .home-page-header .brand-lockup h1 {
   font-size: clamp(1.9rem, 3.1vw, 2.9rem);
   max-width: 16ch;
+}
+
+.home-page-header {
+  grid-template-columns: minmax(0, 1.05fr) minmax(420px, 0.95fr);
+  gap: 18px;
+}
+
+.page-header-side {
+  display: grid;
+  gap: 12px;
+  align-items: start;
 }
 
 .eyebrow,
@@ -195,12 +205,6 @@ p {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
-.entry-grid {
-  margin-top: 24px;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  align-items: start;
-}
-
 .use-case-grid,
 .content-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -214,6 +218,20 @@ p {
 .review-index-grid {
   display: grid;
   gap: 20px;
+}
+
+.browse-section {
+  margin-top: 16px;
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 16px 18px;
+}
+
+.browse-section h2 {
+  margin-top: 6px;
+  font-size: 1.12rem;
 }
 
 .industry-card,
@@ -242,6 +260,11 @@ p {
   gap: 10px;
 }
 
+.hero-helper-card {
+  padding: 16px;
+  gap: 8px;
+}
+
 .choice-copy {
   display: grid;
   gap: 6px;
@@ -252,6 +275,23 @@ p {
   align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
+}
+
+.hero-helper-card .choice-copy {
+  gap: 4px;
+}
+
+.hero-helper-card .choice-copy h2 {
+  font-size: 1.38rem;
+  line-height: 1.2;
+}
+
+.hero-helper-card .panel-copy {
+  font-size: 0.95rem;
+}
+
+.hero-helper-card .choice-copy .panel-copy {
+  white-space: nowrap;
 }
 
 .industry-card h3,
@@ -296,12 +336,12 @@ p {
 .selector-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
+  gap: 8px 10px;
 }
 
 .selector-field {
   display: grid;
-  gap: 6px;
+  gap: 4px;
 }
 
 .selector-field-wide {
@@ -309,7 +349,7 @@ p {
 }
 
 .selector-field select {
-  min-height: 46px;
+  min-height: 42px;
   padding: 0 12px;
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
@@ -320,7 +360,7 @@ p {
 
 .recommendation-list {
   display: grid;
-  gap: 10px;
+  gap: 8px;
 }
 
 .recommendation-actions {
@@ -382,8 +422,8 @@ p {
 }
 
 .compact-ghost-button {
-  padding: 9px 14px;
-  font-size: 0.95rem;
+  padding: 7px 11px;
+  font-size: 0.88rem;
 }
 
 .ghost-button:disabled {
@@ -394,6 +434,7 @@ p {
 
 .compact-helper-copy {
   margin-top: 0;
+  font-size: 0.9rem;
 }
 
 .industry-card button:hover,
@@ -608,13 +649,13 @@ button:focus-visible,
   .industry-grid,
   .use-case-grid,
   .content-grid,
-  .entry-grid,
   .guidance-grid {
     grid-template-columns: 1fr;
   }
 
   .intro-panel,
-  .notes-panel {
+  .notes-panel,
+  .browse-section {
     flex-direction: column;
     align-items: flex-start;
   }
@@ -634,6 +675,10 @@ button:focus-visible,
   .impact-highlight,
   .extra-output-grid {
     grid-template-columns: 1fr;
+  }
+
+  .hero-helper-card .choice-copy .panel-copy {
+    white-space: normal;
   }
 
   .field-label-row {

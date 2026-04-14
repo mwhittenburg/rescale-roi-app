@@ -12,27 +12,26 @@ export function HomePage({ onNavigate }) {
         eyebrow="ROI Calculator Platform"
         title="Find the right ROI calculator for your workflow"
         description="Choose an industry path or use the helper below to find the calculator that best matches your team, bottleneck, and decision needs."
-        breadcrumbs={[{ label: "Home" }]}
+        breadcrumbs={[]}
         onNavigate={onNavigate}
+        asideContent={
+          <CalculatorRecommendationHelper
+            className="hero-helper-card"
+            industries={industries}
+            options={recommendationOptions}
+            onNavigate={onNavigate}
+          />
+        }
       />
 
-      <section className="entry-grid">
-        <section className="panel choice-card">
-          <div className="choice-copy">
-            <p className="section-kicker">Browse By Industry</p>
-            <h2>Choose the industry first, then open the workflow that best matches the conversation.</h2>
-            <p className="panel-copy">
-              This is the easiest path when the customer industry is already clear
-              and you want to compare the calculators available in that vertical.
-            </p>
-          </div>
-        </section>
-
-        <CalculatorRecommendationHelper
-          industries={industries}
-          options={recommendationOptions}
-          onNavigate={onNavigate}
-        />
+      <section className="panel browse-section">
+        <div>
+          <p className="section-kicker">Browse By Industry</p>
+          <h2>Choose the industry first, then open the workflow that best matches the conversation.</h2>
+        </div>
+        <p className="panel-copy">
+          Use this path when the industry is already clear and you want to compare the calculators available in that vertical.
+        </p>
       </section>
 
       <section className="industry-grid">

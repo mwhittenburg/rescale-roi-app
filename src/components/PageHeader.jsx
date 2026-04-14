@@ -7,6 +7,7 @@ export function PageHeader({
   breadcrumbs,
   onNavigate,
   className = "",
+  asideContent = null,
 }) {
   return (
     <header className={`page-header ${className}`.trim()}>
@@ -15,7 +16,12 @@ export function PageHeader({
         <h1>{title}</h1>
         <p className="hero-text">{description}</p>
       </div>
-      <Breadcrumbs items={breadcrumbs} onNavigate={onNavigate} />
+      <div className="page-header-side">
+        {breadcrumbs?.length ? (
+          <Breadcrumbs items={breadcrumbs} onNavigate={onNavigate} />
+        ) : null}
+        {asideContent}
+      </div>
     </header>
   );
 }
