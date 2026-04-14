@@ -13,6 +13,10 @@ function parseRoute(path) {
     return { view: "home", path: "/" };
   }
 
+  if (segments.length === 1 && segments[0] === "review") {
+    return { view: "review", path };
+  }
+
   if (segments[0] !== "industries") {
     return { view: "not-found", path };
   }
@@ -41,6 +45,10 @@ function parseRoute(path) {
 
 export function buildHomePath() {
   return "/";
+}
+
+export function buildReviewPath() {
+  return "/review";
 }
 
 export function buildIndustryPath(industryId) {

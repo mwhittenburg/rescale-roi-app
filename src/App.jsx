@@ -3,7 +3,8 @@ import { CalculatorPage } from "./pages/CalculatorPage";
 import { HomePage } from "./pages/HomePage";
 import { IndustryPage } from "./pages/IndustryPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
-import { industriesById, useCasesByKey } from "./data/platform";
+import { ReviewIndexPage } from "./pages/ReviewIndexPage";
+import { industries, industriesById, useCasesByKey } from "./data/platform";
 import { navigateTo, useHashRoute } from "./router";
 
 function App() {
@@ -13,6 +14,10 @@ function App() {
 
   if (route.view === "home") {
     page = <HomePage onNavigate={navigateTo} />;
+  }
+
+  if (route.view === "review") {
+    page = <ReviewIndexPage industries={industries} onNavigate={navigateTo} />;
   }
 
   if (route.view === "industry") {

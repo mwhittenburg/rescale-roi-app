@@ -163,7 +163,8 @@ p {
 .notes-panel,
 .industry-grid,
 .use-case-grid,
-.content-grid {
+.content-grid,
+.review-index-grid {
   margin-top: 24px;
 }
 
@@ -192,6 +193,11 @@ p {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.review-index-grid {
+  display: grid;
+  gap: 20px;
+}
+
 .industry-card,
 .use-case-card,
 .content-panel {
@@ -201,9 +207,18 @@ p {
   gap: 14px;
 }
 
+.review-index-card {
+  display: grid;
+  gap: 14px;
+}
+
 .industry-card h3,
 .use-case-card h3 {
   font-size: 1.3rem;
+}
+
+.review-index-card h2 {
+  font-size: 1.32rem;
 }
 
 .pill {
@@ -228,6 +243,25 @@ p {
   flex-direction: column;
   gap: 12px;
   align-items: flex-start;
+}
+
+.notes-actions {
+  display: grid;
+  gap: 12px;
+  justify-items: start;
+}
+
+.review-link-group,
+.review-link-list {
+  display: grid;
+  gap: 10px;
+}
+
+.review-link {
+  justify-self: start;
+  text-align: left;
+  font-size: 0.96rem;
+  line-height: 1.45;
 }
 
 .industry-card button,
