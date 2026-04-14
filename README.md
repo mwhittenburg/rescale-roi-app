@@ -18,6 +18,7 @@ The app is organized in three layers:
    - formulas
 
 Each calculator has its own route and its own content file.
+Industries and use cases are defined from one central catalog so navigation and routing stay in sync.
 
 ## How routing works
 
@@ -36,12 +37,16 @@ Examples:
 - [src/styles.css](/Users/markwhittenburg/Documents/New%20project/src/styles.css): shared design system and page styling
 - [src/components](/Users/markwhittenburg/Documents/New%20project/src/components): shared UI building blocks
 - [src/pages](/Users/markwhittenburg/Documents/New%20project/src/pages): route-level page components
-- [src/data/platform.js](/Users/markwhittenburg/Documents/New%20project/src/data/platform.js): industry registry and calculator lookup maps
+- [src/data/catalog.js](/Users/markwhittenburg/Documents/New%20project/src/data/catalog.js): central source of truth for industries and use cases
+- [src/data/calculatorModules.js](/Users/markwhittenburg/Documents/New%20project/src/data/calculatorModules.js): maps catalog entries to calculator modules
+- [src/data/platform.js](/Users/markwhittenburg/Documents/New%20project/src/data/platform.js): builds the resolved platform registry used by routes and navigation
 - [src/calculators](/Users/markwhittenburg/Documents/New%20project/src/calculators): calculator content modules grouped by industry
+- [docs/safe-publishing-workflow.md](/Users/markwhittenburg/Documents/New%20project/docs/safe-publishing-workflow.md): plain-English guide for low-risk updates and publishing
 
 ## Where each calculator lives
 
 Each calculator lives in its own file inside `src/calculators/<industry>/`.
+The central catalog decides which industries and use cases appear in navigation.
 
 Examples:
 
@@ -53,11 +58,11 @@ That means a future formula engine for one calculator can be added in that calcu
 
 ## How to add a new industry
 
-1. Create a new folder under `src/calculators/` for the industry.
+1. Create a new folder under `src/calculators/` for the industry if needed.
 2. Add one file per calculator in that folder.
-3. Add an `index.js` file in that folder that exports an array of that industry's calculators.
-4. Register the new industry in [src/data/platform.js](/Users/markwhittenburg/Documents/New%20project/src/data/platform.js).
-5. The home page and industry page will render from that shared data automatically.
+3. Import the calculator modules in [src/data/calculatorModules.js](/Users/markwhittenburg/Documents/New%20project/src/data/calculatorModules.js).
+4. Add the new industry and its use cases in [src/data/catalog.js](/Users/markwhittenburg/Documents/New%20project/src/data/catalog.js).
+5. The routes, home page, and industry page will render from that shared catalog automatically.
 
 ## How to add a new use case
 
@@ -71,8 +76,9 @@ That means a future formula engine for one calculator can be added in that calcu
    - `assumptions`
    - `outcomes`
    - `formulas`
-3. Export it from that industry's `index.js`.
-4. The industry page and route lookup will pick it up through [src/data/platform.js](/Users/markwhittenburg/Documents/New%20project/src/data/platform.js).
+3. Import it into [src/data/calculatorModules.js](/Users/markwhittenburg/Documents/New%20project/src/data/calculatorModules.js).
+4. Add it to the correct industry's `useCases` list in [src/data/catalog.js](/Users/markwhittenburg/Documents/New%20project/src/data/catalog.js).
+5. The industry page and route lookup will pick it up automatically from the catalog-driven platform data.
 
 ## How to safely update one calculator without affecting the rest
 
@@ -89,6 +95,20 @@ This keeps:
 - `main` as the stable rep-ready version
 - branch previews as the draft or staging workflow
 - new calculators additive instead of destructive
+
+For the plain-English version, see [docs/safe-publishing-workflow.md](/Users/markwhittenburg/Documents/New%20project/docs/safe-publishing-workflow.md).
+
+## Recommended draft-to-publish workflow for low-risk updates
+
+For non-technical users or low-risk content edits:
+
+1. Request a branch for the change
+2. Update the one calculator file that needs copy changes
+3. Build and review the Vercel preview
+4. Approve the preview
+5. Merge to `main`
+
+That keeps production stable while making simple edits easy to review.
 
 ## How to run locally
 
