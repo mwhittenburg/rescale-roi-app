@@ -152,6 +152,17 @@ function InteractiveCalculatorPage({ industry, calculator, onNavigate }) {
         onNavigate={onNavigate}
       />
 
+      <section className="panel intro-panel calculator-intro-panel">
+        <div>
+          <p className="section-kicker">How To Use This Calculator</p>
+          <h2>Start with the example values, then adjust the few inputs that matter most to your situation.</h2>
+        </div>
+        <p className="panel-copy">
+          The page updates live as you edit the assumptions, so you can quickly
+          test different scenarios and see how the estimated impact changes.
+        </p>
+      </section>
+
       <section className="guidance-grid calculator-guidance-grid">
         <article className="panel guidance-card">
           <p className="section-kicker">Best Fit When</p>

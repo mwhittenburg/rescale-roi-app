@@ -9,20 +9,20 @@ export function HomePage({ onNavigate }) {
     <>
       <PageHeader
         eyebrow="ROI Calculator Platform"
-        title="Pick your industry / use case"
-        description="A shared app shell for vertical-specific ROI calculators. Start with an industry path, then open a workflow-specific calculator on its own route."
+        title="Find the right ROI calculator for your workflow"
+        description="Choose an industry path or use the helper below to find the calculator that best matches your team, bottleneck, and decision needs."
         breadcrumbs={[{ label: "Home" }]}
         onNavigate={onNavigate}
       />
 
       <section className="panel intro-panel">
         <div>
-          <p className="section-kicker">Seller Entry Paths</p>
-          <h2>Start by browsing an industry or use the helper to choose the most relevant calculator.</h2>
+          <p className="section-kicker">Start Here</p>
+          <h2>Begin with the path that feels most natural for your conversation.</h2>
         </div>
         <p className="panel-copy">
-          The goal is to help a seller get to the right conversation quickly,
-          ask sharper questions, and open a calculator that already feels credible.
+          If you already know the industry, browse the vertical directly. If
+          you are still narrowing the use case, use the helper to get a quick recommendation.
         </p>
       </section>
 
@@ -30,10 +30,10 @@ export function HomePage({ onNavigate }) {
         <section className="panel choice-card">
           <div className="choice-copy">
             <p className="section-kicker">Browse By Industry</p>
-            <h2>Choose the customer vertical first, then narrow to the best workflow.</h2>
+            <h2>Choose the industry first, then open the workflow that best matches the conversation.</h2>
             <p className="panel-copy">
-              Use this path when the industry is already clear and you want to
-              compare the calculators available in that vertical.
+              This is the easiest path when the customer industry is already clear
+              and you want to compare the calculators available in that vertical.
             </p>
           </div>
         </section>
@@ -57,14 +57,13 @@ export function HomePage({ onNavigate }) {
 
       <section className="panel notes-panel">
         <div>
-          <p className="section-kicker">How To Review</p>
-          <h2>Follow the full path from home page to industry to calculator.</h2>
+          <p className="section-kicker">Need A Plain Link Index?</p>
+          <h2>Open a simple review page with direct links to every vertical and calculator.</h2>
         </div>
         <div className="notes-actions">
           <p className="panel-copy">
-            Reviewers should click into each vertical, open each calculator, and
-            adjust the sample values to judge input quality, output credibility,
-            and how usable the workflow feels during a real call.
+            Use this if you want a simple text-readable list of every route in the
+            platform, including the industry landing pages and each calculator page.
           </p>
           <button type="button" className="ghost-button" onClick={() => onNavigate(buildReviewPath())}>
             Open Review Index

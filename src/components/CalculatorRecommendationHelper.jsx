@@ -76,8 +76,8 @@ export function CalculatorRecommendationHelper({
         <p className="section-kicker">Help Me Choose A Calculator</p>
         <h2>Start with the bottleneck, team, and decision that is being slowed down.</h2>
         <p className="panel-copy">
-          This lightweight guide points a seller to the 1 to 2 calculators most
-          likely to fit the conversation.
+          Answer these three quick questions to see the 1 to 2 calculators most
+          likely to fit your workflow.
         </p>
       </div>
 

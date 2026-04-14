@@ -4,12 +4,12 @@ export function AppShell({ children }) {
       <main className="app-card">
         <section className="review-banner">
           <div>
-            <p className="section-kicker">Review Mode</p>
-            <h2>Sample values are preloaded across the platform.</h2>
+            <p className="section-kicker">Getting Started</p>
+            <h2>Example values are already loaded so you can explore the calculators right away.</h2>
           </div>
           <p className="panel-copy">
-            Reviewers can click from industry to use case and see live ROI outputs
-            immediately without signing in or setting anything up first.
+            Start from an industry or use the calculator helper, then adjust the
+            inputs to match your situation and see the estimated impact update live.
           </p>
         </section>
         {children}
