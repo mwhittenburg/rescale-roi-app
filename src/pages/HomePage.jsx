@@ -1,6 +1,7 @@
+import { CalculatorRecommendationHelper } from "../components/CalculatorRecommendationHelper";
 import { IndustryCard } from "../components/IndustryCard";
 import { PageHeader } from "../components/PageHeader";
-import { industries } from "../data/platform";
+import { industries, recommendationOptions } from "../data/platform";
 import { buildHomePath, buildIndustryPath, buildReviewPath } from "../router";
 
 export function HomePage({ onNavigate }) {
@@ -16,14 +17,32 @@ export function HomePage({ onNavigate }) {
 
       <section className="panel intro-panel">
         <div>
-          <p className="section-kicker">Seller Review Flow</p>
-          <h2>Start with an industry, then open the use case closest to the customer conversation.</h2>
+          <p className="section-kicker">Seller Entry Paths</p>
+          <h2>Start by browsing an industry or use the helper to choose the most relevant calculator.</h2>
         </div>
         <p className="panel-copy">
-          Every calculator opens with seeded sample inputs and live outputs so a
-          reviewer can understand the workflow the same way a seller would in a
-          customer-facing session.
+          The goal is to help a seller get to the right conversation quickly,
+          ask sharper questions, and open a calculator that already feels credible.
         </p>
+      </section>
+
+      <section className="entry-grid">
+        <section className="panel choice-card">
+          <div className="choice-copy">
+            <p className="section-kicker">Browse By Industry</p>
+            <h2>Choose the customer vertical first, then narrow to the best workflow.</h2>
+            <p className="panel-copy">
+              Use this path when the industry is already clear and you want to
+              compare the calculators available in that vertical.
+            </p>
+          </div>
+        </section>
+
+        <CalculatorRecommendationHelper
+          industries={industries}
+          options={recommendationOptions}
+          onNavigate={onNavigate}
+        />
       </section>
 
       <section className="industry-grid">

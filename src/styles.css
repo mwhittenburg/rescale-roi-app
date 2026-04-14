@@ -74,7 +74,9 @@ p {
 .calculator-layout,
 .industry-grid,
 .use-case-grid,
-.content-grid {
+.content-grid,
+.entry-grid,
+.guidance-grid {
   display: grid;
   gap: 20px;
 }
@@ -188,9 +190,20 @@ p {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
+.entry-grid {
+  margin-top: 24px;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  align-items: start;
+}
+
 .use-case-grid,
 .content-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.guidance-grid {
+  margin-top: 24px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .review-index-grid {
@@ -210,6 +223,18 @@ p {
 .review-index-card {
   display: grid;
   gap: 14px;
+}
+
+.choice-card,
+.guidance-card,
+.recommendation-card {
+  display: grid;
+  gap: 12px;
+}
+
+.choice-copy {
+  display: grid;
+  gap: 10px;
 }
 
 .industry-card h3,
@@ -249,6 +274,52 @@ p {
   display: grid;
   gap: 12px;
   justify-items: start;
+}
+
+.selector-grid {
+  display: grid;
+  gap: 14px;
+}
+
+.selector-field {
+  display: grid;
+  gap: 8px;
+}
+
+.selector-field select {
+  min-height: 52px;
+  padding: 0 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: #ffffff;
+  color: var(--text);
+  font: inherit;
+}
+
+.recommendation-list {
+  display: grid;
+  gap: 14px;
+}
+
+.recommendation-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.guidance-list {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--muted);
+}
+
+.guidance-list li + li {
+  margin-top: 8px;
+}
+
+.calculator-guidance-grid {
+  margin-top: 24px;
 }
 
 .review-link-group,
@@ -497,7 +568,8 @@ p {
 
 button:focus-visible,
 .link-button:focus-visible,
-.input-shell:focus-within {
+.input-shell:focus-within,
+.selector-field select:focus-visible {
   outline: 3px solid rgba(31, 92, 168, 0.18);
   outline-offset: 2px;
 }
@@ -508,7 +580,9 @@ button:focus-visible,
   .calculator-layout,
   .industry-grid,
   .use-case-grid,
-  .content-grid {
+  .content-grid,
+  .entry-grid,
+  .guidance-grid {
     grid-template-columns: 1fr;
   }
 

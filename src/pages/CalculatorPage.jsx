@@ -152,6 +152,25 @@ function InteractiveCalculatorPage({ industry, calculator, onNavigate }) {
         onNavigate={onNavigate}
       />
 
+      <section className="guidance-grid calculator-guidance-grid">
+        <article className="panel guidance-card">
+          <p className="section-kicker">Best Fit When</p>
+          <p className="panel-copy">{calculator.sellerGuidance.bestFitWhen}</p>
+        </article>
+        <article className="panel guidance-card">
+          <p className="section-kicker">Ask These First</p>
+          <ul className="guidance-list">
+            {calculator.sellerGuidance.askTheseFirst.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </article>
+        <article className="panel guidance-card">
+          <p className="section-kicker">What This Estimates</p>
+          <p className="panel-copy">{calculator.sellerGuidance.whatThisEstimates}</p>
+        </article>
+      </section>
+
       <section className="calculator-layout">
         <div className="calculator-main">
           {calculator.sections.map((section) => {

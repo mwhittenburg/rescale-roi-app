@@ -27,6 +27,21 @@ export function IndustryPage({ industry, onNavigate }) {
         </p>
       </section>
 
+      <section className="guidance-grid">
+        <article className="panel guidance-card">
+          <p className="section-kicker">Best For These Conversations</p>
+          <p className="panel-copy">{industry.bestForConversations}</p>
+        </article>
+        <article className="panel guidance-card">
+          <p className="section-kicker">Typical Buyer</p>
+          <p className="panel-copy">{industry.typicalBuyer}</p>
+        </article>
+        <article className="panel guidance-card">
+          <p className="section-kicker">Common Bottleneck</p>
+          <p className="panel-copy">{industry.commonBottleneck}</p>
+        </article>
+      </section>
+
       <section className="use-case-grid">
         {industry.calculators.map((calculator) => (
           <CalculatorCard

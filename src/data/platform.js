@@ -2,6 +2,7 @@ import { calculatorModules } from "./calculatorModules";
 import { platformCatalog } from "./catalog";
 
 export { platformCatalog };
+export const recommendationOptions = platformCatalog.recommendationOptions;
 
 function resolveUseCase(industry, useCaseConfig) {
   const calculator = calculatorModules[useCaseConfig.moduleKey];
@@ -18,7 +19,10 @@ function resolveUseCase(industry, useCaseConfig) {
     );
   }
 
-  return calculator;
+  return {
+    ...calculator,
+    ...useCaseConfig,
+  };
 }
 
 export const industries = platformCatalog.industries.map((industry) => ({
