@@ -132,7 +132,7 @@ export function CalculatorRecommendationHelper({
           </select>
         </label>
 
-        <label className="selector-field">
+        <label className="selector-field selector-field-wide">
           <span className="field-label">What decision is being slowed down?</span>
           <select
             value={answers.slowedDecision}
