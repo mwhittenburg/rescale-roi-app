@@ -10,12 +10,12 @@ The app is organized in three layers:
 
 1. Home page: shows industry paths
 2. Industry page: shows workflow-specific calculators for that industry
-3. Calculator page: shows the selected calculator with placeholder sections for:
-   - workflow description
-   - inputs
-   - assumptions
-   - outcomes
-   - formulas
+3. Calculator page: shows a working ROI calculator with:
+   - current-state inputs
+   - improvement assumptions
+   - financial assumptions
+   - estimated business impact
+   - a live summary panel
 
 Each calculator has its own route and its own content file.
 Industries and use cases are defined from one central catalog so navigation and routing stay in sync.
@@ -71,21 +71,63 @@ That means a future formula engine for one calculator can be added in that calcu
    - `id`
    - `name`
    - `teaser`
-   - `workflowDescription`
-   - `inputs`
-   - `assumptions`
-   - `outcomes`
-   - `formulas`
-3. Import it into [src/data/calculatorModules.js](/Users/markwhittenburg/Documents/New%20project/src/data/calculatorModules.js).
-4. Add it to the correct industry's `useCases` list in [src/data/catalog.js](/Users/markwhittenburg/Documents/New%20project/src/data/catalog.js).
-5. The industry page and route lookup will pick it up automatically from the catalog-driven platform data.
+   - `businessOutcome`
+   - `sections`
+   - `calculate`
+3. Build the module with `createInteractiveCalculator(...)` from [src/calculators/shared.js](/Users/markwhittenburg/Documents/New%20project/src/calculators/shared.js) so it inherits the shared calculator framework.
+4. Use the standard section keys:
+   - `currentState`
+   - `improvements`
+   - `financial`
+5. Return the shared output metrics from `calculate`:
+   - `annualHoursSaved`
+   - `cycleTimeReduction`
+   - `capacityUnlocked`
+   - `annualEconomicImpact`
+   - `paybackPeriodMonths`
+   - `roiPercent`
+6. Add optional `extraOutputs` only when a calculator truly needs one more supporting metric.
+7. Import it into [src/data/calculatorModules.js](/Users/markwhittenburg/Documents/New%20project/src/data/calculatorModules.js).
+8. Add it to the correct industry's `useCases` list in [src/data/catalog.js](/Users/markwhittenburg/Documents/New%20project/src/data/catalog.js).
+9. The industry page and route lookup will pick it up automatically from the catalog-driven platform data.
+
+## Shared calculator framework
+
+The shared calculator framework lives in [src/calculators/shared.js](/Users/markwhittenburg/Documents/New%20project/src/calculators/shared.js) and [src/pages/CalculatorPage.jsx](/Users/markwhittenburg/Documents/New%20project/src/pages/CalculatorPage.jsx).
+
+Every interactive calculator inherits the same platform behavior:
+
+- the same three main sections
+- required inputs first
+- advanced inputs inside a collapsible section
+- helper text under every field
+- confidence tags for assumptions
+- standardized labor-rate and platform-investment defaults
+- live summary cards
+- a reset-to-defaults action
+
+This lets each calculator keep its own business logic while still feeling like part of one product.
+
+## Shared defaults and conventions
+
+To keep the platform consistent, the shared framework normalizes:
+
+- currency formatting as U.S. dollars
+- percent inputs as whole-number percentages in the UI
+- time inputs in days or hours
+- labor-rate defaults for hourly cost fields
+- annual platform investment defaults
+- confidence tags by section:
+  - `Customer-provided` for current-state inputs
+  - `Benchmark` for improvement assumptions
+  - `Estimated` for financial assumptions
 
 ## How to safely update one calculator without affecting the rest
 
 The safest workflow is:
 
 1. Create a branch for the specific calculator change
-2. Edit only that calculator's file and any truly shared UI files you need
+2. Edit only that calculator's file when the change is calculator-specific
 3. Run `npm run build`
 4. Push the branch and review the Vercel preview link
 5. Merge to `main` only after the calculator looks right
@@ -103,7 +145,7 @@ For the plain-English version, see [docs/safe-publishing-workflow.md](/Users/mar
 For non-technical users or low-risk content edits:
 
 1. Request a branch for the change
-2. Update the one calculator file that needs copy changes
+2. Update the one calculator file that needs input, helper-text, or copy changes
 3. Build and review the Vercel preview
 4. Approve the preview
 5. Merge to `main`

@@ -15,11 +15,10 @@ The safest updates are content-only changes inside one calculator file.
 Examples:
 
 - changing the teaser text
-- changing workflow description wording
-- updating placeholder inputs
+- changing helper text
+- adjusting one calculator's default values
 - revising assumptions copy
-- revising outcomes copy
-- adding formula placeholder notes
+- tuning one calculator's formula logic
 
 These updates are usually limited to one file inside `src/calculators/<industry>/`.
 

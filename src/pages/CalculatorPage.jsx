@@ -43,14 +43,6 @@ function formatCapacity(value, unit) {
   return `${value.toFixed(1)} ${unit}`;
 }
 
-function buildDefaultValues(sections) {
-  return Object.fromEntries(
-    sections.flatMap((section) =>
-      section.fields.map((field) => [field.key, field.defaultValue]),
-    ),
-  );
-}
-
 function FieldInput({ field, value, onChange }) {
   const isPercent = field.kind === "percent";
   const displayValue = isPercent ? Number(value) * 100 : value;
@@ -60,7 +52,12 @@ function FieldInput({ field, value, onChange }) {
 
   return (
     <label className="field-card">
-      <span className="field-label">{field.label}</span>
+      <div className="field-label-row">
+        <span className="field-label">{field.label}</span>
+        <span className={`confidence-tag ${field.confidenceTag.key}`}>
+          {field.confidenceTag.label}
+        </span>
+      </div>
       <div className="input-shell">
         {field.prefix ? <span className="input-prefix">{field.prefix}</span> : null}
         <input
@@ -79,6 +76,7 @@ function FieldInput({ field, value, onChange }) {
           <span className="input-suffix">{field.suffix}</span>
         ) : null}
       </div>
+      <span className="field-helper">{field.helperText}</span>
     </label>
   );
 }
@@ -93,15 +91,24 @@ function MetricCard({ label, value }) {
 }
 
 function InteractiveCalculatorPage({ industry, calculator, onNavigate }) {
-  const [values, setValues] = useState(() => buildDefaultValues(calculator.sections));
+  const [values, setValues] = useState(() => calculator.defaultValues);
   const results = useMemo(() => calculator.calculate(values), [calculator, values]);
 
   function updateValue(field, nextValue) {
-    const boundedValue = Number.isNaN(nextValue) ? 0 : nextValue;
+    const numericValue = Number.isNaN(nextValue) ? 0 : nextValue;
+    const boundedValue = Math.min(
+      field.max ?? Number.POSITIVE_INFINITY,
+      Math.max(field.min ?? Number.NEGATIVE_INFINITY, numericValue),
+    );
+
     setValues((current) => ({
       ...current,
       [field.key]: boundedValue,
     }));
+  }
+
+  function resetToDefaults() {
+    setValues(calculator.defaultValues);
   }
 
   const outputCards = [
@@ -155,6 +162,9 @@ function InteractiveCalculatorPage({ industry, calculator, onNavigate }) {
               <section key={section.key} className="panel calc-section">
                 <header className="panel-header">
                   <h2>{section.title}</h2>
+                  {section.description ? (
+                    <p className="section-copy">{section.description}</p>
+                  ) : null}
                 </header>
 
                 <div className="field-grid">
@@ -216,6 +226,11 @@ function InteractiveCalculatorPage({ industry, calculator, onNavigate }) {
               Use this summary during customer working sessions to show how the
               value story changes as you refine assumptions together.
             </p>
+            <div className="summary-actions">
+              <button type="button" className="ghost-button" onClick={resetToDefaults}>
+                Reset to defaults
+              </button>
+            </div>
           </div>
 
           <div className="metric-grid">
@@ -223,6 +238,18 @@ function InteractiveCalculatorPage({ industry, calculator, onNavigate }) {
               <MetricCard key={metric.label} label={metric.label} value={metric.value} />
             ))}
           </div>
+
+          {results.extraOutputs.length > 0 ? (
+            <div className="extra-output-grid">
+              {results.extraOutputs.map((metric) => (
+                <MetricCard
+                  key={metric.label}
+                  label={metric.label}
+                  value={metric.value}
+                />
+              ))}
+            </div>
+          ) : null}
         </aside>
       </section>
     </>
@@ -252,11 +279,11 @@ function ContentCalculatorPage({ industry, calculator, onNavigate }) {
         </article>
 
         <aside className="panel workflow-sidebar">
-          <p className="section-kicker">Next Step</p>
-          <h2>Calculator buildout is coming next.</h2>
+          <p className="section-kicker">Calculator Status</p>
+          <h2>This route is not active yet.</h2>
           <p className="panel-copy">
-            This use case is still in platform setup mode while the Biopharma
-            calculators are being converted into live ROI models first.
+            Return to the industry page to open a live calculator or continue
+            building this use case in its module when you are ready.
           </p>
           <button
             type="button"

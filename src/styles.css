@@ -304,11 +304,54 @@ p {
   gap: 8px;
 }
 
+.field-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
 .field-label,
 .metric-label {
   font-size: 0.84rem;
   font-weight: 700;
   color: var(--muted);
+}
+
+.field-helper,
+.section-copy {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+.confidence-tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.confidence-tag.customer-provided {
+  background: rgba(20, 95, 61, 0.08);
+  color: #145f3d;
+}
+
+.confidence-tag.benchmark {
+  background: rgba(31, 92, 168, 0.08);
+  color: #1f5ca8;
+}
+
+.confidence-tag.estimated {
+  background: rgba(138, 93, 18, 0.12);
+  color: #8a5d12;
 }
 
 .input-shell {
@@ -363,8 +406,18 @@ p {
   font-size: 1.4rem;
 }
 
+.summary-actions {
+  display: flex;
+  justify-content: flex-start;
+}
+
 .metric-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.extra-output-grid {
+  display: grid;
+  gap: 14px;
 }
 
 .metric-card {
@@ -422,8 +475,14 @@ button:focus-visible,
 
   .field-grid,
   .metric-grid,
-  .impact-highlight {
+  .impact-highlight,
+  .extra-output-grid {
     grid-template-columns: 1fr;
+  }
+
+  .field-label-row {
+    align-items: flex-start;
+    flex-direction: column;
   }
 
   .summary-panel {

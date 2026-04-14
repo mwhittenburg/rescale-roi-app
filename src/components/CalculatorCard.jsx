@@ -5,7 +5,7 @@ export function CalculatorCard({ calculator, onOpen }) {
       <h3>{calculator.name}</h3>
       <p>{calculator.teaser}</p>
       <div className="card-footer">
-        <span className="card-meta">Own page and formula module ready</span>
+        <span className="card-meta">Route-based interactive calculator</span>
         <button type="button" onClick={onOpen}>
           Open Calculator
         </button>
