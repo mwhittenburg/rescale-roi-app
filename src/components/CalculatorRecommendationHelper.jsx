@@ -86,15 +86,14 @@ export function CalculatorRecommendationHelper({
       <div className="selector-header">
         <div className="choice-copy">
           <p className="section-kicker">Help Me Choose A Calculator</p>
-          <h2>Start with the bottleneck, team, and decision that is being slowed down.</h2>
+          <h2>Choose based on the bottleneck, team, and decision being slowed down.</h2>
           <p className="panel-copy">
-            Answer these three quick questions to see the 1 to 2 calculators most
-            likely to fit your workflow.
+            Answer three quick questions to see the best-fit calculators.
           </p>
         </div>
         <button
           type="button"
-          className="ghost-button"
+          className="ghost-button compact-ghost-button"
           onClick={resetAnswers}
           disabled={isAtDefaultState}
         >
@@ -175,7 +174,7 @@ export function CalculatorRecommendationHelper({
             </article>
           ))
         ) : (
-          <p className="panel-copy">
+          <p className="panel-copy compact-helper-copy">
             Pick one or more answers above to see recommended calculators.
           </p>
         )}
