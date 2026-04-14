@@ -134,7 +134,7 @@ function InteractiveCalculatorPage({ industry, calculator, onNavigate }) {
   return (
     <>
       <PageHeader
-        eyebrow="Biopharma ROI Calculator"
+        eyebrow={`${industry.name} ROI Calculator`}
         title={calculator.name}
         description={calculator.businessOutcome}
         breadcrumbs={[
