@@ -19,11 +19,11 @@ export function IndustryPage({ industry, onNavigate }) {
       <section className="panel intro-panel">
         <div>
           <p className="section-kicker">Use Case Library</p>
-          <h2>Choose a workflow calculator for this vertical.</h2>
+          <h2>Choose the workflow that best matches the customer motion.</h2>
         </div>
         <p className="panel-copy">
-          Each calculator has its own route, its own content file, and room for
-          a dedicated formula engine later.
+          Every calculator in this path opens with sample inputs and a live ROI
+          summary so reviewers can assess the seller flow end to end.
         </p>
       </section>
 

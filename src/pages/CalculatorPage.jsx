@@ -223,8 +223,9 @@ function InteractiveCalculatorPage({ industry, calculator, onNavigate }) {
             <p className="section-kicker">Live Summary</p>
             <h2>Estimated business impact</h2>
             <p className="panel-copy">
-              Use this summary during customer working sessions to show how the
-              value story changes as you refine assumptions together.
+              Sample values are already loaded so the page is reviewable on first
+              open. Adjust the assumptions during the session to show how the
+              value story changes with the customer conversation.
             </p>
             <div className="summary-actions">
               <button type="button" className="ghost-button" onClick={resetToDefaults}>
@@ -280,10 +281,10 @@ function ContentCalculatorPage({ industry, calculator, onNavigate }) {
 
         <aside className="panel workflow-sidebar">
           <p className="section-kicker">Calculator Status</p>
-          <h2>This route is not active yet.</h2>
+          <h2>This calculator is not available in the current review build.</h2>
           <p className="panel-copy">
-            Return to the industry page to open a live calculator or continue
-            building this use case in its module when you are ready.
+            Return to the industry page to open one of the live calculators that
+            are included in this review experience.
           </p>
           <button
             type="button"

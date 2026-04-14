@@ -16,12 +16,13 @@ export function HomePage({ onNavigate }) {
 
       <section className="panel intro-panel">
         <div>
-          <p className="section-kicker">Shared Platform</p>
-          <h2>One shell, many calculators, safe expansion over time.</h2>
+          <p className="section-kicker">Seller Review Flow</p>
+          <h2>Start with an industry, then open the use case closest to the customer conversation.</h2>
         </div>
         <p className="panel-copy">
-          Each calculator is modular, route-based, and ready for its own formula
-          engine later. Updates stay additive instead of replacing the whole app.
+          Every calculator opens with seeded sample inputs and live outputs so a
+          reviewer can understand the workflow the same way a seller would in a
+          customer-facing session.
         </p>
       </section>
 
@@ -37,12 +38,13 @@ export function HomePage({ onNavigate }) {
 
       <section className="panel notes-panel">
         <div>
-          <p className="section-kicker">Publishing Model</p>
-          <h2>Stable production, safe previews, independent calculators.</h2>
+          <p className="section-kicker">How To Review</p>
+          <h2>Follow the full path from home page to industry to calculator.</h2>
         </div>
         <p className="panel-copy">
-          Keep `main` as the stable rep-ready version. Build new calculators on
-          a branch, preview them in Vercel, then merge only when ready.
+          Reviewers should click into each vertical, open each calculator, and
+          adjust the sample values to judge input quality, output credibility,
+          and how usable the workflow feels during a real call.
         </p>
       </section>
     </>
