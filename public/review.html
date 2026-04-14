@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ROI Calculator Platform Review Index</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #edf3f9;
+        --card: #ffffff;
+        --text: #122033;
+        --muted: #5b6e82;
+        --border: #d5e0ea;
+        --accent: #1f5ca8;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        padding: 32px 16px 48px;
+        font-family: Arial, Helvetica, sans-serif;
+        line-height: 1.5;
+        color: var(--text);
+        background: var(--bg);
+      }
+
+      main {
+        width: min(1040px, 100%);
+        margin: 0 auto;
+      }
+
+      .top-link {
+        display: inline-block;
+        margin-bottom: 20px;
+        color: var(--accent);
+        font-weight: 700;
+        text-decoration: none;
+      }
+
+      .hero,
+      .industry {
+        margin-bottom: 20px;
+        padding: 20px 22px;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        background: var(--card);
+      }
+
+      h1,
+      h2,
+      h3,
+      p,
+      ul {
+        margin: 0;
+      }
+
+      h1 {
+        font-size: 2rem;
+        margin-bottom: 8px;
+      }
+
+      h2 {
+        font-size: 1.4rem;
+        margin-bottom: 8px;
+      }
+
+      .eyebrow {
+        margin-bottom: 8px;
+        color: var(--accent);
+        font-size: 0.82rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      .summary {
+        color: var(--muted);
+      }
+
+      .industry-link {
+        margin: 14px 0 16px;
+      }
+
+      .industry-link a,
+      .calc-link {
+        color: var(--accent);
+      }
+
+      .calculator-list {
+        padding-left: 20px;
+      }
+
+      .calculator-list li + li {
+        margin-top: 14px;
+      }
+
+      .status {
+        display: inline-block;
+        margin-top: 6px;
+        padding: 2px 8px;
+        border-radius: 999px;
+        background: #e7f0fb;
+        color: var(--accent);
+        font-size: 0.8rem;
+        font-weight: 700;
+      }
+
+      .meta {
+        color: var(--muted);
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <a class="top-link" href="./">Back to homepage</a>
+
+      <section class="hero">
+        <p class="eyebrow">Review Index</p>
+        <h1>ROI Calculator Platform static review page</h1>
+        <p class="summary">
+          This page is intentionally plain HTML so browser tooling can inspect the
+          full platform. Use the links below to move from the homepage to each
+          vertical landing page and then into every calculator route.
+        </p>
+      </section>
+
+      <section class="industry">
+        <p class="eyebrow">Vertical</p>
+        <h2>Pharma / Biopharma</h2>
+        <p class="summary">
+          ROI paths for computational drug discovery, simulation-led R&amp;D, and
+          development acceleration.
+        </p>
+        <p class="industry-link">
+          Vertical landing page:
+          <a href="./#/industries/pharma-biopharma">#/industries/pharma-biopharma</a>
+        </p>
+        <ul class="calculator-list">
+          <li>
+            <strong>Virtual Screening / Docking</strong><br />
+            <span class="meta">Model ROI from faster compound triage and docking throughput.</span><br />
+            <a class="calc-link" href="./#/industries/pharma-biopharma/virtual-screening-docking">
+              #/industries/pharma-biopharma/virtual-screening-docking
+            </a><br />
+            <span class="status">Fully implemented</span>
+          </li>
+          <li>
+            <strong>Molecular Dynamics</strong><br />
+            <span class="meta">Model ROI from higher simulation capacity and shorter time to insight.</span><br />
+            <a class="calc-link" href="./#/industries/pharma-biopharma/molecular-dynamics">
+              #/industries/pharma-biopharma/molecular-dynamics
+            </a><br />
+            <span class="status">Fully implemented</span>
+          </li>
+          <li>
+            <strong>CMC / Process Modeling</strong><br />
+            <span class="meta">Model ROI from faster process understanding, fewer physical iterations, and more confident development decisions.</span><br />
+            <a class="calc-link" href="./#/industries/pharma-biopharma/cmc-process-modeling">
+              #/industries/pharma-biopharma/cmc-process-modeling
+            </a><br />
+            <span class="status">Fully implemented</span>
+          </li>
+        </ul>
+      </section>
+
+      <section class="industry">
+        <p class="eyebrow">Vertical</p>
+        <h2>Semiconductor</h2>
+        <p class="summary">
+          ROI paths for chip design, verification throughput, yield learning, and
+          EDA burst capacity.
+        </p>
+        <p class="industry-link">
+          Vertical landing page:
+          <a href="./#/industries/semiconductor">#/industries/semiconductor</a>
+        </p>
+        <ul class="calculator-list">
+          <li>
+            <strong>Chip Design Verification</strong><br />
+            <span class="meta">Model ROI from shorter verification cycles and faster tape-out readiness.</span><br />
+            <a class="calc-link" href="./#/industries/semiconductor/design-verification">
+              #/industries/semiconductor/design-verification
+            </a><br />
+            <span class="status">Fully implemented</span>
+          </li>
+          <li>
+            <strong>Yield Learning / Optimization</strong><br />
+            <span class="meta">Model ROI from faster learning cycles and improved yield tuning.</span><br />
+            <a class="calc-link" href="./#/industries/semiconductor/yield-optimization">
+              #/industries/semiconductor/yield-optimization
+            </a><br />
+            <span class="status">Fully implemented</span>
+          </li>
+          <li>
+            <strong>Peak EDA Compute Capacity</strong><br />
+            <span class="meta">Model ROI from clearing peak EDA demand without overbuilding fixed infrastructure.</span><br />
+            <a class="calc-link" href="./#/industries/semiconductor/eda-burst-compute">
+              #/industries/semiconductor/eda-burst-compute
+            </a><br />
+            <span class="status">Fully implemented</span>
+          </li>
+        </ul>
+      </section>
+
+      <section class="industry">
+        <p class="eyebrow">Vertical</p>
+        <h2>Advanced Manufacturing / Industrial</h2>
+        <p class="summary">
+          ROI paths for digital twins, line optimization, and product design
+          simulation in industrial environments.
+        </p>
+        <p class="industry-link">
+          Vertical landing page:
+          <a href="./#/industries/advanced-manufacturing-industrial">
+            #/industries/advanced-manufacturing-industrial
+          </a>
+        </p>
+        <ul class="calculator-list">
+          <li>
+            <strong>Manufacturing Line Simulation / Digital Twin</strong><br />
+            <span class="meta">Model ROI from better line planning, throughput forecasting, and operational decisions.</span><br />
+            <a class="calc-link" href="./#/industries/advanced-manufacturing-industrial/manufacturing-line-simulation-digital-twin">
+              #/industries/advanced-manufacturing-industrial/manufacturing-line-simulation-digital-twin
+            </a><br />
+            <span class="status">Fully implemented</span>
+          </li>
+          <li>
+            <strong>Process Optimization</strong><br />
+            <span class="meta">Model ROI from faster process learning, fewer physical trials, and more throughput improvement.</span><br />
+            <a class="calc-link" href="./#/industries/advanced-manufacturing-industrial/process-optimization">
+              #/industries/advanced-manufacturing-industrial/process-optimization
+            </a><br />
+            <span class="status">Fully implemented</span>
+          </li>
+          <li>
+            <strong>Product Design Simulation</strong><br />
+            <span class="meta">Model ROI from evaluating more design concepts with fewer prototype cycles.</span><br />
+            <a class="calc-link" href="./#/industries/advanced-manufacturing-industrial/product-design-simulation">
+              #/industries/advanced-manufacturing-industrial/product-design-simulation
+            </a><br />
+            <span class="status">Fully implemented</span>
+          </li>
+        </ul>
+      </section>
+
+      <section class="industry">
+        <p class="eyebrow">Vertical</p>
+        <h2>Automotive &amp; Mobility</h2>
+        <p class="summary">
+          ROI paths for vehicle simulation, crash analysis, and battery or aero
+          optimization workflows.
+        </p>
+        <p class="industry-link">
+          Vertical landing page:
+          <a href="./#/industries/automotive-mobility">#/industries/automotive-mobility</a>
+        </p>
+        <ul class="calculator-list">
+          <li>
+            <strong>CFD / Aero Design Exploration</strong><br />
+            <span class="meta">Model ROI from faster aerodynamic analysis and more design exploration.</span><br />
+            <a class="calc-link" href="./#/industries/automotive-mobility/cfd-aero-design-exploration">
+              #/industries/automotive-mobility/cfd-aero-design-exploration
+            </a><br />
+            <span class="status">Fully implemented</span>
+          </li>
+          <li>
+            <strong>Crash / Structural Simulation</strong><br />
+            <span class="meta">Model ROI from earlier structural insight and fewer physical validation loops.</span><br />
+            <a class="calc-link" href="./#/industries/automotive-mobility/crash-structural-simulation">
+              #/industries/automotive-mobility/crash-structural-simulation
+            </a><br />
+            <span class="status">Fully implemented</span>
+          </li>
+          <li>
+            <strong>EV Battery Thermal Optimization</strong><br />
+            <span class="meta">Model ROI from faster thermal design iteration and reduced physical battery testing.</span><br />
+            <a class="calc-link" href="./#/industries/automotive-mobility/ev-battery-thermal-pack-optimization">
+              #/industries/automotive-mobility/ev-battery-thermal-pack-optimization
+            </a><br />
+            <span class="status">Fully implemented</span>
+          </li>
+        </ul>
+      </section>
+
+      <section class="industry">
+        <p class="eyebrow">Vertical</p>
+        <h2>Aerospace &amp; Defense</h2>
+        <p class="summary">
+          ROI paths for CFD, FEA, and multidisciplinary design exploration across
+          complex programs.
+        </p>
+        <p class="industry-link">
+          Vertical landing page:
+          <a href="./#/industries/aerospace-defense">#/industries/aerospace-defense</a>
+        </p>
+        <ul class="calculator-list">
+          <li>
+            <strong>CFD / Aero Performance</strong><br />
+            <span class="meta">Model ROI from faster aerodynamic analysis and more design exploration.</span><br />
+            <a class="calc-link" href="./#/industries/aerospace-defense/cfd-aero-performance">
+              #/industries/aerospace-defense/cfd-aero-performance
+            </a><br />
+            <span class="status">Fully implemented</span>
+          </li>
+          <li>
+            <strong>Structural / FEA</strong><br />
+            <span class="meta">Model ROI from faster structural analysis and improved engineering throughput.</span><br />
+            <a class="calc-link" href="./#/industries/aerospace-defense/structural-fea">
+              #/industries/aerospace-defense/structural-fea
+            </a><br />
+            <span class="status">Fully implemented</span>
+          </li>
+          <li>
+            <strong>Multidisciplinary Design Exploration</strong><br />
+            <span class="meta">Model ROI from faster trade studies and earlier design convergence across complex programs.</span><br />
+            <a class="calc-link" href="./#/industries/aerospace-defense/multidisciplinary-design-exploration">
+              #/industries/aerospace-defense/multidisciplinary-design-exploration
+            </a><br />
+            <span class="status">Fully implemented</span>
+          </li>
+        </ul>
+      </section>
+
+      <section class="industry">
+        <p class="eyebrow">Vertical</p>
+        <h2>Oil &amp; Gas</h2>
+        <p class="summary">
+          ROI paths for subsurface decision speed, seismic turnaround, field
+          planning, and drilling or production optimization.
+        </p>
+        <p class="industry-link">
+          Vertical landing page:
+          <a href="./#/industries/oil-gas">#/industries/oil-gas</a>
+        </p>
+        <ul class="calculator-list">
+          <li>
+            <strong>Reservoir Simulation / Field Development Planning</strong><br />
+            <span class="meta">Model ROI from evaluating more field development scenarios with less delay.</span><br />
+            <a class="calc-link" href="./#/industries/oil-gas/reservoir-simulation-field-development-planning">
+              #/industries/oil-gas/reservoir-simulation-field-development-planning
+            </a><br />
+            <span class="status">Fully implemented</span>
+          </li>
+          <li>
+            <strong>Seismic Processing / Imaging</strong><br />
+            <span class="meta">Model ROI from faster seismic processing and earlier interpretation decisions.</span><br />
+            <a class="calc-link" href="./#/industries/oil-gas/seismic-processing-imaging">
+              #/industries/oil-gas/seismic-processing-imaging
+            </a><br />
+            <span class="status">Fully implemented</span>
+          </li>
+          <li>
+            <strong>Drilling and Production Optimization</strong><br />
+            <span class="meta">Model ROI from faster operational optimization and fewer delays in drilling or production analysis.</span><br />
+            <a class="calc-link" href="./#/industries/oil-gas/drilling-production-optimization">
+              #/industries/oil-gas/drilling-production-optimization
+            </a><br />
+            <span class="status">Fully implemented</span>
+          </li>
+        </ul>
+      </section>
+    </main>
+  </body>
+</html>
