@@ -36,6 +36,7 @@ export function CalculatorRecommendationHelper({
   industries,
   options,
   onNavigate,
+  className = "",
 }) {
   const [answers, setAnswers] = useState(defaultAnswers);
 
@@ -82,7 +83,7 @@ export function CalculatorRecommendationHelper({
     answers.slowedDecision === "";
 
   return (
-    <section className="panel choice-card">
+    <section className={`panel choice-card ${className}`.trim()}>
       <div className="selector-header">
         <div className="choice-copy">
           <p className="section-kicker">Help Me Choose A Calculator</p>
@@ -97,7 +98,7 @@ export function CalculatorRecommendationHelper({
           onClick={resetAnswers}
           disabled={isAtDefaultState}
         >
-          Reset to choose one
+          Reset
         </button>
       </div>
 
