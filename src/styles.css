@@ -71,6 +71,7 @@ p {
 
 .page-header,
 .hero-layout,
+.calculator-layout,
 .industry-grid,
 .use-case-grid,
 .content-grid {
@@ -81,6 +82,12 @@ p {
 .page-header,
 .hero-layout {
   grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.75fr);
+  align-items: start;
+}
+
+.calculator-layout {
+  margin-top: 24px;
+  grid-template-columns: minmax(0, 1.15fr) minmax(300px, 0.85fr);
   align-items: start;
 }
 
@@ -250,7 +257,8 @@ p {
 }
 
 .workflow-sidebar,
-.calculator-intro {
+.calculator-intro,
+.summary-panel {
   display: grid;
   gap: 12px;
 }
@@ -271,8 +279,123 @@ p {
   font-size: 1.08rem;
 }
 
+.calculator-main {
+  display: grid;
+  gap: 20px;
+}
+
+.calc-section {
+  display: grid;
+  gap: 18px;
+}
+
+.field-grid,
+.metric-grid {
+  display: grid;
+  gap: 14px;
+}
+
+.field-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.field-card {
+  display: grid;
+  gap: 8px;
+}
+
+.field-label,
+.metric-label {
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.input-shell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 0 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: #ffffff;
+}
+
+.input-shell input {
+  width: 100%;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+}
+
+.input-prefix,
+.input-suffix {
+  color: var(--muted);
+  font-size: 0.92rem;
+  white-space: nowrap;
+}
+
+.advanced-block {
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+}
+
+.advanced-block summary {
+  cursor: pointer;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.advanced-grid {
+  margin-top: 16px;
+}
+
+.summary-panel {
+  position: sticky;
+  top: 24px;
+}
+
+.summary-top h2 {
+  margin-top: 8px;
+  font-size: 1.4rem;
+}
+
+.metric-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.metric-card {
+  display: grid;
+  gap: 8px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: #ffffff;
+}
+
+.metric-card strong,
+.impact-highlight strong {
+  font-size: 1.3rem;
+}
+
+.impact-panel {
+  background:
+    linear-gradient(135deg, rgba(231, 240, 251, 0.72), rgba(248, 250, 252, 0.92)),
+    var(--card-muted);
+}
+
+.impact-highlight {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
 button:focus-visible,
-.link-button:focus-visible {
+.link-button:focus-visible,
+.input-shell:focus-within {
   outline: 3px solid rgba(31, 92, 168, 0.18);
   outline-offset: 2px;
 }
@@ -280,6 +403,7 @@ button:focus-visible,
 @media (max-width: 980px) {
   .page-header,
   .hero-layout,
+  .calculator-layout,
   .industry-grid,
   .use-case-grid,
   .content-grid {
@@ -294,6 +418,16 @@ button:focus-visible,
 
   .breadcrumb-list {
     justify-content: flex-start;
+  }
+
+  .field-grid,
+  .metric-grid,
+  .impact-highlight {
+    grid-template-columns: 1fr;
+  }
+
+  .summary-panel {
+    position: static;
   }
 }
 

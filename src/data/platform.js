@@ -1,8 +1,6 @@
-import { calculatorSections } from "../calculators/shared";
 import { calculatorModules } from "./calculatorModules";
 import { platformCatalog } from "./catalog";
 
-export { calculatorSections };
 export { platformCatalog };
 
 function resolveUseCase(industry, useCaseConfig) {
