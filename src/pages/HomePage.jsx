@@ -8,23 +8,13 @@ export function HomePage({ onNavigate }) {
   return (
     <>
       <PageHeader
+        className="home-page-header"
         eyebrow="ROI Calculator Platform"
         title="Find the right ROI calculator for your workflow"
         description="Choose an industry path or use the helper below to find the calculator that best matches your team, bottleneck, and decision needs."
         breadcrumbs={[{ label: "Home" }]}
         onNavigate={onNavigate}
       />
-
-      <section className="panel intro-panel">
-        <div>
-          <p className="section-kicker">Start Here</p>
-          <h2>Begin with the path that feels most natural for your conversation.</h2>
-        </div>
-        <p className="panel-copy">
-          If you already know the industry, browse the vertical directly. If
-          you are still narrowing the use case, use the helper to get a quick recommendation.
-        </p>
-      </section>
 
       <section className="entry-grid">
         <section className="panel choice-card">
