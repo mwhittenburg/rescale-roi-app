@@ -1,6 +1,12 @@
 import { useMemo, useState } from "react";
 import { buildCalculatorPath, buildIndustryPath } from "../router";
 
+const defaultAnswers = {
+  bottleneck: "",
+  teamType: "",
+  slowedDecision: "",
+};
+
 function scoreCalculator(calculator, answers) {
   const selector = calculator.selector ?? {};
   let score = 0;
@@ -31,11 +37,7 @@ export function CalculatorRecommendationHelper({
   options,
   onNavigate,
 }) {
-  const [answers, setAnswers] = useState({
-    bottleneck: "",
-    teamType: "",
-    slowedDecision: "",
-  });
+  const [answers, setAnswers] = useState(defaultAnswers);
 
   const allCalculators = useMemo(
     () =>
@@ -70,15 +72,34 @@ export function CalculatorRecommendationHelper({
     setAnswers((current) => ({ ...current, [key]: value }));
   }
 
+  function resetAnswers() {
+    setAnswers(defaultAnswers);
+  }
+
+  const isAtDefaultState =
+    answers.bottleneck === "" &&
+    answers.teamType === "" &&
+    answers.slowedDecision === "";
+
   return (
     <section className="panel choice-card">
-      <div className="choice-copy">
-        <p className="section-kicker">Help Me Choose A Calculator</p>
-        <h2>Start with the bottleneck, team, and decision that is being slowed down.</h2>
-        <p className="panel-copy">
-          Answer these three quick questions to see the 1 to 2 calculators most
-          likely to fit your workflow.
-        </p>
+      <div className="selector-header">
+        <div className="choice-copy">
+          <p className="section-kicker">Help Me Choose A Calculator</p>
+          <h2>Start with the bottleneck, team, and decision that is being slowed down.</h2>
+          <p className="panel-copy">
+            Answer these three quick questions to see the 1 to 2 calculators most
+            likely to fit your workflow.
+          </p>
+        </div>
+        <button
+          type="button"
+          className="ghost-button"
+          onClick={resetAnswers}
+          disabled={isAtDefaultState}
+        >
+          Reset to choose one
+        </button>
       </div>
 
       <div className="selector-grid">

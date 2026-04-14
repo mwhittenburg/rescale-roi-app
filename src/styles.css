@@ -237,6 +237,13 @@ p {
   gap: 10px;
 }
 
+.selector-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
 .industry-card h3,
 .use-case-card h3 {
   font-size: 1.3rem;
@@ -352,6 +359,12 @@ p {
 .ghost-button {
   background: rgba(18, 32, 51, 0.06);
   color: var(--text);
+}
+
+.ghost-button:disabled {
+  cursor: default;
+  opacity: 0.55;
+  transform: none;
 }
 
 .industry-card button:hover,
@@ -588,6 +601,11 @@ button:focus-visible,
 
   .intro-panel,
   .notes-panel {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .selector-header {
     flex-direction: column;
     align-items: flex-start;
   }
