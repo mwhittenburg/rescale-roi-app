@@ -61,28 +61,28 @@ export const peakCapacityTco = createInteractiveCalculator("it", {
     {
       key: "currentState",
       title: "Current-state cost inputs",
-      description: "Capture the annual cost of building and carrying enough capacity to cover peak demand.",
+      description: "Capture the annual fixed cost of carrying peak-sized on-prem capacity plus any extra overflow cost during heavy demand periods.",
       fields: [
-        { key: "annualPeakBuiltCapacityCost", label: "Annual cost of carrying capacity for peak demand", defaultValue: 780000, min: 0, step: 10000, prefix: "$" },
+        { key: "annualPeakBuiltCapacityCost", label: "Current annual cost of carrying peak-sized on-prem capacity", defaultValue: 780000, min: 0, step: 10000, prefix: "$" },
         { key: "burstWindowsPerYear", label: "Peak demand windows per year", defaultValue: 12, min: 0, step: 1 },
         {
           key: "currentEmergencyBurstCostPerWindow",
-          label: "Current extra reactive cost per peak period",
+          label: "Current extra overflow cost per peak period",
           defaultValue: 18000,
           min: 0,
           step: 500,
           prefix: "$",
           helperText:
-            "Use the extra cost created by one typical demand spike beyond normal capacity.",
+            "Use the extra burst or overflow cost on top of the fixed environment during one typical peak period.",
           helpTooltip: {
             what:
-              "Represents the extra cost incurred each time demand spikes beyond the normal capacity plan.",
+              "Represents the extra overflow or burst cost incurred during one typical peak period on top of the fixed on-prem capacity cost above.",
             include:
-              "Reactive cloud spend, temporary extra capacity, premium support effort, or inefficient workaround costs tied to one peak period.",
+              "Burst-to-cloud spend, temporary extra capacity, premium support effort, or workaround costs tied to one peak period.",
             exclude:
-              "The full annual infrastructure cost or normal day-to-day operating spend that would exist even without the spike.",
+              "The annual fixed on-prem capacity cost already captured above or normal day-to-day operating spend that would exist even without the spike.",
             example:
-              "One quarter-end crunch that creates about $18,000 of extra cost beyond the normal baseline.",
+              "One quarter-end crunch that triggers about $18,000 of burst-to-cloud or overflow cost beyond the fixed baseline.",
           },
         },
         { key: "averageUtilizationPct", label: "Average utilization", defaultValue: 0.46, min: 0, max: 0.95, step: 0.01, kind: "percent" },
@@ -92,21 +92,21 @@ export const peakCapacityTco = createInteractiveCalculator("it", {
     {
       key: "futureState",
       title: "Future-state cost inputs",
-      description: "Model a right-sized baseline plus elastic overflow for peak periods.",
+      description: "Model a right-sized baseline plus elastic burst capacity for peak periods.",
       fields: [
         { key: "hybridBaselineCapacityCost", label: "Future steady-state capacity cost", defaultValue: 420000, min: 0, step: 10000, prefix: "$" },
         {
           key: "futureElasticBurstCostPerWindow",
-          label: "Future elastic cost per peak period",
+          label: "Future elastic burst cost per peak period",
           defaultValue: 14000,
           min: 0,
           step: 500,
           prefix: "$",
           helperText:
-            "Use the expected extra cost of covering one typical peak period in the future model.",
+            "Use the expected burst cost of covering one typical peak period in the future model.",
           helpTooltip: {
             what:
-              "Represents the extra future-state cost of covering one typical demand spike with elastic or hybrid capacity.",
+              "Represents the future burst cost of covering one typical demand spike with elastic or hybrid capacity on top of the future baseline.",
             include:
               "The incremental burst cost above the future baseline capacity plan for one peak period.",
             exclude:
