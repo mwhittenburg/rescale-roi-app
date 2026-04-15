@@ -1,4 +1,5 @@
-import { useMemo, useState } from "react";
+import { useId, useMemo, useState } from "react";
+import { FieldHelpTooltip } from "../components/FieldHelpTooltip";
 import { PageHeader } from "../components/PageHeader";
 import { buildHomePath, buildIndustryPath } from "../router";
 
@@ -44,6 +45,7 @@ function formatCapacity(value, unit) {
 }
 
 function FieldInput({ field, value, onChange }) {
+  const inputId = useId();
   const isPercent = field.kind === "percent";
   const displayValue = isPercent ? Number(value) * 100 : value;
   const step = isPercent ? (field.step ?? 0.01) * 100 : field.step ?? 1;
@@ -51,9 +53,12 @@ function FieldInput({ field, value, onChange }) {
   const max = isPercent ? (field.max ?? 999999) * 100 : field.max;
 
   return (
-    <label className="field-card">
+    <div className="field-card">
       <div className="field-label-row">
-        <span className="field-label">{field.label}</span>
+        <label className="field-label-group" htmlFor={inputId}>
+          <span className="field-label">{field.label}</span>
+          <FieldHelpTooltip label={field.label} help={field.helpTooltip} />
+        </label>
         <span className={`confidence-tag ${field.confidenceTag.key}`}>
           {field.confidenceTag.label}
         </span>
@@ -61,6 +66,7 @@ function FieldInput({ field, value, onChange }) {
       <div className="input-shell">
         {field.prefix ? <span className="input-prefix">{field.prefix}</span> : null}
         <input
+          id={inputId}
           type="number"
           value={displayValue}
           min={min}
@@ -77,7 +83,7 @@ function FieldInput({ field, value, onChange }) {
         ) : null}
       </div>
       <span className="field-helper">{field.helperText}</span>
-    </label>
+    </div>
   );
 }
 
