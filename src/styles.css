@@ -295,6 +295,17 @@ p {
     var(--card-muted);
 }
 
+.guidance-card-primary .section-kicker {
+  font-size: 0.92rem;
+  letter-spacing: 0.1em;
+}
+
+.guidance-card-primary .guidance-list,
+.guidance-card-primary .guidance-list li {
+  font-weight: 700;
+  color: var(--text);
+}
+
 .choice-card {
   padding: 18px;
   gap: 10px;
