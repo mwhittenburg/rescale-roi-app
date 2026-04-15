@@ -2,6 +2,7 @@ import { calculatorModules } from "./calculatorModules";
 import { platformCatalog } from "./catalog";
 
 export { platformCatalog };
+export const buyerPaths = platformCatalog.buyerPaths;
 export const recommendationOptions = platformCatalog.recommendationOptions;
 
 function resolveUseCase(industry, useCaseConfig) {
@@ -30,8 +31,19 @@ export const industries = platformCatalog.industries.map((industry) => ({
   calculators: industry.useCases.map((useCase) => resolveUseCase(industry, useCase)),
 }));
 
+export const itPath = {
+  ...platformCatalog.itPath,
+  calculators: platformCatalog.itPath.useCases.map((useCase) =>
+    resolveUseCase(platformCatalog.itPath, useCase),
+  ),
+};
+
 export const industriesById = Object.fromEntries(
   industries.map((industry) => [industry.id, industry]),
+);
+
+export const itCalculatorsById = Object.fromEntries(
+  itPath.calculators.map((calculator) => [calculator.id, calculator]),
 );
 
 export const useCasesByKey = Object.fromEntries(

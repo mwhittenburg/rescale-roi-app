@@ -1,7 +1,6 @@
 import { useId, useMemo, useState } from "react";
 import { FieldHelpTooltip } from "../components/FieldHelpTooltip";
 import { PageHeader } from "../components/PageHeader";
-import { buildHomePath, buildIndustryPath } from "../router";
 
 function formatCurrency(value) {
   return new Intl.NumberFormat("en-US", {
@@ -96,7 +95,12 @@ function MetricCard({ label, value }) {
   );
 }
 
-function InteractiveCalculatorPage({ industry, calculator, onNavigate }) {
+function InteractiveCalculatorPage({
+  contextName,
+  breadcrumbs,
+  calculator,
+  onNavigate,
+}) {
   const [values, setValues] = useState(() => calculator.defaultValues);
   const results = useMemo(() => calculator.calculate(values), [calculator, values]);
 
@@ -147,14 +151,10 @@ function InteractiveCalculatorPage({ industry, calculator, onNavigate }) {
   return (
     <>
       <PageHeader
-        eyebrow={`${industry.name} ROI Calculator`}
+        eyebrow={`${contextName} ROI Calculator`}
         title={calculator.name}
         description={calculator.businessOutcome}
-        breadcrumbs={[
-          { label: "Home", path: buildHomePath() },
-          { label: industry.name, path: buildIndustryPath(industry.id) },
-          { label: calculator.name },
-        ]}
+        breadcrumbs={breadcrumbs}
         onNavigate={onNavigate}
       />
 
@@ -293,53 +293,65 @@ function InteractiveCalculatorPage({ industry, calculator, onNavigate }) {
   );
 }
 
-function ContentCalculatorPage({ industry, calculator, onNavigate }) {
+function ContentCalculatorPage({
+  contextName,
+  breadcrumbs,
+  calculator,
+  onNavigate,
+}) {
   return (
     <>
       <PageHeader
-        eyebrow="Workflow Calculator"
+        eyebrow={`${contextName} Calculator`}
         title={calculator.name}
         description={calculator.teaser}
-        breadcrumbs={[
-          { label: "Home", path: buildHomePath() },
-          { label: industry.name, path: buildIndustryPath(industry.id) },
-          { label: calculator.name },
-        ]}
+        breadcrumbs={breadcrumbs}
         onNavigate={onNavigate}
       />
 
       <section className="hero-layout">
         <article className="panel calculator-intro">
-          <p className="section-kicker">Industry Context</p>
-          <h2>{industry.name}</h2>
-          <p className="panel-copy">{industry.summary}</p>
+          <p className="section-kicker">Path Context</p>
+          <h2>{contextName}</h2>
+          <p className="panel-copy">
+            Return to the path landing page to open one of the live calculators
+            included in this build.
+          </p>
         </article>
 
         <aside className="panel workflow-sidebar">
           <p className="section-kicker">Calculator Status</p>
           <h2>This calculator is not available in the current review build.</h2>
           <p className="panel-copy">
-            Return to the industry page to open one of the live calculators that
-            are included in this review experience.
+            Return to the path landing page to open one of the live calculators
+            that are included in this review experience.
           </p>
-          <button
-            type="button"
-            className="ghost-button"
-            onClick={() => onNavigate(buildIndustryPath(industry.id))}
-          >
-            Back to {industry.name}
-          </button>
+          {breadcrumbs.length > 1 ? (
+            <button
+              type="button"
+              className="ghost-button"
+              onClick={() => onNavigate(breadcrumbs[breadcrumbs.length - 2].path)}
+            >
+              Back to {breadcrumbs[breadcrumbs.length - 2].label}
+            </button>
+          ) : null}
         </aside>
       </section>
     </>
   );
 }
 
-export function CalculatorPage({ industry, calculator, onNavigate }) {
+export function CalculatorPage({
+  contextName,
+  breadcrumbs,
+  calculator,
+  onNavigate,
+}) {
   if (calculator.calculatorType === "interactive") {
     return (
       <InteractiveCalculatorPage
-        industry={industry}
+        contextName={contextName}
+        breadcrumbs={breadcrumbs}
         calculator={calculator}
         onNavigate={onNavigate}
       />
@@ -348,7 +360,8 @@ export function CalculatorPage({ industry, calculator, onNavigate }) {
 
   return (
     <ContentCalculatorPage
-      industry={industry}
+      contextName={contextName}
+      breadcrumbs={breadcrumbs}
       calculator={calculator}
       onNavigate={onNavigate}
     />

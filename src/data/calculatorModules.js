@@ -7,6 +7,9 @@ import { structuralFea } from "../calculators/aerospace-defense/structural-fea";
 import { cfdAeroDesignExploration } from "../calculators/automotive-mobility/cfd-aero-design-exploration";
 import { crashStructuralSimulation } from "../calculators/automotive-mobility/crash-structural-simulation";
 import { evBatteryThermalPackOptimization } from "../calculators/automotive-mobility/ev-battery-thermal-pack-optimization";
+import { burstCapacityOverflow } from "../calculators/it/burst-capacity-overflow";
+import { governanceStandardization } from "../calculators/it/governance-standardization";
+import { itOperationsEfficiency } from "../calculators/it/it-operations-efficiency";
 import { cmcProcessModeling } from "../calculators/pharma-biopharma/cmc-process-modeling";
 import { molecularDynamics } from "../calculators/pharma-biopharma/molecular-dynamics";
 import { virtualScreeningDocking } from "../calculators/pharma-biopharma/virtual-screening-docking";
@@ -41,4 +44,7 @@ export const calculatorModules = {
     reservoirSimulationFieldDevelopmentPlanning,
   "oil-gas/seismic-processing-imaging": seismicProcessingImaging,
   "oil-gas/drilling-production-optimization": drillingProductionOptimization,
+  "it/burst-capacity-overflow": burstCapacityOverflow,
+  "it/it-operations-efficiency": itOperationsEfficiency,
+  "it/governance-standardization": governanceStandardization,
 };

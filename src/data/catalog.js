@@ -8,6 +8,24 @@ function useCase(id, moduleKey, config) {
 }
 
 export const platformCatalog = {
+  buyerPaths: [
+    {
+      id: "lob",
+      name: "Build ROI for Line of Business",
+      summary:
+        "Use industry-specific workflow calculators for science, engineering, manufacturing, and operations conversations.",
+      audience:
+        "Best when the buyer conversation is about workflow speed, design iteration, throughput, or physical testing reduction.",
+    },
+    {
+      id: "it",
+      name: "Build ROI for IT",
+      summary:
+        "Use IT-focused calculators for capacity economics, operations efficiency, governance, and platform standardization.",
+      audience:
+        "Best when the buyer conversation is about infrastructure, support effort, operating model, or governed compute delivery.",
+    },
+  ],
   recommendationOptions: {
     bottlenecks: [
       { value: "throughput", label: "Need more throughput" },
@@ -463,4 +481,58 @@ export const platformCatalog = {
       ],
     },
   ],
+  itPath: {
+    id: "it",
+    name: "IT",
+    title: "Build ROI for IT",
+    summary:
+      "ROI paths for burst capacity economics, IT operations efficiency, and governed compute delivery.",
+    bestForConversations:
+      "Capacity overflow, support burden, governance consistency, and operating-model ROI for technical computing teams.",
+    typicalBuyer:
+      "HPC or infrastructure leaders, platform engineering, IT operations, and governance or architecture stakeholders.",
+    commonBottleneck:
+      "Peak demand, manual support effort, and fragmented compute processes are creating avoidable cost and delay.",
+    useCases: [
+      useCase("burst-capacity-overflow", "it/burst-capacity-overflow", {
+        sellerGuidance: {
+          bestFitWhen:
+            "The IT story is about peak workload demand, queue pressure, and the cost of adding fixed capacity that sits idle later.",
+          askTheseFirst: [
+            "How often do peak demand windows overwhelm current infrastructure?",
+            "What work is delayed when capacity runs short?",
+            "How much fixed capacity is being considered just to cover those peaks?",
+          ],
+          whatThisEstimates:
+            "The model estimates hours saved, queue-time reduction, overflow capacity value, and the economics of avoiding overbuilt infrastructure.",
+        },
+      }),
+      useCase("it-operations-efficiency", "it/it-operations-efficiency", {
+        sellerGuidance: {
+          bestFitWhen:
+            "The customer spends too much technical time on provisioning, troubleshooting, and keeping environments moving for users.",
+          askTheseFirst: [
+            "How many requests and support incidents hit the team in a normal month?",
+            "Where is the most manual effort today: provisioning, troubleshooting, or environment maintenance?",
+            "How long do users wait before they can actually start working?",
+          ],
+          whatThisEstimates:
+            "The model estimates labor savings, faster request turnaround, and the value of freeing the IT team to support more work with less manual effort.",
+        },
+      }),
+      useCase("governance-standardization", "it/governance-standardization", {
+        sellerGuidance: {
+          bestFitWhen:
+            "The customer is trying to replace fragmented compute practices with a more governed and standardized operating model.",
+          askTheseFirst: [
+            "How many teams are still using inconsistent or unmanaged workflows?",
+            "How much time is spent on reporting, exception handling, or governance rework today?",
+            "What project or decision delays show up when governance is reactive instead of built in?",
+          ],
+          whatThisEstimates:
+            "The model estimates governance labor savings, reduced delay from fragmented workflows, and the value of standardizing how teams consume compute services.",
+        },
+      }),
+    ],
+  },
 };

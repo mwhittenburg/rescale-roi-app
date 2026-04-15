@@ -1,18 +1,15 @@
 import { CalculatorCard } from "../components/CalculatorCard";
 import { PageHeader } from "../components/PageHeader";
-import { buildCalculatorPath, buildHomePath } from "../router";
+import { buildCalculatorPath } from "../router";
 
-export function IndustryPage({ industry, onNavigate }) {
+export function IndustryPage({ industry, breadcrumbs, onNavigate }) {
   return (
     <>
       <PageHeader
         eyebrow="Industry Path"
         title={industry.name}
         description={industry.summary}
-        breadcrumbs={[
-          { label: "Home", path: buildHomePath() },
-          { label: industry.name },
-        ]}
+        breadcrumbs={breadcrumbs}
         onNavigate={onNavigate}
       />
 

@@ -72,6 +72,7 @@ p {
 .page-header,
 .hero-layout,
 .calculator-layout,
+.buyer-path-grid,
 .industry-grid,
 .use-case-grid,
 .content-grid,
@@ -84,6 +85,11 @@ p {
 .hero-layout {
   grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.75fr);
   align-items: start;
+}
+
+.buyer-path-grid {
+  margin-top: 24px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .calculator-layout {
@@ -127,6 +133,7 @@ p {
 
 .hero-text,
 .panel-copy,
+.buyer-path-card p,
 .industry-card p,
 .use-case-card p,
 .content-panel p,
@@ -167,6 +174,7 @@ p {
 }
 
 .panel,
+.buyer-path-card,
 .industry-card,
 .use-case-card,
 .content-panel {
@@ -178,6 +186,7 @@ p {
 
 .intro-panel,
 .notes-panel,
+.buyer-path-grid,
 .industry-grid,
 .use-case-grid,
 .content-grid,
@@ -218,6 +227,31 @@ p {
 .review-index-grid {
   display: grid;
   gap: 20px;
+}
+
+.buyer-path-hero {
+  display: grid;
+  gap: 12px;
+  padding: 28px;
+}
+
+.buyer-path-copy {
+  display: grid;
+  gap: 8px;
+  max-width: 72ch;
+}
+
+.buyer-path-copy h1 {
+  font-size: clamp(2rem, 3.5vw, 3.2rem);
+  line-height: 1.06;
+  max-width: 14ch;
+}
+
+.buyer-path-card {
+  min-height: 230px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
 
 .browse-section {
@@ -294,6 +328,7 @@ p {
   white-space: nowrap;
 }
 
+.buyer-path-card h2,
 .industry-card h3,
 .use-case-card h3 {
   font-size: 1.3rem;
@@ -402,6 +437,7 @@ p {
   line-height: 1.45;
 }
 
+.buyer-path-card button,
 .industry-card button,
 .use-case-card button,
 .ghost-button {
@@ -410,6 +446,7 @@ p {
   cursor: pointer;
 }
 
+.buyer-path-card button,
 .industry-card button,
 .use-case-card button {
   background: linear-gradient(135deg, var(--accent), var(--accent-strong));
@@ -710,6 +747,7 @@ button:focus-visible,
   .page-header,
   .hero-layout,
   .calculator-layout,
+  .buyer-path-grid,
   .industry-grid,
   .use-case-grid,
   .content-grid,

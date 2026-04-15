@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { industriesById, useCasesByKey } from "./data/platform";
+import { industriesById, itCalculatorsById, useCasesByKey } from "./data/platform";
 
 function normalizeHash(hash) {
   const raw = hash.replace(/^#/, "") || "/";
@@ -13,8 +13,27 @@ function parseRoute(path) {
     return { view: "home", path: "/" };
   }
 
+  if (segments.length === 1 && segments[0] === "lob") {
+    return { view: "lob-home", path };
+  }
+
+  if (segments.length === 1 && segments[0] === "it") {
+    return { view: "it-home", path };
+  }
+
   if (segments.length === 1 && segments[0] === "review") {
     return { view: "review", path };
+  }
+
+  if (segments[0] === "it" && segments.length === 2) {
+    const calculator = itCalculatorsById[segments[1]];
+    return calculator
+      ? {
+          view: "it-calculator",
+          path,
+          useCaseId: calculator.id,
+        }
+      : { view: "not-found", path };
   }
 
   if (segments[0] !== "industries") {
@@ -51,12 +70,24 @@ export function buildReviewPath() {
   return "/review";
 }
 
+export function buildLobPath() {
+  return "/lob";
+}
+
+export function buildItPath() {
+  return "/it";
+}
+
 export function buildIndustryPath(industryId) {
   return `/industries/${industryId}`;
 }
 
 export function buildCalculatorPath(industryId, useCaseId) {
   return `/industries/${industryId}/${useCaseId}`;
+}
+
+export function buildItCalculatorPath(useCaseId) {
+  return `/it/${useCaseId}`;
 }
 
 export function navigateTo(path) {
