@@ -10,6 +10,36 @@ const defaultSessionContext = {
   notes: "",
 };
 
+const workspaceHelp = {
+  scenarioName: {
+    what:
+      "Represents the name of the version of assumptions you want to save for this calculator.",
+    include:
+      "A clear label such as Customer current state, Rescale benchmark, or Stretch case.",
+    exclude:
+      "Generic names that do not tell you which version of the story you are reopening later.",
+    example: "Customer current state baseline.",
+  },
+  savedScenarios: {
+    what:
+      "Represents the saved versions of this calculator for the current browser and calculator only.",
+    include:
+      "Named views you want to compare, revisit, or reuse in follow-up meetings.",
+    exclude:
+      "Assumptions from other calculators or one-off drafts you do not want to keep.",
+    example: "Customer baseline and Rescale benchmark.",
+  },
+  pdfMode: {
+    what:
+      "Controls whether the exported PDF is a customer-ready summary or an internal working version.",
+    include:
+      "Customer-ready when you want a cleaner external summary, and Internal working when you still want discovery prompts or notes visible.",
+    exclude:
+      "Using the customer-ready version before the assumptions are validated, or using the internal version when you plan to send it directly to the customer.",
+    example: "Use Customer-ready for a recap email, Internal working for account-team review.",
+  },
+};
+
 function buildWorkspaceStorageKey(calculatorId) {
   return `rescale:calculator-workspace:${calculatorId}`;
 }
@@ -201,7 +231,7 @@ function buildRecommendedNextSteps({
       title: "Share next",
       body:
         pdfMode === "customer"
-          ? "Use the customer-safe PDF once the baseline is confirmed and any benchmark assumptions have been pressure-tested."
+          ? "Use the customer-ready PDF once the baseline is confirmed and any benchmark assumptions have been pressure-tested."
           : "Use the internal PDF while discovery notes, confidence tags, or follow-up validation items still need review.",
     },
   ];
@@ -499,18 +529,30 @@ function InteractiveCalculatorPage({
 
           <div className="scenario-toolbar">
             <label className="selector-field">
-              <span className="field-label">Scenario name</span>
+              <span className="field-label-group">
+                <span className="field-label">Scenario name</span>
+                <FieldHelpTooltip
+                  label="Scenario name"
+                  help={workspaceHelp.scenarioName}
+                />
+              </span>
               <input
                 className="session-input"
                 type="text"
                 value={scenarioName}
                 onChange={(event) => setScenarioName(event.target.value)}
-                placeholder="Customer baseline"
+                placeholder="Customer current-state baseline"
               />
             </label>
 
             <label className="selector-field">
-              <span className="field-label">Saved scenarios</span>
+              <span className="field-label-group">
+                <span className="field-label">Saved scenarios</span>
+                <FieldHelpTooltip
+                  label="Saved scenarios"
+                  help={workspaceHelp.savedScenarios}
+                />
+              </span>
               <select
                 value={selectedScenarioName}
                 onChange={(event) => {
@@ -528,12 +570,15 @@ function InteractiveCalculatorPage({
             </label>
 
             <label className="selector-field">
-              <span className="field-label">PDF mode</span>
+              <span className="field-label-group">
+                <span className="field-label">PDF mode</span>
+                <FieldHelpTooltip label="PDF mode" help={workspaceHelp.pdfMode} />
+              </span>
               <select
                 value={pdfMode}
                 onChange={(event) => setPdfMode(event.target.value)}
               >
-                <option value="customer">Customer-safe</option>
+                <option value="customer">Customer-ready</option>
                 <option value="internal">Internal working version</option>
               </select>
             </label>
@@ -799,7 +844,7 @@ function InteractiveCalculatorPage({
             </div>
             <div>
               <span className="metric-label">PDF mode</span>
-              <strong>{pdfMode === "customer" ? "Customer-safe" : "Internal working"}</strong>
+              <strong>{pdfMode === "customer" ? "Customer-ready" : "Internal working"}</strong>
             </div>
           </div>
         </header>
