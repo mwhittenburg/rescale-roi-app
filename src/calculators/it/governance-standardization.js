@@ -92,7 +92,7 @@ export const peakCapacityTco = createInteractiveCalculator("it", {
     {
       key: "futureState",
       title: "Future-state cost inputs",
-      description: "Model a right-sized baseline plus elastic burst capacity for peak periods.",
+      description: "Model a smaller always-on baseline plus intentional elastic burst capacity for peak periods.",
       fields: [
         { key: "hybridBaselineCapacityCost", label: "Future steady-state capacity cost", defaultValue: 420000, min: 0, step: 10000, prefix: "$" },
         {
@@ -103,7 +103,7 @@ export const peakCapacityTco = createInteractiveCalculator("it", {
           step: 500,
           prefix: "$",
           helperText:
-            "Use the expected burst cost of covering one typical peak period in the future model.",
+            "Use your estimated burst cost of covering one typical peak period in the future model.",
           helpTooltip: {
             what:
               "Represents the future burst cost of covering one typical demand spike with elastic or hybrid capacity on top of the future baseline.",
@@ -112,7 +112,7 @@ export const peakCapacityTco = createInteractiveCalculator("it", {
             exclude:
               "The steady-state baseline cost that already exists in the future model year-round.",
             example:
-              "The additional cloud burst charge for one monthly or quarterly peak period.",
+              "The additional cloud burst charge for one monthly or quarterly peak period. This is a directional user estimate, not a system-calculated ratio.",
           },
         },
         { key: "commitmentDiscountPct", label: "Commitment discount assumption", defaultValue: 0.12, min: 0, max: 0.95, step: 0.01, kind: "percent" },
