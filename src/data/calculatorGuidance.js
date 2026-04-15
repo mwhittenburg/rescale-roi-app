@@ -329,16 +329,17 @@ export const calculatorGuidanceById = {
       "What does the current environment cost annually across hardware, support, data center, and licenses?",
       "When is the next hardware refresh or major capacity purchase due?",
       "How much of the workload is expected to move to cloud, stay on-prem, or land in a hybrid model?",
+      "What is the current productive utilization of the installed environment?",
       "Which fixed costs would truly go away under the future model?",
       "What migration or cutover cost needs to be included for a credible first pass?",
     ],
     howToRead: {
       topDrivers:
-        "Hardware refresh, current fixed infrastructure cost, and future cloud or hybrid spend drive the comparison most.",
+        "Hardware refresh, workload placement, productive utilization, and future cloud or hybrid spend drive the comparison most.",
       biggestAssumptions:
-        "The output is sensitive to workload placement, commitment discounts, and the amount of fixed cost that can truly be avoided.",
+        "The output is sensitive to workload placement, commitment discounts, productive utilization, and the amount of fixed cost that can truly be avoided.",
       validateNext:
-        "Validate current annual cost, future cloud pricing assumptions, and the share of workloads expected to stay on-prem.",
+        "Validate current annual cost, installed capacity utilization, future cloud pricing assumptions, and the share of workloads expected to stay on-prem.",
     },
   },
   "peak-capacity-tco": {
@@ -348,33 +349,33 @@ export const calculatorGuidanceById = {
       "How often do burst windows happen and how long do they last?",
       "How much fixed capacity exists mainly to cover those peaks?",
       "What is the annual cost of idle capacity outside burst windows?",
-      "What would elastic overflow or hybrid burst capacity cost during those periods?",
+      "What would elastic overflow or hybrid burst capacity cost per peak hour or period?",
     ],
     howToRead: {
       topDrivers:
-        "Peak-built capacity cost, utilization profile, and elastic overflow pricing are the biggest drivers in the model.",
+        "Peak-built capacity cost, the peak-to-average utilization profile, burst duration, and elastic overflow pricing are the biggest drivers in the model.",
       biggestAssumptions:
-        "The largest assumptions are how often burst windows happen and how much of today’s fixed capacity exists only for the peak.",
+        "The largest assumptions are how often burst windows happen, how long they last, and how much of today’s fixed capacity exists only for the peak.",
       validateNext:
-        "Validate average versus peak utilization, annual burst frequency, and the real baseline cost needed outside those peaks.",
+        "Validate average versus peak utilization, annual burst frequency, burst duration, and the real baseline cost needed outside those peaks.",
     },
   },
   "it-operations-tco": {
     typicalBuyerTags: ["IT / infrastructure", "Platform / governance team", "IT operations"],
     askTheseFirst: [
-      "How many provisioning, troubleshooting, and support hours are spent each month today?",
-      "How much labor goes into governance, compliance, and environment management?",
+      "How many provisioning requests and troubleshooting incidents happen each month today?",
+      "How much labor goes into environment management, governance, backup, and patching today?",
       "What tooling or process cost is already in place to support the current model?",
       "What future-state tooling or automation cost needs to be included?",
       "What transition effort is needed to move to the target operating model?",
     ],
     howToRead: {
       topDrivers:
-        "Provisioning labor, support incident effort, governance overhead, and environment maintenance hours drive the result most.",
+        "Provisioning labor, troubleshooting effort, environment management burden, and governance overhead drive the result most.",
       biggestAssumptions:
-        "The model depends on how much manual effort can realistically be removed and what future-state tooling will cost.",
+        "The model depends on how much manual effort can realistically be removed by category and what future-state tooling will cost.",
       validateNext:
-        "Validate monthly support workload, current admin hours, and the transition cost required to reach the future operating model.",
+        "Validate monthly request volume, current category hours, and the transition cost required to reach the future operating model.",
     },
   },
 };

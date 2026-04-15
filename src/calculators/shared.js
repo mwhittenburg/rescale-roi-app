@@ -346,7 +346,9 @@ const FIELD_HELP_RULES = [
   {
     test: (field) =>
       /\baverage utilization\b/i.test(field.label) ||
-      /\bpeak utilization\b/i.test(field.label),
+      /\bpeak utilization\b/i.test(field.label) ||
+      /\baverage productive utilization\b/i.test(field.label) ||
+      /\bcommitment or reservation utilization\b/i.test(field.label),
     help: {
       what:
         "Represents how much of the available capacity is actually used during normal versus peak periods.",
@@ -355,6 +357,22 @@ const FIELD_HELP_RULES = [
       exclude:
         "Short-lived spikes, planned outages, or theoretical maximums that do not reflect real operating behavior.",
       example: "Average at 46% across the year versus 92% during quarter-end peaks.",
+    },
+  },
+  {
+    test: (field) =>
+      /\binstalled cores\b/i.test(field.label) ||
+      /\bburst duration per peak period\b/i.test(field.label) ||
+      /\bfuture elastic burst cost per peak hour\b/i.test(field.label),
+    help: {
+      what:
+        "Represents a core peak-capacity assumption that drives the cost model behind the TCO estimate.",
+      include:
+        "The practical installed capacity, peak duration, or burst price the customer expects to operate with in the modeled environment.",
+      exclude:
+        "Theoretical maximums, list prices with no expected discounting, or one-time migration costs that belong elsewhere.",
+      example:
+        "A 72-hour peak period or a burst price that reflects the actual cloud or overflow capacity expected during that window.",
     },
   },
   {
@@ -527,6 +545,8 @@ export function normalizeCalculatorResults(results) {
     currentAnnualCost: results.currentAnnualCost ?? 0,
     futureAnnualCost: results.futureAnnualCost ?? 0,
     annualCostDifference: results.annualCostDifference ?? 0,
+    transitionCost: results.transitionCost ?? 0,
+    threeYearCumulativeDifference: results.threeYearCumulativeDifference ?? 0,
     fixedCostAvoided: results.fixedCostAvoided ?? 0,
     idleCapacityCostReduced: results.idleCapacityCostReduced ?? 0,
     adminSupportHoursReduced: results.adminSupportHoursReduced ?? 0,

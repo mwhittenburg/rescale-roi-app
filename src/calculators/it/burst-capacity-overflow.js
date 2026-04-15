@@ -1,25 +1,50 @@
-import { clampPercent, createInteractiveCalculator } from "../shared";
+import { clampPercent, createInteractiveCalculator, safeDivide } from "../shared";
+
+function annualizeThreeYears(value, growthRate) {
+  return (
+    value * (1 + (1 + growthRate) + Math.pow(1 + growthRate, 2))
+  );
+}
 
 function calculateInfrastructureTco(values) {
   const annualizedHardwareRefresh =
     values.hardwareRefreshCost / Math.max(values.depreciationYears, 1);
+  const productiveUtilization = Math.max(
+    clampPercent(values.productiveUtilizationPct),
+    0.05,
+  );
+  const cloudCommitmentDiscount = clampPercent(values.cloudCommitmentDiscountPct);
+  const reservationUtilization = Math.max(
+    clampPercent(values.reservationUtilizationPct),
+    0.35,
+  );
+  const onPremShare = clampPercent(values.workloadShareStayingOnPremPct);
+  const workloadGrowthRate = clampPercent(values.workloadGrowthRatePct);
+  const installedCoreHoursPerYear =
+    Math.max(values.installedCoreCount, 1) * 24 * 365;
+  const utilizedCoreHoursPerYear =
+    installedCoreHoursPerYear * productiveUtilization;
+
   const currentInfrastructureBase =
     annualizedHardwareRefresh +
     values.maintenanceSupportContracts +
     values.dataCenterColoCost +
-    values.storageBackupCost +
+    values.storageCost +
+    values.backupDisasterRecoveryCost +
     values.networkEgressCost +
     values.licensingCost +
     values.securityComplianceCost;
   const currentAdminSupportCost =
-    values.adminSupportHoursPerMonth * 12 * values.adminHourlyCost;
-  const currentAnnualCost = currentInfrastructureBase + currentAdminSupportCost;
+    values.currentAdminSupportHoursPerMonth * 12 * values.adminHourlyCost;
+  const currentAnnualCost =
+    currentInfrastructureBase +
+    currentAdminSupportCost +
+    values.currentPlatformToolingCost;
 
-  const cloudCommitmentDiscount = clampPercent(values.cloudCommitmentDiscountPct);
-  const onPremShare = clampPercent(values.workloadShareStayingOnPremPct);
   const currentFixedInfraRetained = currentInfrastructureBase * onPremShare;
   const discountedCloudCost =
-    values.cloudInfrastructureCost * 12 * (1 - cloudCommitmentDiscount);
+    (values.cloudInfrastructureCostPerMonth * 12 * (1 - cloudCommitmentDiscount)) /
+    reservationUtilization;
   const futureAdminSupportCost =
     values.futureAdminSupportHoursPerMonth * 12 * values.adminHourlyCost;
   const futureAnnualCost =
@@ -28,33 +53,59 @@ function calculateInfrastructureTco(values) {
     values.futureLicensingCost +
     values.futureSecurityComplianceCost +
     values.futureStorageDrCost +
+    values.futureNetworkEgressCost +
+    values.futurePlatformToolingCost +
     futureAdminSupportCost;
 
+  const transitionCost = values.migrationCutoverCost + values.parallelRunCost;
   const annualCostDifference = currentAnnualCost - futureAnnualCost;
+  const threeYearCumulativeDifference =
+    annualizeThreeYears(currentAnnualCost, workloadGrowthRate) -
+    (annualizeThreeYears(futureAnnualCost, workloadGrowthRate) + transitionCost);
   const fixedCostAvoided = currentInfrastructureBase - currentFixedInfraRetained;
-  const idleCapacityCostReduced =
-    currentInfrastructureBase * clampPercent(values.idleCapacityReductionPct);
+  const annualIdleCapacityCost = currentInfrastructureBase * (1 - productiveUtilization);
+  const idleCapacityCostReduced = annualIdleCapacityCost * (1 - onPremShare);
   const adminSupportHoursReduced =
-    (values.adminSupportHoursPerMonth - values.futureAdminSupportHoursPerMonth) * 12;
+    (values.currentAdminSupportHoursPerMonth - values.futureAdminSupportHoursPerMonth) *
+    12;
   const migrationPaybackMonths =
-    annualCostDifference > 0
-      ? ((values.migrationCutoverCost + values.parallelRunCost) /
-          annualCostDifference) *
-        12
-      : 0;
+    annualCostDifference > 0 ? (transitionCost / annualCostDifference) * 12 : 0;
+  const installedCoreHourCost = safeDivide(
+    currentAnnualCost,
+    installedCoreHoursPerYear,
+  );
+  const utilizedCoreHourCost = safeDivide(
+    currentAnnualCost,
+    utilizedCoreHoursPerYear,
+  );
 
   return {
     currentAnnualCost,
     futureAnnualCost,
     annualCostDifference,
+    transitionCost,
+    threeYearCumulativeDifference,
     fixedCostAvoided,
     idleCapacityCostReduced,
     adminSupportHoursReduced,
     migrationPaybackMonths,
     extraOutputs: [
-      { label: "Cloud annual cost", value: `$${Math.round(discountedCloudCost).toLocaleString()}` },
-      { label: "On-prem retained", value: `$${Math.round(currentFixedInfraRetained).toLocaleString()}` },
-      { label: "Admin hours reduced", value: `${Math.round(adminSupportHoursReduced).toLocaleString()} hours` },
+      {
+        label: "Installed core-hour cost",
+        value: `${installedCoreHourCost.toFixed(2)} per core-hour`,
+      },
+      {
+        label: "Effective utilized core-hour cost",
+        value: `${utilizedCoreHourCost.toFixed(2)} per used core-hour`,
+      },
+      {
+        label: "Annual idle-capacity cost",
+        value: `$${Math.round(annualIdleCapacityCost).toLocaleString()}`,
+      },
+      {
+        label: "Fixed cost avoided",
+        value: `$${Math.round(fixedCostAvoided).toLocaleString()}`,
+      },
     ],
   };
 }
@@ -66,54 +117,275 @@ export const infrastructureTco = createInteractiveCalculator("it", {
   teaser:
     "Compare the total cost of fixed on-prem infrastructure against a more elastic cloud or hybrid operating model.",
   businessOutcome:
-    "Compare current-state total cost against future-state cloud or hybrid total cost, including migration and support burden.",
+    "Compare current-state annual cost, future-state annual cost, and transition cost for a cloud or hybrid move with utilization-aware unit economics.",
   sections: [
     {
       key: "currentState",
       title: "Current-state cost inputs",
-      description: "Start with the annual costs the IT team carries today.",
+      description: "Start with the biggest annual current-state cost lines the IT team carries today.",
+      advancedSectionLabel: "Utilization and additional cost buckets",
       fields: [
-        { key: "hardwareRefreshCost", label: "Hardware refresh cost", defaultValue: 1200000, min: 0, step: 10000, prefix: "$" },
-        { key: "depreciationYears", label: "Depreciation window", defaultValue: 4, min: 1, step: 1, suffix: "years" },
-        { key: "maintenanceSupportContracts", label: "Maintenance and support contracts", defaultValue: 180000, min: 0, step: 5000, prefix: "$" },
-        { key: "dataCenterColoCost", label: "Data center or colo cost", defaultValue: 220000, min: 0, step: 5000, prefix: "$" },
-        { key: "storageBackupCost", label: "Storage, backup, and disaster recovery cost", defaultValue: 160000, min: 0, step: 5000, prefix: "$" },
-        { key: "networkEgressCost", label: "Network and egress cost", defaultValue: 70000, min: 0, step: 5000, prefix: "$" },
+        {
+          key: "hardwareRefreshCost",
+          label: "Hardware refresh cost",
+          defaultValue: 1200000,
+          min: 0,
+          step: 10000,
+          prefix: "$",
+        },
+        {
+          key: "maintenanceSupportContracts",
+          label: "Maintenance and support contracts",
+          defaultValue: 180000,
+          min: 0,
+          step: 5000,
+          prefix: "$",
+        },
+        {
+          key: "dataCenterColoCost",
+          label: "Data center or colo cost",
+          defaultValue: 220000,
+          min: 0,
+          step: 5000,
+          prefix: "$",
+        },
+        {
+          key: "depreciationYears",
+          label: "Depreciation window",
+          defaultValue: 4,
+          min: 1,
+          step: 1,
+          suffix: "years",
+          advanced: true,
+        },
+        {
+          key: "storageCost",
+          label: "Storage cost",
+          defaultValue: 110000,
+          min: 0,
+          step: 5000,
+          prefix: "$",
+          advanced: true,
+        },
+        {
+          key: "backupDisasterRecoveryCost",
+          label: "Backup and disaster recovery cost",
+          defaultValue: 50000,
+          min: 0,
+          step: 5000,
+          prefix: "$",
+          advanced: true,
+        },
+        {
+          key: "networkEgressCost",
+          label: "Network and egress cost",
+          defaultValue: 70000,
+          min: 0,
+          step: 5000,
+          prefix: "$",
+          advanced: true,
+        },
+        {
+          key: "licensingCost",
+          label: "Current licensing cost",
+          defaultValue: 240000,
+          min: 0,
+          step: 5000,
+          prefix: "$",
+          advanced: true,
+        },
+        {
+          key: "securityComplianceCost",
+          label: "Current security and compliance tooling cost",
+          defaultValue: 85000,
+          min: 0,
+          step: 5000,
+          prefix: "$",
+          advanced: true,
+        },
+        {
+          key: "installedCoreCount",
+          label: "Installed cores",
+          defaultValue: 1000,
+          min: 1,
+          step: 10,
+          advanced: true,
+        },
+        {
+          key: "productiveUtilizationPct",
+          label: "Average productive utilization",
+          defaultValue: 0.52,
+          min: 0.01,
+          max: 0.95,
+          step: 0.01,
+          kind: "percent",
+          advanced: true,
+        },
       ],
     },
     {
       key: "futureState",
       title: "Future-state cost inputs",
-      description: "Model the annual cost of the proposed cloud or hybrid operating model.",
+      description: "Model the future steady-state cost of the cloud or hybrid operating model.",
+      advancedSectionLabel: "Licensing, resiliency, and growth",
       fields: [
-        { key: "cloudInfrastructureCost", label: "Cloud infrastructure cost per month", defaultValue: 95000, min: 0, step: 1000, prefix: "$" },
-        { key: "cloudCommitmentDiscountPct", label: "Commitment discount assumption", defaultValue: 0.18, min: 0, max: 0.95, step: 0.01, kind: "percent" },
-        { key: "workloadShareStayingOnPremPct", label: "Share of workloads staying on-prem or in hybrid", defaultValue: 0.35, min: 0, max: 0.95, step: 0.01, kind: "percent" },
-        { key: "futureLicensingCost", label: "Future-state licensing cost", defaultValue: 210000, min: 0, step: 5000, prefix: "$" },
-        { key: "futureSecurityComplianceCost", label: "Future-state security and compliance tooling cost", defaultValue: 90000, min: 0, step: 5000, prefix: "$" },
-        { key: "futureStorageDrCost", label: "Future-state storage and DR cost", defaultValue: 130000, min: 0, step: 5000, prefix: "$" },
+        {
+          key: "cloudInfrastructureCostPerMonth",
+          label: "Future cloud infrastructure cost per month",
+          defaultValue: 95000,
+          min: 0,
+          step: 1000,
+          prefix: "$",
+        },
+        {
+          key: "workloadShareStayingOnPremPct",
+          label: "Share of workloads staying on-prem or in hybrid",
+          defaultValue: 0.35,
+          min: 0,
+          max: 0.95,
+          step: 0.01,
+          kind: "percent",
+        },
+        {
+          key: "cloudCommitmentDiscountPct",
+          label: "Commitment discount assumption",
+          defaultValue: 0.18,
+          min: 0,
+          max: 0.95,
+          step: 0.01,
+          kind: "percent",
+        },
+        {
+          key: "futureLicensingCost",
+          label: "Future-state licensing cost",
+          defaultValue: 210000,
+          min: 0,
+          step: 5000,
+          prefix: "$",
+          advanced: true,
+        },
+        {
+          key: "futureSecurityComplianceCost",
+          label: "Future-state security and compliance tooling cost",
+          defaultValue: 90000,
+          min: 0,
+          step: 5000,
+          prefix: "$",
+          advanced: true,
+        },
+        {
+          key: "futureStorageDrCost",
+          label: "Future-state storage and DR cost",
+          defaultValue: 130000,
+          min: 0,
+          step: 5000,
+          prefix: "$",
+          advanced: true,
+        },
+        {
+          key: "futureNetworkEgressCost",
+          label: "Future-state network and egress cost",
+          defaultValue: 90000,
+          min: 0,
+          step: 5000,
+          prefix: "$",
+          advanced: true,
+        },
+        {
+          key: "futurePlatformToolingCost",
+          label: "Future annual tooling and platform support cost",
+          defaultValue: 70000,
+          min: 0,
+          step: 5000,
+          prefix: "$",
+          advanced: true,
+        },
+        {
+          key: "reservationUtilizationPct",
+          label: "Commitment or reservation utilization",
+          defaultValue: 0.82,
+          min: 0.2,
+          max: 0.95,
+          step: 0.01,
+          kind: "percent",
+          advanced: true,
+        },
+        {
+          key: "workloadGrowthRatePct",
+          label: "Workload growth rate",
+          defaultValue: 0.08,
+          min: 0,
+          max: 0.35,
+          step: 0.01,
+          kind: "percent",
+          advanced: true,
+        },
       ],
     },
     {
       key: "support",
-      title: "Support and utilization assumptions",
-      description: "Include labor and capacity assumptions that affect the TCO story.",
+      title: "Support and admin inputs",
+      description: "Include the recurring labor burden that changes between the current and future model.",
+      advancedSectionLabel: "Additional support assumptions",
       fields: [
-        { key: "adminSupportHoursPerMonth", label: "Current admin and support hours per month", defaultValue: 280, min: 0, step: 5, suffix: "hours" },
-        { key: "futureAdminSupportHoursPerMonth", label: "Future admin and support hours per month", defaultValue: 180, min: 0, step: 5, suffix: "hours" },
-        { key: "adminHourlyCost", label: "Admin and support hourly cost", defaultValue: 125, min: 0, step: 5, prefix: "$" },
-        { key: "idleCapacityReductionPct", label: "Idle capacity cost reduced", defaultValue: 0.28, min: 0, max: 0.95, step: 0.01, kind: "percent", advanced: true },
-        { key: "licensingCost", label: "Current licensing cost", defaultValue: 240000, min: 0, step: 5000, prefix: "$" },
-        { key: "securityComplianceCost", label: "Current security and compliance tooling cost", defaultValue: 85000, min: 0, step: 5000, prefix: "$" },
+        {
+          key: "currentAdminSupportHoursPerMonth",
+          label: "Current admin and support hours per month",
+          defaultValue: 280,
+          min: 0,
+          step: 5,
+          suffix: "hours",
+        },
+        {
+          key: "futureAdminSupportHoursPerMonth",
+          label: "Future admin and support hours per month",
+          defaultValue: 180,
+          min: 0,
+          step: 5,
+          suffix: "hours",
+        },
+        {
+          key: "adminHourlyCost",
+          label: "Admin and support hourly cost",
+          defaultValue: 125,
+          min: 0,
+          step: 5,
+          prefix: "$",
+        },
+        {
+          key: "currentPlatformToolingCost",
+          label: "Current annual tooling and platform support cost",
+          defaultValue: 45000,
+          min: 0,
+          step: 5000,
+          prefix: "$",
+          advanced: true,
+        },
       ],
     },
     {
       key: "transition",
       title: "Transition or migration cost inputs",
-      description: "Model one-time costs needed to move from the current model to the future model.",
+      description: "Model the one-time cost of moving from the current model to the future model.",
+      advancedSectionLabel: "Timing and overlap assumptions",
       fields: [
-        { key: "migrationCutoverCost", label: "Migration and cutover cost", defaultValue: 320000, min: 0, step: 10000, prefix: "$" },
-        { key: "parallelRunCost", label: "Parallel run or dual-operation cost", defaultValue: 90000, min: 0, step: 5000, prefix: "$", advanced: true },
+        {
+          key: "migrationCutoverCost",
+          label: "Migration and cutover cost",
+          defaultValue: 320000,
+          min: 0,
+          step: 10000,
+          prefix: "$",
+        },
+        {
+          key: "parallelRunCost",
+          label: "Parallel run or dual-operation cost",
+          defaultValue: 90000,
+          min: 0,
+          step: 5000,
+          prefix: "$",
+          advanced: true,
+        },
       ],
     },
   ],

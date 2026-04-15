@@ -111,6 +111,20 @@ function formatAnnualCostDelta(value) {
   return "$0";
 }
 
+function formatDirectionalCurrency(value) {
+  const absValue = formatCompactCurrency(Math.abs(value));
+
+  if (value > 0) {
+    return `${absValue} better`;
+  }
+
+  if (value < 0) {
+    return `${absValue} worse`;
+  }
+
+  return "$0";
+}
+
 function formatCapacity(value, unit) {
   return `${value.toFixed(1)} ${unit}`;
 }
@@ -395,12 +409,12 @@ function InteractiveCalculatorPage({
           value: formatAnnualCostDelta(results.annualCostDifference),
         },
         {
-          label: "Fixed cost avoided",
-          value: formatCompactCurrency(results.fixedCostAvoided),
+          label: "Transition or migration cost",
+          value: formatCompactCurrency(results.transitionCost),
         },
         {
-          label: "Idle capacity cost reduced",
-          value: formatCompactCurrency(results.idleCapacityCostReduced),
+          label: "3-year cumulative difference",
+          value: formatDirectionalCurrency(results.threeYearCumulativeDifference),
         },
         {
           label: "Migration payback period",
@@ -665,7 +679,9 @@ function InteractiveCalculatorPage({
 
                   {advancedFields.length > 0 ? (
                     <details className="advanced-block">
-                      <summary>{calculator.advancedSectionLabel}</summary>
+                      <summary>
+                        {section.advancedSectionLabel ?? calculator.advancedSectionLabel}
+                      </summary>
                       <div className="field-grid advanced-grid">
                         {advancedFields.map((field) => (
                           <FieldInput
@@ -695,24 +711,24 @@ function InteractiveCalculatorPage({
                 <div>
                   <span className="metric-label">
                     {isTcoModel
-                      ? "Estimated annual future-state cost"
+                      ? "Estimated annual cost difference"
                       : "Estimated annual economic impact"}
                   </span>
                   <strong>
                     {isTcoModel
-                      ? formatCurrency(results.futureAnnualCost)
+                      ? formatAnnualCostDelta(results.annualCostDifference)
                       : formatCurrency(results.annualEconomicImpact)}
                   </strong>
                 </div>
                 <div>
                   <span className="metric-label">
                     {isTcoModel
-                      ? "Estimated migration payback period"
+                      ? "Estimated 3-year cumulative difference"
                       : "Estimated payback period"}
                   </span>
                   <strong>
                     {isTcoModel
-                      ? formatMonths(results.migrationPaybackMonths)
+                      ? formatDirectionalCurrency(results.threeYearCumulativeDifference)
                       : formatMonths(results.paybackPeriodMonths)}
                   </strong>
                 </div>
