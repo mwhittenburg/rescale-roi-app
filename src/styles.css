@@ -289,6 +289,12 @@ p {
   gap: 12px;
 }
 
+.guidance-card-primary {
+  background:
+    linear-gradient(135deg, rgba(231, 240, 251, 0.82), rgba(248, 250, 252, 0.94)),
+    var(--card-muted);
+}
+
 .choice-card {
   padding: 18px;
   gap: 10px;

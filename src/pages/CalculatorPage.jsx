@@ -233,17 +233,17 @@ function InteractiveCalculatorPage({
       </section>
 
       <section className="guidance-grid calculator-guidance-grid">
-        <article className="panel guidance-card">
-          <p className="section-kicker">Best Fit When</p>
-          <p className="panel-copy">{calculator.sellerGuidance.bestFitWhen}</p>
-        </article>
-        <article className="panel guidance-card">
-          <p className="section-kicker">Ask These First</p>
+        <article className="panel guidance-card guidance-card-primary">
+          <p className="section-kicker">Start Here</p>
           <ul className="guidance-list">
             {calculator.sellerGuidance.askTheseFirst.map((item) => (
               <li key={item}>{item}</li>
             ))}
           </ul>
+        </article>
+        <article className="panel guidance-card">
+          <p className="section-kicker">Best Fit When</p>
+          <p className="panel-copy">{calculator.sellerGuidance.bestFitWhen}</p>
         </article>
         <article className="panel guidance-card">
           <p className="section-kicker">Typical Buyer</p>
