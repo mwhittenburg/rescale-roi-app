@@ -126,7 +126,7 @@ export const structuralFea = createInteractiveCalculator("aerospace-defense", {
         },
         {
           key: "redesignSensitivityCost",
-          label: "Redesign sensitivity per program",
+          label: "Expected redesign cost per program",
           defaultValue: 110000,
           min: 0,
           step: 1000,
@@ -135,7 +135,7 @@ export const structuralFea = createInteractiveCalculator("aerospace-defense", {
         },
         {
           key: "validationReworkSensitivityCost",
-          label: "Validation rework sensitivity per program",
+          label: "Expected validation rework cost per program",
           defaultValue: 65000,
           min: 0,
           step: 1000,

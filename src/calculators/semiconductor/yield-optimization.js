@@ -76,14 +76,14 @@ export const yieldOptimization = createInteractiveCalculator("semiconductor", {
         },
         {
           key: "runsPerCycle",
-          label: "Runs or analyses per cycle",
+          label: "Meaningful runs or analyses per yield-learning cycle",
           defaultValue: 24,
           min: 0,
           step: 1,
         },
         {
           key: "cycleTimePerCycle",
-          label: "Cycle time per cycle",
+          label: "Current cycle time per yield-learning cycle",
           defaultValue: 12,
           min: 0,
           step: 0.5,
@@ -107,7 +107,7 @@ export const yieldOptimization = createInteractiveCalculator("semiconductor", {
         },
         {
           key: "delaySensitivityCost",
-          label: "Delay sensitivity per cycle",
+          label: "Cost of delaying one cycle",
           defaultValue: 12000,
           min: 0,
           step: 500,
@@ -150,7 +150,7 @@ export const yieldOptimization = createInteractiveCalculator("semiconductor", {
         },
         {
           key: "delaySensitivityReductionPct",
-          label: "Delay sensitivity reduction",
+          label: "Cost of delay reduction",
           defaultValue: 0.3,
           min: 0,
           max: 0.95,

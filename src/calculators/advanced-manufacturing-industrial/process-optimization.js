@@ -115,7 +115,7 @@ export const processOptimization = createInteractiveCalculator(
           },
           {
             key: "throughputOrEnergyImpactValue",
-            label: "Annual throughput, scrap, or energy impact value",
+            label: "Estimated annual value from throughput, scrap, or energy improvement",
             defaultValue: 450000,
             min: 0,
             step: 5000,

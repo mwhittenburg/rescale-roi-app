@@ -44,7 +44,7 @@ function calculatePeakCapacityTco(values) {
     extraOutputs: [
       { label: "Average utilization", value: `${Math.round(averageUtilization * 100)}%` },
       { label: "Peak utilization", value: `${Math.round(peakUtilization * 100)}%` },
-      { label: "Elastic overflow cost", value: `$${Math.round(futureElasticBurstCost).toLocaleString()}` },
+      { label: "Future elastic peak cost", value: `$${Math.round(futureElasticBurstCost).toLocaleString()}` },
     ],
   };
 }
@@ -63,9 +63,28 @@ export const peakCapacityTco = createInteractiveCalculator("it", {
       title: "Current-state cost inputs",
       description: "Capture the annual cost of building and carrying enough capacity to cover peak demand.",
       fields: [
-        { key: "annualPeakBuiltCapacityCost", label: "Annual fixed capacity cost built for peak demand", defaultValue: 780000, min: 0, step: 10000, prefix: "$" },
+        { key: "annualPeakBuiltCapacityCost", label: "Annual cost of carrying capacity for peak demand", defaultValue: 780000, min: 0, step: 10000, prefix: "$" },
         { key: "burstWindowsPerYear", label: "Peak demand windows per year", defaultValue: 12, min: 0, step: 1 },
-        { key: "currentEmergencyBurstCostPerWindow", label: "Current emergency overflow cost per peak window", defaultValue: 18000, min: 0, step: 500, prefix: "$" },
+        {
+          key: "currentEmergencyBurstCostPerWindow",
+          label: "Current extra reactive cost per peak period",
+          defaultValue: 18000,
+          min: 0,
+          step: 500,
+          prefix: "$",
+          helperText:
+            "Use the extra cost created by one typical demand spike beyond normal capacity.",
+          helpTooltip: {
+            what:
+              "Represents the extra cost incurred each time demand spikes beyond the normal capacity plan.",
+            include:
+              "Reactive cloud spend, temporary extra capacity, premium support effort, or inefficient workaround costs tied to one peak period.",
+            exclude:
+              "The full annual infrastructure cost or normal day-to-day operating spend that would exist even without the spike.",
+            example:
+              "One quarter-end crunch that creates about $18,000 of extra cost beyond the normal baseline.",
+          },
+        },
         { key: "averageUtilizationPct", label: "Average utilization", defaultValue: 0.46, min: 0, max: 0.95, step: 0.01, kind: "percent" },
         { key: "peakUtilizationPct", label: "Peak utilization", defaultValue: 0.92, min: 0.01, max: 0.99, step: 0.01, kind: "percent" },
       ],
@@ -75,8 +94,27 @@ export const peakCapacityTco = createInteractiveCalculator("it", {
       title: "Future-state cost inputs",
       description: "Model a right-sized baseline plus elastic overflow for peak periods.",
       fields: [
-        { key: "hybridBaselineCapacityCost", label: "Future baseline capacity cost", defaultValue: 420000, min: 0, step: 10000, prefix: "$" },
-        { key: "futureElasticBurstCostPerWindow", label: "Elastic burst cost per peak window", defaultValue: 14000, min: 0, step: 500, prefix: "$" },
+        { key: "hybridBaselineCapacityCost", label: "Future steady-state capacity cost", defaultValue: 420000, min: 0, step: 10000, prefix: "$" },
+        {
+          key: "futureElasticBurstCostPerWindow",
+          label: "Future elastic cost per peak period",
+          defaultValue: 14000,
+          min: 0,
+          step: 500,
+          prefix: "$",
+          helperText:
+            "Use the expected extra cost of covering one typical peak period in the future model.",
+          helpTooltip: {
+            what:
+              "Represents the extra future-state cost of covering one typical demand spike with elastic or hybrid capacity.",
+            include:
+              "The incremental burst cost above the future baseline capacity plan for one peak period.",
+            exclude:
+              "The steady-state baseline cost that already exists in the future model year-round.",
+            example:
+              "The additional cloud burst charge for one monthly or quarterly peak period.",
+          },
+        },
         { key: "commitmentDiscountPct", label: "Commitment discount assumption", defaultValue: 0.12, min: 0, max: 0.95, step: 0.01, kind: "percent" },
         { key: "futureGovernanceToolingCost", label: "Future governance and utilization tooling cost", defaultValue: 65000, min: 0, step: 5000, prefix: "$" },
       ],

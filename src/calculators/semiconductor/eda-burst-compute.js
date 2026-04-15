@@ -73,7 +73,7 @@ export const edaBurstCompute = createInteractiveCalculator("semiconductor", {
       fields: [
         {
           key: "peakJobsPerQuarter",
-          label: "Peak jobs per quarter",
+          label: "Peak compute jobs per quarter",
           defaultValue: 220,
           min: 0,
           step: 1,

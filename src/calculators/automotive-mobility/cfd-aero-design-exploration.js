@@ -146,7 +146,7 @@ export const cfdAeroDesignExploration = createInteractiveCalculator(
           },
           {
             key: "redesignSensitivityCost",
-            label: "Redesign sensitivity per program",
+            label: "Expected redesign cost per program",
             defaultValue: 70000,
             min: 0,
             step: 1000,

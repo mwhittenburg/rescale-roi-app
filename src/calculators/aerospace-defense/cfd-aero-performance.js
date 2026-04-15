@@ -141,7 +141,7 @@ export const cfdAeroPerformance = createInteractiveCalculator("aerospace-defense
         },
         {
           key: "redesignSensitivityCost",
-          label: "Redesign sensitivity per program",
+          label: "Expected redesign cost per program",
           defaultValue: 95000,
           min: 0,
           step: 1000,

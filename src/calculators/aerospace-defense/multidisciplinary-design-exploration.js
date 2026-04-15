@@ -129,7 +129,7 @@ export const multidisciplinaryDesignExploration = createInteractiveCalculator(
           },
           {
             key: "redesignSensitivityCost",
-            label: "Redesign sensitivity per study",
+            label: "Expected redesign cost per study",
             defaultValue: 95000,
             min: 0,
             step: 1000,
@@ -138,7 +138,7 @@ export const multidisciplinaryDesignExploration = createInteractiveCalculator(
           },
           {
             key: "lateStageChangeSensitivityCost",
-            label: "Late-stage change sensitivity per study",
+            label: "Expected late-stage change cost per study",
             defaultValue: 80000,
             min: 0,
             step: 1000,

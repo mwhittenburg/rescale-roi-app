@@ -89,7 +89,7 @@ export const virtualScreeningDocking = createInteractiveCalculator(
           },
           {
             key: "currentCampaignTurnaroundDays",
-            label: "Current campaign turnaround time in days",
+            label: "Current campaign turnaround time",
             defaultValue: 14,
             min: 0,
             step: 0.5,
@@ -97,7 +97,7 @@ export const virtualScreeningDocking = createInteractiveCalculator(
           },
           {
             key: "queueDelayDays",
-            label: "Queue delay in days",
+            label: "Average queue delay",
             defaultValue: 5,
             min: 0,
             step: 0.5,

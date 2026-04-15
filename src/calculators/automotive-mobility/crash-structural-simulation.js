@@ -129,7 +129,7 @@ export const crashStructuralSimulation = createInteractiveCalculator(
           },
           {
             key: "redesignSensitivityCost",
-            label: "Redesign sensitivity per program",
+            label: "Expected redesign cost per program",
             defaultValue: 85000,
             min: 0,
             step: 1000,
@@ -138,7 +138,7 @@ export const crashStructuralSimulation = createInteractiveCalculator(
           },
           {
             key: "reworkSensitivityCost",
-            label: "Rework sensitivity per program",
+            label: "Expected rework cost per program",
             defaultValue: 40000,
             min: 0,
             step: 1000,

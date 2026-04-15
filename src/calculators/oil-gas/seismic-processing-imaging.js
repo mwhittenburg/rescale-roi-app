@@ -119,7 +119,7 @@ export const seismicProcessingImaging = createInteractiveCalculator("oil-gas", {
         },
         {
           key: "costSensitivityToDelayedInterpretation",
-          label: "Cost sensitivity to delayed interpretation",
+          label: "Cost of delayed interpretation",
           defaultValue: 180000,
           min: 0,
           step: 1000,
@@ -135,7 +135,7 @@ export const seismicProcessingImaging = createInteractiveCalculator("oil-gas", {
         },
         {
           key: "burstDemandCostPerPeriod",
-          label: "Burst demand cost per period",
+          label: "Extra cost during one burst-demand period",
           defaultValue: 35000,
           min: 0,
           step: 1000,

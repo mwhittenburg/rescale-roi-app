@@ -129,7 +129,7 @@ export const evBatteryThermalPackOptimization = createInteractiveCalculator(
           },
           {
             key: "coolingRedesignCost",
-            label: "Cooling redesign sensitivity per study",
+            label: "Expected cooling redesign cost per study",
             defaultValue: 70000,
             min: 0,
             step: 1000,

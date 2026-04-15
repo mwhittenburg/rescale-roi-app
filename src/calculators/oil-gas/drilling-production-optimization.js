@@ -129,7 +129,7 @@ export const drillingProductionOptimization = createInteractiveCalculator(
           },
           {
             key: "productionImprovementValuePerYear",
-            label: "Production improvement value per year",
+            label: "Estimated annual production improvement value",
             defaultValue: 700000,
             min: 0,
             step: 5000,

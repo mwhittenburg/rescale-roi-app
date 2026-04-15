@@ -90,7 +90,7 @@ export const manufacturingLineSimulationDigitalTwin = createInteractiveCalculato
           },
           {
             key: "currentTimePerSimulationStudy",
-            label: "Current time per simulation study",
+            label: "Current turnaround time per simulation study",
             defaultValue: 8,
             min: 0,
             step: 0.5,
@@ -98,7 +98,7 @@ export const manufacturingLineSimulationDigitalTwin = createInteractiveCalculato
           },
           {
             key: "queueWaitTime",
-            label: "Queue or wait time",
+            label: "Average queue or wait time",
             defaultValue: 3,
             min: 0,
             step: 0.5,
@@ -224,7 +224,7 @@ export const manufacturingLineSimulationDigitalTwin = createInteractiveCalculato
           },
           {
             key: "valuePerScenarioDecision",
-            label: "Value per scenario decision improved",
+            label: "Estimated value per improved scenario decision",
             defaultValue: 15000,
             min: 0,
             step: 500,
