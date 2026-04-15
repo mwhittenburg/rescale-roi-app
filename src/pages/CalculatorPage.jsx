@@ -1,6 +1,34 @@
-import { useId, useMemo, useState } from "react";
+import { useEffect, useId, useMemo, useState } from "react";
 import { FieldHelpTooltip } from "../components/FieldHelpTooltip";
 import { PageHeader } from "../components/PageHeader";
+
+const defaultSessionContext = {
+  customerName: "",
+  accountName: "",
+  opportunityName: "",
+  preparedBy: "",
+  notes: "",
+};
+
+function buildWorkspaceStorageKey(calculatorId) {
+  return `rescale:calculator-workspace:${calculatorId}`;
+}
+
+function readStoredWorkspace(calculatorId) {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  try {
+    const rawValue = window.localStorage.getItem(
+      buildWorkspaceStorageKey(calculatorId),
+    );
+
+    return rawValue ? JSON.parse(rawValue) : null;
+  } catch {
+    return null;
+  }
+}
 
 function formatCurrency(value) {
   return new Intl.NumberFormat("en-US", {
@@ -147,6 +175,38 @@ function PrintSection({ title, children }) {
   );
 }
 
+function buildRecommendedNextSteps({
+  calculator,
+  isTcoModel,
+  pdfMode,
+  savedScenarioCount,
+}) {
+  return [
+    {
+      title: "Validate baseline",
+      body:
+        calculator.sellerGuidance.howToRead?.validateNext ??
+        (isTcoModel
+          ? "Confirm the current-state cost lines and workload split with the infrastructure owner."
+          : "Confirm the current workflow volume, delay baseline, and labor effort with the workflow owner."),
+    },
+    {
+      title: "Compare scenarios",
+      body:
+        savedScenarioCount >= 2
+          ? "Compare the customer baseline against a benchmark or stretch scenario before sharing the result."
+          : "Save at least two named scenarios so you can compare the customer baseline against a benchmark or stretch case.",
+    },
+    {
+      title: "Share next",
+      body:
+        pdfMode === "customer"
+          ? "Use the customer-safe PDF once the baseline is confirmed and any benchmark assumptions have been pressure-tested."
+          : "Use the internal PDF while discovery notes, confidence tags, or follow-up validation items still need review.",
+    },
+  ];
+}
+
 function InteractiveCalculatorPage({
   contextName,
   breadcrumbs,
@@ -154,7 +214,50 @@ function InteractiveCalculatorPage({
   onNavigate,
 }) {
   const [values, setValues] = useState(() => calculator.defaultValues);
+  const [sessionContext, setSessionContext] = useState(defaultSessionContext);
+  const [scenarioName, setScenarioName] = useState("");
+  const [selectedScenarioName, setSelectedScenarioName] = useState("");
+  const [savedScenarios, setSavedScenarios] = useState([]);
+  const [pdfMode, setPdfMode] = useState("customer");
   const results = useMemo(() => calculator.calculate(values), [calculator, values]);
+
+  useEffect(() => {
+    const storedWorkspace = readStoredWorkspace(calculator.id);
+
+    setValues(calculator.defaultValues);
+    setSessionContext({
+      ...defaultSessionContext,
+      ...(storedWorkspace?.sessionContext ?? {}),
+    });
+    setScenarioName(storedWorkspace?.scenarioName ?? "");
+    setSelectedScenarioName(storedWorkspace?.selectedScenarioName ?? "");
+    setSavedScenarios(storedWorkspace?.savedScenarios ?? []);
+    setPdfMode(storedWorkspace?.pdfMode === "internal" ? "internal" : "customer");
+  }, [calculator.id]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    window.localStorage.setItem(
+      buildWorkspaceStorageKey(calculator.id),
+      JSON.stringify({
+        sessionContext,
+        scenarioName,
+        selectedScenarioName,
+        savedScenarios,
+        pdfMode,
+      }),
+    );
+  }, [
+    calculator.id,
+    pdfMode,
+    savedScenarios,
+    scenarioName,
+    selectedScenarioName,
+    sessionContext,
+  ]);
 
   function updateValue(field, nextValue) {
     const numericValue = Number.isNaN(nextValue) ? 0 : nextValue;
@@ -173,6 +276,52 @@ function InteractiveCalculatorPage({
     setValues(calculator.defaultValues);
   }
 
+  function updateSessionContext(key, nextValue) {
+    setSessionContext((current) => ({
+      ...current,
+      [key]: nextValue,
+    }));
+  }
+
+  function saveScenario() {
+    const trimmedName =
+      scenarioName.trim() || `${calculator.name} scenario ${savedScenarios.length + 1}`;
+    const nextScenario = {
+      name: trimmedName,
+      values,
+      savedAt: new Date().toISOString(),
+    };
+
+    setSavedScenarios((current) => {
+      const withoutMatch = current.filter((scenario) => scenario.name !== trimmedName);
+      return [nextScenario, ...withoutMatch].slice(0, 8);
+    });
+    setScenarioName(trimmedName);
+    setSelectedScenarioName(trimmedName);
+  }
+
+  function loadSelectedScenario() {
+    const selectedScenario = savedScenarios.find(
+      (scenario) => scenario.name === selectedScenarioName,
+    );
+
+    if (selectedScenario) {
+      setValues(selectedScenario.values);
+      setScenarioName(selectedScenario.name);
+    }
+  }
+
+  function deleteSelectedScenario() {
+    if (!selectedScenarioName) {
+      return;
+    }
+
+    setSavedScenarios((current) =>
+      current.filter((scenario) => scenario.name !== selectedScenarioName),
+    );
+    setSelectedScenarioName("");
+  }
+
   function exportPdf() {
     const previousTitle = document.title;
     document.title = `${calculator.name} Summary`;
@@ -185,6 +334,12 @@ function InteractiveCalculatorPage({
   const isTcoModel = calculator.valueModel === "tco";
   const typicalBuyerTags = calculator.typicalBuyerTags ?? [];
   const howToRead = calculator.sellerGuidance.howToRead;
+  const recommendedNextSteps = buildRecommendedNextSteps({
+    calculator,
+    isTcoModel,
+    pdfMode,
+    savedScenarioCount: savedScenarios.length,
+  });
   const preparedDate = new Intl.DateTimeFormat("en-US", {
     month: "long",
     day: "numeric",
@@ -274,6 +429,137 @@ function InteractiveCalculatorPage({
               ? "The page updates live as you edit the cost assumptions, so you can compare the current operating model against the future-state model in real time."
               : "The page updates live as you edit the assumptions, so you can quickly test different scenarios and see how the estimated impact changes."}
           </p>
+        </section>
+
+        <section className="panel working-session-panel">
+          <div className="selector-header">
+            <div className="choice-copy">
+              <p className="section-kicker">Working Session</p>
+              <h2>Capture the account context and save the scenarios you want to keep.</h2>
+              <p className="panel-copy">
+                Keep the calculator grounded in the actual customer conversation,
+                then save named scenarios for follow-up and sharing.
+              </p>
+            </div>
+          </div>
+
+          <div className="working-session-grid">
+            <label className="selector-field">
+              <span className="field-label">Customer</span>
+              <input
+                className="session-input"
+                type="text"
+                value={sessionContext.customerName}
+                onChange={(event) =>
+                  updateSessionContext("customerName", event.target.value)
+                }
+                placeholder="Owens Corning"
+              />
+            </label>
+
+            <label className="selector-field">
+              <span className="field-label">Account or program</span>
+              <input
+                className="session-input"
+                type="text"
+                value={sessionContext.accountName}
+                onChange={(event) =>
+                  updateSessionContext("accountName", event.target.value)
+                }
+                placeholder="Aero design modernization"
+              />
+            </label>
+
+            <label className="selector-field">
+              <span className="field-label">Prepared by</span>
+              <input
+                className="session-input"
+                type="text"
+                value={sessionContext.preparedBy}
+                onChange={(event) =>
+                  updateSessionContext("preparedBy", event.target.value)
+                }
+                placeholder="Seller or account team"
+              />
+            </label>
+
+            <label className="selector-field selector-field-wide">
+              <span className="field-label">Opportunity or working notes</span>
+              <textarea
+                className="session-input session-textarea"
+                value={sessionContext.notes}
+                onChange={(event) =>
+                  updateSessionContext("notes", event.target.value)
+                }
+                placeholder="Capture the program context, source of inputs, or follow-up items."
+                rows={3}
+              />
+            </label>
+          </div>
+
+          <div className="scenario-toolbar">
+            <label className="selector-field">
+              <span className="field-label">Scenario name</span>
+              <input
+                className="session-input"
+                type="text"
+                value={scenarioName}
+                onChange={(event) => setScenarioName(event.target.value)}
+                placeholder="Customer baseline"
+              />
+            </label>
+
+            <label className="selector-field">
+              <span className="field-label">Saved scenarios</span>
+              <select
+                value={selectedScenarioName}
+                onChange={(event) => {
+                  setSelectedScenarioName(event.target.value);
+                  setScenarioName(event.target.value);
+                }}
+              >
+                <option value="">Choose one</option>
+                {savedScenarios.map((scenario) => (
+                  <option key={scenario.name} value={scenario.name}>
+                    {scenario.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <label className="selector-field">
+              <span className="field-label">PDF mode</span>
+              <select
+                value={pdfMode}
+                onChange={(event) => setPdfMode(event.target.value)}
+              >
+                <option value="customer">Customer-safe</option>
+                <option value="internal">Internal working version</option>
+              </select>
+            </label>
+          </div>
+
+          <div className="recommendation-actions">
+            <button type="button" className="ghost-button" onClick={saveScenario}>
+              Save scenario
+            </button>
+            <button
+              type="button"
+              className="ghost-button"
+              onClick={loadSelectedScenario}
+              disabled={!selectedScenarioName}
+            >
+              Load selected
+            </button>
+            <button
+              type="button"
+              className="ghost-button"
+              onClick={deleteSelectedScenario}
+              disabled={!selectedScenarioName}
+            >
+              Delete selected
+            </button>
+          </div>
         </section>
 
         <section className="guidance-grid calculator-guidance-grid">
@@ -451,6 +737,24 @@ function InteractiveCalculatorPage({
                 </div>
               </div>
             ) : null}
+
+            <div className="how-to-read-block">
+              <div className="how-to-read-header">
+                <p className="section-kicker">Recommended Next Step</p>
+                <p className="panel-copy">
+                  Use this to move from the estimate to a follow-up action.
+                </p>
+              </div>
+              <div className="guidance-detail-grid">
+                {recommendedNextSteps.map((step) => (
+                  <GuidanceDetail
+                    key={step.title}
+                    title={step.title}
+                    body={step.body}
+                  />
+                ))}
+              </div>
+            </div>
           </aside>
         </section>
       </div>
@@ -458,7 +762,15 @@ function InteractiveCalculatorPage({
       <section className="print-report">
         <header className="print-report-header">
           <div>
-            <p className="section-kicker">{isTcoModel ? "TCO Summary" : "ROI Summary"}</p>
+            <p className="section-kicker">
+              {pdfMode === "customer"
+                ? isTcoModel
+                  ? "TCO Summary"
+                  : "ROI Summary"
+                : isTcoModel
+                  ? "Internal TCO Working Summary"
+                  : "Internal ROI Working Summary"}
+            </p>
             <h1>{calculator.name}</h1>
             <p className="print-report-subtitle">{calculator.businessOutcome}</p>
           </div>
@@ -468,11 +780,39 @@ function InteractiveCalculatorPage({
               <strong>{preparedDate}</strong>
             </div>
             <div>
+              <span className="metric-label">Prepared for</span>
+              <strong>{sessionContext.customerName || "Not specified"}</strong>
+            </div>
+            <div>
               <span className="metric-label">Context</span>
               <strong>{contextName}</strong>
             </div>
+            <div>
+              <span className="metric-label">Account / program</span>
+              <strong>
+                {sessionContext.accountName || sessionContext.opportunityName || "Not specified"}
+              </strong>
+            </div>
+            <div>
+              <span className="metric-label">Prepared by</span>
+              <strong>{sessionContext.preparedBy || "Not specified"}</strong>
+            </div>
+            <div>
+              <span className="metric-label">PDF mode</span>
+              <strong>{pdfMode === "customer" ? "Customer-safe" : "Internal working"}</strong>
+            </div>
           </div>
         </header>
+
+        {pdfMode === "internal" ? (
+          <PrintSection title="Start Here">
+            <ul className="guidance-list">
+              {calculator.sellerGuidance.askTheseFirst.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </PrintSection>
+        ) : null}
 
         <PrintSection title="What This Estimates">
           <p className="print-copy">
@@ -504,6 +844,14 @@ function InteractiveCalculatorPage({
           </PrintSection>
         ) : null}
 
+        <PrintSection title="Recommended Next Step">
+          <div className="guidance-detail-grid">
+            {recommendedNextSteps.map((step) => (
+              <GuidanceDetail key={step.title} title={step.title} body={step.body} />
+            ))}
+          </div>
+        </PrintSection>
+
         <PrintSection title="Assumption Snapshot">
           <div className="print-assumption-grid">
             {printSections.map((section) => (
@@ -522,9 +870,16 @@ function InteractiveCalculatorPage({
           </div>
         </PrintSection>
 
+        {pdfMode === "internal" && sessionContext.notes ? (
+          <PrintSection title="Working Notes">
+            <p className="print-copy">{sessionContext.notes}</p>
+          </PrintSection>
+        ) : null}
+
         <p className="print-footnote">
-          This summary is directional and assumption-based. Validate customer-provided
-          inputs and benchmark assumptions before external distribution.
+          {pdfMode === "customer"
+            ? "This summary is directional and assumption-based and should be used as a working estimate."
+            : "This summary is directional and assumption-based. Validate customer-provided inputs and benchmark assumptions before external distribution."}
         </p>
       </section>
     </>

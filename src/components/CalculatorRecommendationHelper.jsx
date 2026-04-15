@@ -7,19 +7,26 @@ const defaultAnswers = {
   slowedDecision: "",
 };
 
-function scoreCalculator(calculator, answers) {
+function getOptionLabel(options, groupKey, value) {
+  return options[groupKey].find((option) => option.value === value)?.label ?? value;
+}
+
+function scoreCalculator(calculator, answers, options) {
   const selector = calculator.selector ?? {};
   let score = 0;
+  const reasons = [];
 
   if (
     answers.bottleneck &&
     selector.bottlenecks?.includes(answers.bottleneck)
   ) {
     score += 3;
+    reasons.push(`Matches the bottleneck: ${getOptionLabel(options, "bottlenecks", answers.bottleneck)}.`);
   }
 
   if (answers.teamType && selector.teamTypes?.includes(answers.teamType)) {
     score += 2;
+    reasons.push(`Fits the team: ${getOptionLabel(options, "teamTypes", answers.teamType)}.`);
   }
 
   if (
@@ -27,9 +34,16 @@ function scoreCalculator(calculator, answers) {
     selector.slowedDecisions?.includes(answers.slowedDecision)
   ) {
     score += 2;
+    reasons.push(
+      `Aligns to the slowed decision: ${getOptionLabel(
+        options,
+        "slowedDecisions",
+        answers.slowedDecision,
+      )}.`,
+    );
   }
 
-  return score;
+  return { score, reasons };
 }
 
 export function CalculatorRecommendationHelper({
@@ -56,7 +70,7 @@ export function CalculatorRecommendationHelper({
     const ranked = allCalculators
       .map((calculator) => ({
         calculator,
-        score: scoreCalculator(calculator, answers),
+        ...scoreCalculator(calculator, answers, options),
       }))
       .filter((entry) => entry.score > 0)
       .sort(
@@ -151,11 +165,21 @@ export function CalculatorRecommendationHelper({
 
       <div className="recommendation-list">
         {recommendations.length > 0 ? (
-          recommendations.map(({ calculator }) => (
+          recommendations.map(({ calculator, reasons }, index) => (
             <article key={calculator.id} className="recommendation-card">
-              <p className="section-kicker">{calculator.industryName}</p>
+              <p className="section-kicker">
+                {index === 0 ? "Best match" : "Also consider"}
+              </p>
               <h3>{calculator.name}</h3>
               <p className="panel-copy">{calculator.teaser}</p>
+              <p className="recommendation-meta">{calculator.industryName}</p>
+              <div className="recommendation-reason-list">
+                {reasons.map((reason) => (
+                  <p key={reason} className="panel-copy">
+                    {reason}
+                  </p>
+                ))}
+              </div>
               <div className="recommendation-actions">
                 <button
                   type="button"
