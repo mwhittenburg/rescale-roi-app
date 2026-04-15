@@ -75,6 +75,51 @@ const FIELD_HELP_RULES = [
     },
   },
   {
+    test: (field) =>
+      /\bruns? or analyses per cycle\b/i.test(field.label) ||
+      /\bsimulations? per (study|program)\b/i.test(field.label) ||
+      /\bverification runs? per project\b/i.test(field.label) ||
+      /\bstructural or crash simulations? per program\b/i.test(field.label),
+    help: {
+      what:
+        "Represents the number of meaningful compute runs needed to finish one full unit of work.",
+      include:
+        "Runs that are reviewed as part of the technical decision, validation cycle, or recommendation.",
+      exclude:
+        "Failed setup attempts, duplicate reruns, or tiny debug jobs that do not change the decision.",
+      example: "Twelve verification runs that support one project milestone.",
+    },
+  },
+  {
+    test: (field) =>
+      /\bcompounds screened\b/i.test(field.label) ||
+      /\bvariables or configurations evaluated per study\b/i.test(field.label),
+    help: {
+      what:
+        "Represents the scale of options evaluated inside one campaign or study.",
+      include:
+        "Distinct compounds, configurations, or variables that are intentionally part of the decision process.",
+      exclude:
+        "Background library entries, duplicate records, or tiny parameter tweaks that are not reviewed separately.",
+      example: "500,000 compounds in one screening campaign, not repeated scoring passes on the same set.",
+    },
+  },
+  {
+    test: (field) =>
+      /\byield-learning cycles? per year\b/i.test(field.label) ||
+      /\bpeak demand windows per year\b/i.test(field.label) ||
+      /\bburst demand periods per year\b/i.test(field.label),
+    help: {
+      what:
+        "Represents how often the team goes through a meaningful learning or demand cycle in a year.",
+      include:
+        "Cycles or windows that create a real workflow, capacity, or decision burden.",
+      exclude:
+        "Minor day-to-day fluctuations that do not change staffing, queueing, or infrastructure behavior.",
+      example: "Quarterly peak windows or formal yield-learning loops, not every busy week.",
+    },
+  },
+  {
     test: (field) => /\bcompute cost per\b/i.test(field.label),
     help: {
       what:
@@ -84,6 +129,20 @@ const FIELD_HELP_RULES = [
       exclude:
         "Broader IT overhead, software subscriptions, or platform investment already modeled elsewhere.",
       example: "The run cost for one verification project, excluding annual CAD licenses.",
+    },
+  },
+  {
+    test: (field) =>
+      /\bincremental compute cost\b/i.test(field.label) ||
+      /\bcloud infrastructure cost per month\b/i.test(field.label),
+    help: {
+      what:
+        "Represents the direct compute or infrastructure spend tied to serving this workload.",
+      include:
+        "Consumed compute, scheduler, cloud infrastructure, and other directly attributable usage charges.",
+      exclude:
+        "Broader platform subscriptions, support labor, or shared corporate IT costs already modeled elsewhere.",
+      example: "Monthly cloud compute spend for this environment, not the entire IT budget.",
     },
   },
   {
@@ -100,6 +159,21 @@ const FIELD_HELP_RULES = [
     },
   },
   {
+    test: (field) =>
+      /\b(admin|support).*hours per month\b/i.test(field.label) ||
+      /\bgovernance and reporting hours per month\b/i.test(field.label) ||
+      /\benvironment maintenance hours per month\b/i.test(field.label),
+    help: {
+      what:
+        "Represents the recurring labor time IT or platform teams spend to keep the environment working.",
+      include:
+        "Provisioning, troubleshooting, reporting, governance, maintenance, and hands-on support effort tied to this environment.",
+      exclude:
+        "One-time migration work, unrelated helpdesk activity, or broader enterprise overhead not tied to the modeled environment.",
+      example: "Monthly platform team hours spent provisioning and fixing user environments.",
+    },
+  },
+  {
     test: (field) => /\bqueue\b/i.test(field.label) && !/reduction/i.test(field.label),
     help: {
       what:
@@ -109,6 +183,19 @@ const FIELD_HELP_RULES = [
       exclude:
         "The actual run time or review time once the work has already started.",
       example: "Two days waiting in queue before a simulation starts.",
+    },
+  },
+  {
+    test: (field) =>
+      /\bruntime\b/i.test(field.label) && !/improvement/i.test(field.label),
+    help: {
+      what:
+        "Represents the actual elapsed compute time once the run has started.",
+      include:
+        "Solver, processing, or execution time needed to complete the run itself.",
+      exclude:
+        "Queue delay, setup time, or downstream review time unless those are intentionally rolled into this field.",
+      example: "Eight hours of simulation runtime after the job begins executing.",
     },
   },
   {
@@ -135,6 +222,22 @@ const FIELD_HELP_RULES = [
       exclude:
         "Separate queue delay if that is already captured in its own field.",
       example: "One and a half days to get a verification run back after it starts.",
+    },
+  },
+  {
+    test: (field) =>
+      /\bscale-up delay\b/i.test(field.label) ||
+      /\btime to interpretation\b/i.test(field.label) ||
+      /\bdelay sensitivity\b/i.test(field.label) ||
+      /\bdecision delay\b/i.test(field.label),
+    help: {
+      what:
+        "Represents the business-relevant delay between finishing the technical work and being able to act on it.",
+      include:
+        "Elapsed time or exposure caused by waiting for interpretation, signoff, or a planning decision.",
+      exclude:
+        "Core compute runtime or broad program delay that is not directly tied to this workflow.",
+      example: "The extra days before a field planning choice can be made after analysis is ready.",
     },
   },
   {
@@ -168,6 +271,53 @@ const FIELD_HELP_RULES = [
   },
   {
     test: (field) =>
+      /\bhardware refresh cost\b/i.test(field.label) ||
+      /\bmaintenance and support contracts\b/i.test(field.label) ||
+      /\bdata center or colo cost\b/i.test(field.label) ||
+      /\bstorage, backup, and disaster recovery cost\b/i.test(field.label) ||
+      /\bnetwork and egress cost\b/i.test(field.label),
+    help: {
+      what:
+        "Represents a current-state infrastructure cost line that should be counted once in the TCO baseline.",
+      include:
+        "Only the annualized or current-period cost directly tied to the environment being modeled.",
+      exclude:
+        "Shared enterprise costs already allocated elsewhere or one-time transition costs captured in migration inputs.",
+      example: "Annualized server refresh plus support contract cost for the technical computing estate.",
+    },
+  },
+  {
+    test: (field) =>
+      /\b(current|future) annual (support and admin|tooling and platform support|security and compliance tooling) cost\b/i.test(
+        field.label,
+      ) || /\bfuture governance and utilization tooling cost\b/i.test(field.label),
+    help: {
+      what:
+        "Represents the recurring annual operating cost of supporting the current or future model.",
+      include:
+        "Platform tooling, support contracts, governance software, and other recurring run-state costs tied to this operating model.",
+      exclude:
+        "One-time migration spend, labor already counted in admin-hours fields, or unrelated enterprise software.",
+      example: "The yearly cost of the tooling stack needed to run the future governance model.",
+    },
+  },
+  {
+    test: (field) =>
+      /\bmigration and (cutover|operating-model transition) cost\b/i.test(field.label) ||
+      /\btransition cost\b/i.test(field.label) ||
+      /\bparallel run or dual-operation cost\b/i.test(field.label),
+    help: {
+      what:
+        "Represents one-time cost required to move from the current model to the future model.",
+      include:
+        "Migration labor, cutover planning, temporary dual running, training, and change-management effort tied to the transition.",
+      exclude:
+        "Recurring future-state operating costs or sunk costs already spent before the project.",
+      example: "Cutover support plus a short parallel-run window during migration.",
+    },
+  },
+  {
+    test: (field) =>
       /\bcost of delayed\b/i.test(field.label) ||
       /\bdelayed decision cost\b/i.test(field.label),
     help: {
@@ -178,6 +328,61 @@ const FIELD_HELP_RULES = [
       exclude:
         "Very broad company-wide opportunity cost that cannot be linked back to the decision.",
       example: "The cost of delaying a field planning decision by one study cycle.",
+    },
+  },
+  {
+    test: (field) =>
+      /\bnonproductive time cost per year\b/i.test(field.label),
+    help: {
+      what:
+        "Represents the annual cost of unplanned downtime, waiting, or lost productive operations tied to this workflow.",
+      include:
+        "Direct exposure from deferred production, unplanned idle time, or operational inefficiency the customer already tracks.",
+      exclude:
+        "Broad field economics that cannot be linked back to the modeled nonproductive time.",
+      example: "Annual cost of avoidable drilling downtime caused by delayed optimization decisions.",
+    },
+  },
+  {
+    test: (field) =>
+      /\baverage utilization\b/i.test(field.label) ||
+      /\bpeak utilization\b/i.test(field.label),
+    help: {
+      what:
+        "Represents how much of the available capacity is actually used during normal versus peak periods.",
+      include:
+        "The practical usage level the customer sees for the relevant environment or cluster.",
+      exclude:
+        "Short-lived spikes, planned outages, or theoretical maximums that do not reflect real operating behavior.",
+      example: "Average at 46% across the year versus 92% during quarter-end peaks.",
+    },
+  },
+  {
+    test: (field) =>
+      /\bcurrent capacity shortfall\b/i.test(field.label) ||
+      /\bidle capacity cost per day\b/i.test(field.label) ||
+      /\bannual fixed capacity cost built for peak demand\b/i.test(field.label),
+    help: {
+      what:
+        "Represents the cost or gap created by sizing infrastructure poorly for real demand.",
+      include:
+        "Capacity that is missing during peaks or sits idle outside those peaks, plus the cost directly tied to that imbalance.",
+      exclude:
+        "General compute spend that would exist even if capacity were sized correctly.",
+      example: "Extra fixed capacity carried year-round only to survive a few burst windows.",
+    },
+  },
+  {
+    test: (field) =>
+      /\bshare of workloads staying on-prem or in hybrid\b/i.test(field.label),
+    help: {
+      what:
+        "Represents the portion of workloads that remain outside full cloud migration in the future model.",
+      include:
+        "Only workloads the customer expects to retain on-prem or place in a hybrid footprint for technical, economic, or governance reasons.",
+      exclude:
+        "Short-term exceptions, temporary migration phases, or workloads that are expected to move fully once the target state is reached.",
+      example: "35% retained because of data gravity, licensing, or performance constraints.",
     },
   },
 ];

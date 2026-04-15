@@ -1,4 +1,5 @@
 import { calculatorModules } from "./calculatorModules";
+import { calculatorGuidanceById } from "./calculatorGuidance";
 import { platformCatalog } from "./catalog";
 
 export { platformCatalog };
@@ -7,6 +8,7 @@ export const recommendationOptions = platformCatalog.recommendationOptions;
 
 function resolveUseCase(industry, useCaseConfig) {
   const calculator = calculatorModules[useCaseConfig.moduleKey];
+  const guidance = calculatorGuidanceById[useCaseConfig.id] ?? {};
 
   if (!calculator) {
     throw new Error(
@@ -23,6 +25,12 @@ function resolveUseCase(industry, useCaseConfig) {
   return {
     ...calculator,
     ...useCaseConfig,
+    typicalBuyerTags: guidance.typicalBuyerTags ?? [],
+    sellerGuidance: {
+      ...useCaseConfig.sellerGuidance,
+      ...(guidance.askTheseFirst ? { askTheseFirst: guidance.askTheseFirst } : {}),
+      ...(guidance.howToRead ? { howToRead: guidance.howToRead } : {}),
+    },
   };
 }
 

@@ -57,6 +57,10 @@ function formatCapacity(value, unit) {
   return `${value.toFixed(1)} ${unit}`;
 }
 
+function withDirectionalNote(text) {
+  return `${text.replace(/\.$/, "")}. Directional and assumption-based.`;
+}
+
 function FieldInput({ field, value, onChange }) {
   const inputId = useId();
   const isPercent = field.kind === "percent";
@@ -109,6 +113,15 @@ function MetricCard({ label, value }) {
   );
 }
 
+function GuidanceDetail({ title, body }) {
+  return (
+    <article className="guidance-detail-card">
+      <p className="guidance-detail-title">{title}</p>
+      <p className="panel-copy">{body}</p>
+    </article>
+  );
+}
+
 function InteractiveCalculatorPage({
   contextName,
   breadcrumbs,
@@ -136,6 +149,8 @@ function InteractiveCalculatorPage({
   }
 
   const isTcoModel = calculator.valueModel === "tco";
+  const typicalBuyerTags = calculator.typicalBuyerTags ?? [];
+  const howToRead = calculator.sellerGuidance.howToRead;
 
   const outputCards = isTcoModel
     ? [
@@ -231,8 +246,19 @@ function InteractiveCalculatorPage({
           </ul>
         </article>
         <article className="panel guidance-card">
-          <p className="section-kicker">What This Estimates</p>
-          <p className="panel-copy">{calculator.sellerGuidance.whatThisEstimates}</p>
+          <p className="section-kicker">Typical Buyer</p>
+          <div className="buyer-tag-list">
+            {typicalBuyerTags.map((tag) => (
+              <span key={tag} className="buyer-tag">
+                {tag}
+              </span>
+            ))}
+          </div>
+          <p className="confidence-copy">
+            Inputs are tagged as <strong>customer-provided</strong>,{" "}
+            <strong>benchmark</strong>, or <strong>estimated</strong> so the
+            team can see what should be validated before sharing the result.
+          </p>
         </article>
       </section>
 
@@ -335,6 +361,13 @@ function InteractiveCalculatorPage({
             </div>
           </div>
 
+          <div className="estimate-bridge">
+            <p className="section-kicker">What This Estimates</p>
+            <p className="panel-copy">
+              {withDirectionalNote(calculator.sellerGuidance.whatThisEstimates)}
+            </p>
+          </div>
+
           <div className="metric-grid">
             {outputCards.map((metric) => (
               <MetricCard key={metric.label} label={metric.label} value={metric.value} />
@@ -350,6 +383,25 @@ function InteractiveCalculatorPage({
                   value={metric.value}
                 />
               ))}
+            </div>
+          ) : null}
+
+          {howToRead ? (
+            <div className="how-to-read-block">
+              <div className="how-to-read-header">
+                <p className="section-kicker">How To Read This</p>
+                <p className="panel-copy">
+                  Directional output for live customer conversations.
+                </p>
+              </div>
+              <div className="guidance-detail-grid">
+                <GuidanceDetail title="Top drivers" body={howToRead.topDrivers} />
+                <GuidanceDetail
+                  title="Biggest assumptions"
+                  body={howToRead.biggestAssumptions}
+                />
+                <GuidanceDetail title="Validate next" body={howToRead.validateNext} />
+              </div>
             </div>
           ) : null}
         </aside>

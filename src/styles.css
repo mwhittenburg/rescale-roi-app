@@ -424,6 +424,36 @@ p {
   margin-top: 24px;
 }
 
+.buyer-tag-list,
+.guidance-detail-grid {
+  display: grid;
+  gap: 10px;
+}
+
+.buyer-tag-list {
+  grid-template-columns: repeat(auto-fit, minmax(140px, max-content));
+  align-items: start;
+}
+
+.buyer-tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  padding: 7px 11px;
+  border: 1px solid rgba(31, 92, 168, 0.12);
+  border-radius: 999px;
+  background: rgba(31, 92, 168, 0.06);
+  color: var(--text);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.confidence-copy {
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
 .review-link-group,
 .review-link-list {
   display: grid;
@@ -694,6 +724,13 @@ p {
   font-size: 1.4rem;
 }
 
+.estimate-bridge,
+.how-to-read-block {
+  display: grid;
+  gap: 10px;
+  padding-top: 2px;
+}
+
 .summary-actions {
   display: flex;
   justify-content: flex-start;
@@ -720,6 +757,28 @@ p {
 .metric-card strong,
 .impact-highlight strong {
   font-size: 1.3rem;
+}
+
+.how-to-read-header {
+  display: grid;
+  gap: 4px;
+}
+
+.guidance-detail-card {
+  display: grid;
+  gap: 6px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.78);
+}
+
+.guidance-detail-title {
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 
 .impact-panel {
