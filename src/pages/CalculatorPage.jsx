@@ -39,6 +39,20 @@ function formatHours(value) {
   return `${Math.round(value).toLocaleString()} hours`;
 }
 
+function formatAnnualCostDelta(value) {
+  const absValue = formatCompactCurrency(Math.abs(value));
+
+  if (value > 0) {
+    return `${absValue} lower`;
+  }
+
+  if (value < 0) {
+    return `${absValue} higher`;
+  }
+
+  return "$0";
+}
+
 function formatCapacity(value, unit) {
   return `${value.toFixed(1)} ${unit}`;
 }
@@ -121,37 +135,66 @@ function InteractiveCalculatorPage({
     setValues(calculator.defaultValues);
   }
 
-  const outputCards = [
-    {
-      label: "Annual hours saved",
-      value: formatHours(results.annualHoursSaved),
-    },
-    {
-      label: "Cycle-time reduction",
-      value: formatDays(results.cycleTimeReduction),
-    },
-    {
-      label: "Capacity unlocked",
-      value: formatCapacity(results.capacityUnlocked, results.capacityUnit),
-    },
-    {
-      label: "Annual economic impact",
-      value: formatCompactCurrency(results.annualEconomicImpact),
-    },
-    {
-      label: "Payback period",
-      value: formatMonths(results.paybackPeriodMonths),
-    },
-    {
-      label: "ROI percent",
-      value: formatPercent(results.roiPercent),
-    },
-  ];
+  const isTcoModel = calculator.valueModel === "tco";
+
+  const outputCards = isTcoModel
+    ? [
+        {
+          label: "Annual current-state cost",
+          value: formatCompactCurrency(results.currentAnnualCost),
+        },
+        {
+          label: "Annual future-state cost",
+          value: formatCompactCurrency(results.futureAnnualCost),
+        },
+        {
+          label: "Annual cost difference",
+          value: formatAnnualCostDelta(results.annualCostDifference),
+        },
+        {
+          label: "Fixed cost avoided",
+          value: formatCompactCurrency(results.fixedCostAvoided),
+        },
+        {
+          label: "Idle capacity cost reduced",
+          value: formatCompactCurrency(results.idleCapacityCostReduced),
+        },
+        {
+          label: "Migration payback period",
+          value: formatMonths(results.migrationPaybackMonths),
+        },
+      ]
+    : [
+        {
+          label: "Annual hours saved",
+          value: formatHours(results.annualHoursSaved),
+        },
+        {
+          label: "Cycle-time reduction",
+          value: formatDays(results.cycleTimeReduction),
+        },
+        {
+          label: "Capacity unlocked",
+          value: formatCapacity(results.capacityUnlocked, results.capacityUnit),
+        },
+        {
+          label: "Annual economic impact",
+          value: formatCompactCurrency(results.annualEconomicImpact),
+        },
+        {
+          label: "Payback period",
+          value: formatMonths(results.paybackPeriodMonths),
+        },
+        {
+          label: "ROI percent",
+          value: formatPercent(results.roiPercent),
+        },
+      ];
 
   return (
     <>
       <PageHeader
-        eyebrow={`${contextName} ROI Calculator`}
+        eyebrow={`${contextName} ${isTcoModel ? "TCO" : "ROI"} Calculator`}
         title={calculator.name}
         description={calculator.businessOutcome}
         breadcrumbs={breadcrumbs}
@@ -161,11 +204,16 @@ function InteractiveCalculatorPage({
       <section className="panel intro-panel calculator-intro-panel">
         <div>
           <p className="section-kicker">How To Use This Calculator</p>
-          <h2>Start with the example values, then adjust the few inputs that matter most to your situation.</h2>
+          <h2>
+            {isTcoModel
+              ? "Start with the example costs, then adjust the current-state, future-state, and migration inputs that matter most."
+              : "Start with the example values, then adjust the few inputs that matter most to your situation."}
+          </h2>
         </div>
         <p className="panel-copy">
-          The page updates live as you edit the assumptions, so you can quickly
-          test different scenarios and see how the estimated impact changes.
+          {isTcoModel
+            ? "The page updates live as you edit the cost assumptions, so you can compare the current operating model against the future-state model in real time."
+            : "The page updates live as you edit the assumptions, so you can quickly test different scenarios and see how the estimated impact changes."}
         </p>
       </section>
 
@@ -235,20 +283,37 @@ function InteractiveCalculatorPage({
 
           <section className="panel calc-section impact-panel">
             <header className="panel-header">
-              <h2>Estimated business impact</h2>
+              <h2>{isTcoModel ? "Estimated cost comparison" : "Estimated business impact"}</h2>
             </header>
             <p className="panel-copy">
-              These estimates update as you adjust the inputs and assumptions in
-              the calculator.
+              {isTcoModel
+                ? "These estimates update as you adjust the current-state, future-state, and transition assumptions in the calculator."
+                : "These estimates update as you adjust the inputs and assumptions in the calculator."}
             </p>
             <div className="impact-highlight">
               <div>
-                <span className="metric-label">Estimated annual economic impact</span>
-                <strong>{formatCurrency(results.annualEconomicImpact)}</strong>
+                <span className="metric-label">
+                  {isTcoModel
+                    ? "Estimated annual future-state cost"
+                    : "Estimated annual economic impact"}
+                </span>
+                <strong>
+                  {isTcoModel
+                    ? formatCurrency(results.futureAnnualCost)
+                    : formatCurrency(results.annualEconomicImpact)}
+                </strong>
               </div>
               <div>
-                <span className="metric-label">Estimated payback period</span>
-                <strong>{formatMonths(results.paybackPeriodMonths)}</strong>
+                <span className="metric-label">
+                  {isTcoModel
+                    ? "Estimated migration payback period"
+                    : "Estimated payback period"}
+                </span>
+                <strong>
+                  {isTcoModel
+                    ? formatMonths(results.migrationPaybackMonths)
+                    : formatMonths(results.paybackPeriodMonths)}
+                </strong>
               </div>
             </div>
           </section>
@@ -257,11 +322,11 @@ function InteractiveCalculatorPage({
         <aside className="panel summary-panel">
           <div className="summary-top">
             <p className="section-kicker">Live Summary</p>
-            <h2>Estimated business impact</h2>
+            <h2>{isTcoModel ? "Estimated TCO comparison" : "Estimated business impact"}</h2>
             <p className="panel-copy">
-              Sample values are already loaded so the page is reviewable on first
-              open. Adjust the assumptions during the session to show how the
-              value story changes with the customer conversation.
+              {isTcoModel
+                ? "Sample values are already loaded so the page is reviewable on first open. Adjust the assumptions during the session to show how the total cost picture changes."
+                : "Sample values are already loaded so the page is reviewable on first open. Adjust the assumptions during the session to show how the value story changes with the customer conversation."}
             </p>
             <div className="summary-actions">
               <button type="button" className="ghost-button" onClick={resetToDefaults}>

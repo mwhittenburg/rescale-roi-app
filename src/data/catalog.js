@@ -19,11 +19,11 @@ export const platformCatalog = {
     },
     {
       id: "it",
-      name: "Build ROI for IT",
+      name: "Build TCO for IT",
       summary:
-        "Use IT-focused calculators for capacity economics, operations efficiency, governance, and platform standardization.",
+        "Use IT-focused calculators for infrastructure cost, capacity strategy, operating-model tradeoffs, and support overhead.",
       audience:
-        "Best when the buyer conversation is about infrastructure, support effort, operating model, or governed compute delivery.",
+        "Best when the buyer conversation is about current-state cost, future-state cost, cloud versus on-prem economics, or IT support burden.",
     },
   ],
   recommendationOptions: {
@@ -484,53 +484,53 @@ export const platformCatalog = {
   itPath: {
     id: "it",
     name: "IT",
-    title: "Build ROI for IT",
+    title: "Build TCO for IT",
     summary:
-      "ROI paths for burst capacity economics, IT operations efficiency, and governed compute delivery.",
+      "TCO paths for infrastructure strategy, peak demand planning, and IT operating-model efficiency.",
     bestForConversations:
-      "Capacity overflow, support burden, governance consistency, and operating-model ROI for technical computing teams.",
+      "Move-to-cloud, stay on-prem, hybrid planning, peak demand economics, support burden, and operating-model cost visibility for technical computing teams.",
     typicalBuyer:
-      "HPC or infrastructure leaders, platform engineering, IT operations, and governance or architecture stakeholders.",
+      "Infrastructure leaders, platform engineering, IT operations, governance teams, and architecture stakeholders.",
     commonBottleneck:
-      "Peak demand, manual support effort, and fragmented compute processes are creating avoidable cost and delay.",
+      "Fixed capacity, idle utilization, support overhead, and fragmented compute processes are obscuring the real total cost of ownership.",
     useCases: [
-      useCase("burst-capacity-overflow", "it/burst-capacity-overflow", {
+      useCase("infrastructure-tco", "it/infrastructure-tco", {
         sellerGuidance: {
           bestFitWhen:
-            "The IT story is about peak workload demand, queue pressure, and the cost of adding fixed capacity that sits idle later.",
+            "The IT story is about comparing current on-prem or self-managed cost against a cloud or hybrid operating model.",
           askTheseFirst: [
-            "How often do peak demand windows overwhelm current infrastructure?",
-            "What work is delayed when capacity runs short?",
-            "How much fixed capacity is being considered just to cover those peaks?",
+            "What does the current environment cost annually across hardware, support, data center, and licenses?",
+            "How much of the workload is expected to move to cloud, stay on-prem, or land in a hybrid model?",
+            "Which fixed costs could become variable under the future operating model?",
           ],
           whatThisEstimates:
-            "The model estimates hours saved, queue-time reduction, overflow capacity value, and the economics of avoiding overbuilt infrastructure.",
+            "The model estimates annual current-state cost, annual future-state cost, annual cost difference, fixed cost avoided, and migration payback.",
         },
       }),
-      useCase("it-operations-efficiency", "it/it-operations-efficiency", {
+      useCase("peak-capacity-tco", "it/peak-capacity-tco", {
         sellerGuidance: {
           bestFitWhen:
-            "The customer spends too much technical time on provisioning, troubleshooting, and keeping environments moving for users.",
+            "The conversation is about handling peak demand without buying or refreshing enough infrastructure to cover the peak all year long.",
           askTheseFirst: [
-            "How many requests and support incidents hit the team in a normal month?",
-            "Where is the most manual effort today: provisioning, troubleshooting, or environment maintenance?",
-            "How long do users wait before they can actually start working?",
+            "What is the gap between average utilization and peak utilization today?",
+            "How much fixed capacity exists mainly to cover burst windows?",
+            "What is the cost of idle capacity outside those peak windows?",
           ],
           whatThisEstimates:
-            "The model estimates labor savings, faster request turnaround, and the value of freeing the IT team to support more work with less manual effort.",
+            "The model estimates idle capacity cost, elastic overflow cost, annual cost difference, and migration payback for a peak-capacity strategy.",
         },
       }),
-      useCase("governance-standardization", "it/governance-standardization", {
+      useCase("it-operations-tco", "it/it-operations-tco", {
         sellerGuidance: {
           bestFitWhen:
-            "The customer is trying to replace fragmented compute practices with a more governed and standardized operating model.",
+            "The customer wants visibility into the labor cost of provisioning, troubleshooting, governance, environment management, and support overhead.",
           askTheseFirst: [
-            "How many teams are still using inconsistent or unmanaged workflows?",
-            "How much time is spent on reporting, exception handling, or governance rework today?",
-            "What project or decision delays show up when governance is reactive instead of built in?",
+            "How many support and provisioning hours are spent each month today?",
+            "What governance, compliance, or troubleshooting effort is required to keep environments working?",
+            "What transition effort is needed to move to a better future-state operating model?",
           ],
           whatThisEstimates:
-            "The model estimates governance labor savings, reduced delay from fragmented workflows, and the value of standardizing how teams consume compute services.",
+            "The model estimates current-state operations cost, future-state operations cost, admin hours reduced, annual cost difference, and migration payback.",
         },
       }),
     ],

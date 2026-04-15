@@ -1,194 +1,105 @@
-import {
-  clampPercent,
-  createInteractiveCalculator,
-} from "../shared";
+import { clampPercent, createInteractiveCalculator } from "../shared";
 
-function calculateGovernanceStandardization(values) {
-  const reportingReduction = clampPercent(values.reportingReductionPct);
-  const incidentReduction = clampPercent(values.incidentReductionPct);
-  const delayReduction = clampPercent(values.delayReductionPct);
-  const duplicateSpendReduction = clampPercent(values.duplicateSpendReductionPct);
+function calculatePeakCapacityTco(values) {
+  const averageUtilization = clampPercent(values.averageUtilizationPct);
+  const peakUtilization = Math.max(clampPercent(values.peakUtilizationPct), 0.01);
+  const rightSizedBaselineCost =
+    values.annualPeakBuiltCapacityCost * Math.max(averageUtilization / peakUtilization, 0.1);
+  const currentBurstPremium =
+    values.burstWindowsPerYear * values.currentEmergencyBurstCostPerWindow;
+  const currentAnnualCost =
+    values.annualPeakBuiltCapacityCost +
+    currentBurstPremium +
+    values.currentSupportAdminCost;
 
-  const annualReportingHoursSaved =
-    values.manualGovernanceHoursPerMonth * 12 * reportingReduction;
-  const annualIncidentHoursSaved =
-    values.governanceIncidentsPerQuarter *
-    4 *
-    values.hoursPerGovernanceIncident *
-    incidentReduction;
-  const annualHoursSaved =
-    annualReportingHoursSaved + annualIncidentHoursSaved;
-  const cycleTimeReduction =
-    values.averageDelayPerGovernanceEvent * delayReduction;
-  const capacityUnlocked =
-    values.teamsUsingFragmentedWorkflows * delayReduction;
+  const futureElasticBurstCost =
+    values.burstWindowsPerYear * values.futureElasticBurstCostPerWindow;
+  const commitmentDiscount = clampPercent(values.commitmentDiscountPct);
+  const discountedHybridBaseline =
+    values.hybridBaselineCapacityCost * (1 - commitmentDiscount);
+  const futureAnnualCost =
+    discountedHybridBaseline +
+    futureElasticBurstCost +
+    values.futureSupportAdminCost +
+    values.futureGovernanceToolingCost;
 
-  const laborSavings = annualHoursSaved * values.governanceHourlyCost;
-  const delaySavings =
-    values.governanceIncidentsPerQuarter *
-    4 *
-    cycleTimeReduction *
-    values.valuePerDelayDay;
-  const duplicateSpendSavings =
-    values.annualDuplicateToolingSpend * duplicateSpendReduction;
-  const annualEconomicImpact =
-    laborSavings + delaySavings + duplicateSpendSavings;
-  const paybackPeriodMonths =
-    annualEconomicImpact > 0
-      ? (values.platformInvestment / annualEconomicImpact) * 12
-      : 0;
-  const roiPercent =
-    values.platformInvestment > 0
-      ? ((annualEconomicImpact - values.platformInvestment) /
-          values.platformInvestment) *
-        100
+  const annualCostDifference = currentAnnualCost - futureAnnualCost;
+  const fixedCostAvoided = values.annualPeakBuiltCapacityCost - discountedHybridBaseline;
+  const idleCapacityCostReduced = values.annualPeakBuiltCapacityCost - rightSizedBaselineCost;
+  const adminSupportHoursReduced =
+    (values.currentSupportHoursPerMonth - values.futureSupportHoursPerMonth) * 12;
+  const migrationPaybackMonths =
+    annualCostDifference > 0
+      ? (values.transitionCost / annualCostDifference) * 12
       : 0;
 
   return {
-    annualHoursSaved,
-    cycleTimeReduction,
-    capacityUnlocked,
-    capacityUnit: "teams standardized",
-    annualEconomicImpact,
-    paybackPeriodMonths,
-    roiPercent,
+    currentAnnualCost,
+    futureAnnualCost,
+    annualCostDifference,
+    fixedCostAvoided,
+    idleCapacityCostReduced,
+    adminSupportHoursReduced,
+    migrationPaybackMonths,
+    extraOutputs: [
+      { label: "Average utilization", value: `${Math.round(averageUtilization * 100)}%` },
+      { label: "Peak utilization", value: `${Math.round(peakUtilization * 100)}%` },
+      { label: "Elastic overflow cost", value: `$${Math.round(futureElasticBurstCost).toLocaleString()}` },
+    ],
   };
 }
 
-export const governanceStandardization = createInteractiveCalculator("it", {
-  id: "governance-standardization",
-  name: "Governance / Standardization ROI",
+export const peakCapacityTco = createInteractiveCalculator("it", {
+  id: "peak-capacity-tco",
+  valueModel: "tco",
+  name: "Peak Capacity TCO",
   teaser:
-    "Model ROI from replacing fragmented compute workflows with a governed operating model.",
+    "Model the cost of handling peak demand without buying infrastructure for the peak.",
   businessOutcome:
-    "Show how standardization can reduce manual governance effort, lower rework risk, and improve decision speed across teams.",
+    "Compare the current cost of building for the peak against a future-state model that uses a right-sized baseline plus elastic overflow.",
   sections: [
     {
       key: "currentState",
-      title: "Current-state inputs",
+      title: "Current-state cost inputs",
+      description: "Capture the annual cost of building and carrying enough capacity to cover peak demand.",
       fields: [
-        {
-          key: "teamsUsingFragmentedWorkflows",
-          label: "Teams using fragmented compute workflows",
-          defaultValue: 9,
-          min: 0,
-          step: 1,
-        },
-        {
-          key: "manualGovernanceHoursPerMonth",
-          label: "Manual governance and reporting hours per month",
-          defaultValue: 48,
-          min: 0,
-          step: 1,
-          suffix: "hours",
-        },
-        {
-          key: "governanceIncidentsPerQuarter",
-          label: "Governance or rework events per quarter",
-          defaultValue: 6,
-          min: 0,
-          step: 1,
-        },
-        {
-          key: "hoursPerGovernanceIncident",
-          label: "Hours per governance event",
-          defaultValue: 10,
-          min: 0,
-          step: 0.5,
-          suffix: "hours",
-        },
-        {
-          key: "averageDelayPerGovernanceEvent",
-          label: "Average delay per governance event",
-          defaultValue: 3.5,
-          min: 0,
-          step: 0.1,
-          suffix: "days",
-        },
+        { key: "annualPeakBuiltCapacityCost", label: "Annual fixed capacity cost built for peak demand", defaultValue: 780000, min: 0, step: 10000, prefix: "$" },
+        { key: "burstWindowsPerYear", label: "Peak demand windows per year", defaultValue: 12, min: 0, step: 1 },
+        { key: "currentEmergencyBurstCostPerWindow", label: "Current emergency overflow cost per peak window", defaultValue: 18000, min: 0, step: 500, prefix: "$" },
+        { key: "averageUtilizationPct", label: "Average utilization", defaultValue: 0.46, min: 0, max: 0.95, step: 0.01, kind: "percent" },
+        { key: "peakUtilizationPct", label: "Peak utilization", defaultValue: 0.92, min: 0.01, max: 0.99, step: 0.01, kind: "percent" },
       ],
     },
     {
-      key: "improvements",
-      title: "Improvement assumptions",
+      key: "futureState",
+      title: "Future-state cost inputs",
+      description: "Model a right-sized baseline plus elastic overflow for peak periods.",
       fields: [
-        {
-          key: "reportingReductionPct",
-          label: "Reporting effort reduction",
-          defaultValue: 0.5,
-          min: 0,
-          max: 0.95,
-          step: 0.01,
-          kind: "percent",
-        },
-        {
-          key: "incidentReductionPct",
-          label: "Governance event reduction",
-          defaultValue: 0.35,
-          min: 0,
-          max: 0.95,
-          step: 0.01,
-          kind: "percent",
-        },
-        {
-          key: "delayReductionPct",
-          label: "Delay reduction",
-          defaultValue: 0.45,
-          min: 0,
-          max: 0.95,
-          step: 0.01,
-          kind: "percent",
-        },
-        {
-          key: "duplicateSpendReductionPct",
-          label: "Duplicate tooling or process spend reduction",
-          defaultValue: 0.3,
-          min: 0,
-          max: 0.95,
-          step: 0.01,
-          kind: "percent",
-          advanced: true,
-        },
+        { key: "hybridBaselineCapacityCost", label: "Future baseline capacity cost", defaultValue: 420000, min: 0, step: 10000, prefix: "$" },
+        { key: "futureElasticBurstCostPerWindow", label: "Elastic burst cost per peak window", defaultValue: 14000, min: 0, step: 500, prefix: "$" },
+        { key: "commitmentDiscountPct", label: "Commitment discount assumption", defaultValue: 0.12, min: 0, max: 0.95, step: 0.01, kind: "percent" },
+        { key: "futureGovernanceToolingCost", label: "Future governance and utilization tooling cost", defaultValue: 65000, min: 0, step: 5000, prefix: "$" },
       ],
     },
     {
-      key: "financial",
-      title: "Financial assumptions",
+      key: "support",
+      title: "Support and admin inputs",
+      description: "Include support labor that changes between the current and future peak-capacity models.",
       fields: [
-        {
-          key: "governanceHourlyCost",
-          label: "Governance or platform team hourly cost",
-          defaultValue: 145,
-          min: 0,
-          step: 5,
-          prefix: "$",
-        },
-        {
-          key: "valuePerDelayDay",
-          label: "Business value per day of avoided delay",
-          defaultValue: 950,
-          min: 0,
-          step: 25,
-          prefix: "$",
-        },
-        {
-          key: "annualDuplicateToolingSpend",
-          label: "Annual duplicate tooling or process spend",
-          defaultValue: 160000,
-          min: 0,
-          step: 5000,
-          prefix: "$",
-          advanced: true,
-        },
-        {
-          key: "platformInvestment",
-          label: "Annual platform investment",
-          defaultValue: 140000,
-          min: 0,
-          step: 1000,
-          prefix: "$",
-        },
+        { key: "currentSupportAdminCost", label: "Current annual support and admin cost", defaultValue: 160000, min: 0, step: 5000, prefix: "$" },
+        { key: "futureSupportAdminCost", label: "Future annual support and admin cost", defaultValue: 115000, min: 0, step: 5000, prefix: "$" },
+        { key: "currentSupportHoursPerMonth", label: "Current support hours per month", defaultValue: 110, min: 0, step: 1, suffix: "hours" },
+        { key: "futureSupportHoursPerMonth", label: "Future support hours per month", defaultValue: 72, min: 0, step: 1, suffix: "hours" },
+      ],
+    },
+    {
+      key: "transition",
+      title: "Transition cost inputs",
+      description: "Include one-time costs required to adopt the future peak-capacity strategy.",
+      fields: [
+        { key: "transitionCost", label: "Migration and cutover cost", defaultValue: 180000, min: 0, step: 5000, prefix: "$" },
       ],
     },
   ],
-  calculate: calculateGovernanceStandardization,
+  calculate: calculatePeakCapacityTco,
 });

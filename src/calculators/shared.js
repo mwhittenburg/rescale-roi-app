@@ -319,6 +319,13 @@ export function normalizeCalculatorResults(results) {
     annualEconomicImpact: results.annualEconomicImpact ?? 0,
     paybackPeriodMonths: results.paybackPeriodMonths ?? 0,
     roiPercent: results.roiPercent ?? 0,
+    currentAnnualCost: results.currentAnnualCost ?? 0,
+    futureAnnualCost: results.futureAnnualCost ?? 0,
+    annualCostDifference: results.annualCostDifference ?? 0,
+    fixedCostAvoided: results.fixedCostAvoided ?? 0,
+    idleCapacityCostReduced: results.idleCapacityCostReduced ?? 0,
+    adminSupportHoursReduced: results.adminSupportHoursReduced ?? 0,
+    migrationPaybackMonths: results.migrationPaybackMonths ?? 0,
     extraOutputs: results.extraOutputs ?? [],
     ...results,
   };
@@ -330,6 +337,7 @@ export function createInteractiveCalculator(industryId, config) {
   return {
     industryId,
     calculatorType: "interactive",
+    valueModel: "roi",
     advancedSectionLabel: "Advanced inputs",
     ...config,
     sections,

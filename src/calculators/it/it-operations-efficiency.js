@@ -1,201 +1,119 @@
-import {
-  clampPercent,
-  createInteractiveCalculator,
-  safeDivide,
-} from "../shared";
+import { clampPercent, createInteractiveCalculator } from "../shared";
 
-function calculateItOperationsEfficiency(values) {
+function calculateItOperationsTco(values) {
   const provisioningReduction = clampPercent(values.provisioningReductionPct);
   const incidentReduction = clampPercent(values.incidentReductionPct);
-  const supportReduction = clampPercent(values.supportReductionPct);
-  const turnaroundReduction = clampPercent(values.turnaroundReductionPct);
+  const governanceReduction = clampPercent(values.governanceReductionPct);
 
-  const annualProvisioningHoursSaved =
+  const currentAdminSupportHours =
     values.provisioningRequestsPerMonth *
-    12 *
-    values.manualHoursPerProvisioningRequest *
-    provisioningReduction;
-  const annualIncidentHoursSaved =
+      values.manualHoursPerProvisioningRequest *
+      12 +
+    values.supportIncidentsPerMonth * values.hoursPerSupportIncident * 12 +
+    values.governanceHoursPerMonth * 12 +
+    values.environmentMaintenanceHoursPerMonth * 12;
+
+  const futureAdminSupportHours =
+    values.provisioningRequestsPerMonth *
+      values.manualHoursPerProvisioningRequest *
+      12 *
+      (1 - provisioningReduction) +
     values.supportIncidentsPerMonth *
-    12 *
-    values.hoursPerSupportIncident *
-    incidentReduction;
-  const annualMaintenanceHoursSaved =
-    values.environmentSupportHoursPerMonth * 12 * supportReduction;
-  const annualHoursSaved =
-    annualProvisioningHoursSaved +
-    annualIncidentHoursSaved +
-    annualMaintenanceHoursSaved;
-  const cycleTimeReduction =
-    values.requestTurnaroundTime * turnaroundReduction;
-  const capacityUnlocked = safeDivide(
-    annualHoursSaved,
-    values.manualHoursPerProvisioningRequest || 1,
-  );
+      values.hoursPerSupportIncident *
+      12 *
+      (1 - incidentReduction) +
+    values.governanceHoursPerMonth * 12 * (1 - governanceReduction) +
+    values.futureEnvironmentMaintenanceHoursPerMonth * 12;
 
-  const laborSavings = annualHoursSaved * values.itHourlyCost;
-  const delaySavings =
-    values.provisioningRequestsPerMonth *
-    12 *
-    cycleTimeReduction *
-    values.valuePerTurnaroundDay;
-  const annualEconomicImpact = laborSavings + delaySavings;
-  const paybackPeriodMonths =
-    annualEconomicImpact > 0
-      ? (values.platformInvestment / annualEconomicImpact) * 12
-      : 0;
-  const roiPercent =
-    values.platformInvestment > 0
-      ? ((annualEconomicImpact - values.platformInvestment) /
-          values.platformInvestment) *
-        100
+  const currentAdminSupportCost =
+    currentAdminSupportHours * values.itHourlyCost +
+    values.currentToolingCost +
+    values.currentSecurityComplianceCost;
+  const futureAdminSupportCost =
+    futureAdminSupportHours * values.itHourlyCost +
+    values.futureToolingCost +
+    values.futureSecurityComplianceCost;
+
+  const currentAnnualCost = currentAdminSupportCost;
+  const futureAnnualCost = futureAdminSupportCost;
+  const annualCostDifference = currentAnnualCost - futureAnnualCost;
+  const fixedCostAvoided = values.currentToolingCost - values.futureToolingCost;
+  const idleCapacityCostReduced = 0;
+  const adminSupportHoursReduced = currentAdminSupportHours - futureAdminSupportHours;
+  const migrationPaybackMonths =
+    annualCostDifference > 0
+      ? (values.transitionTrainingCost / annualCostDifference) * 12
       : 0;
 
   return {
-    annualHoursSaved,
-    cycleTimeReduction,
-    capacityUnlocked,
-    capacityUnit: "requests per year",
-    annualEconomicImpact,
-    paybackPeriodMonths,
-    roiPercent,
+    currentAnnualCost,
+    futureAnnualCost,
+    annualCostDifference,
+    fixedCostAvoided,
+    idleCapacityCostReduced,
+    adminSupportHoursReduced,
+    migrationPaybackMonths,
+    extraOutputs: [
+      { label: "Current admin hours", value: `${Math.round(currentAdminSupportHours).toLocaleString()} hours` },
+      { label: "Future admin hours", value: `${Math.round(futureAdminSupportHours).toLocaleString()} hours` },
+      { label: "Annual support cost", value: `$${Math.round(futureAdminSupportCost).toLocaleString()}` },
+    ],
   };
 }
 
-export const itOperationsEfficiency = createInteractiveCalculator("it", {
-  id: "it-operations-efficiency",
-  name: "IT Operations Efficiency ROI",
+export const itOperationsTco = createInteractiveCalculator("it", {
+  id: "it-operations-tco",
+  valueModel: "tco",
+  name: "IT Operations TCO",
   teaser:
-    "Model ROI from reducing manual provisioning, troubleshooting, and environment support effort.",
+    "Model the cost of manual provisioning, environment management, troubleshooting, governance, and support overhead.",
   businessOutcome:
-    "Show how streamlining support and provisioning can free technical teams to support more demand with less manual effort.",
+    "Compare current-state operations cost against a future-state operating model with lower support and admin burden.",
   sections: [
     {
       key: "currentState",
-      title: "Current-state inputs",
+      title: "Current-state cost inputs",
+      description: "Capture the monthly operations workload and direct cost of supporting the current environment.",
       fields: [
-        {
-          key: "provisioningRequestsPerMonth",
-          label: "Provisioning requests per month",
-          defaultValue: 42,
-          min: 0,
-          step: 1,
-        },
-        {
-          key: "manualHoursPerProvisioningRequest",
-          label: "Manual hours per provisioning request",
-          defaultValue: 2.8,
-          min: 0,
-          step: 0.1,
-          suffix: "hours",
-        },
-        {
-          key: "supportIncidentsPerMonth",
-          label: "Support incidents per month",
-          defaultValue: 18,
-          min: 0,
-          step: 1,
-        },
-        {
-          key: "hoursPerSupportIncident",
-          label: "Hours per support incident",
-          defaultValue: 3.2,
-          min: 0,
-          step: 0.1,
-          suffix: "hours",
-        },
-        {
-          key: "environmentSupportHoursPerMonth",
-          label: "Environment support hours per month",
-          defaultValue: 65,
-          min: 0,
-          step: 1,
-          suffix: "hours",
-        },
-        {
-          key: "requestTurnaroundTime",
-          label: "Average turnaround time for a request",
-          defaultValue: 2.4,
-          min: 0,
-          step: 0.1,
-          suffix: "days",
-        },
+        { key: "provisioningRequestsPerMonth", label: "Provisioning requests per month", defaultValue: 48, min: 0, step: 1 },
+        { key: "manualHoursPerProvisioningRequest", label: "Manual hours per provisioning request", defaultValue: 2.6, min: 0, step: 0.1, suffix: "hours" },
+        { key: "supportIncidentsPerMonth", label: "Support incidents per month", defaultValue: 22, min: 0, step: 1 },
+        { key: "hoursPerSupportIncident", label: "Hours per support incident", defaultValue: 3.4, min: 0, step: 0.1, suffix: "hours" },
+        { key: "governanceHoursPerMonth", label: "Governance and reporting hours per month", defaultValue: 54, min: 0, step: 1, suffix: "hours" },
+        { key: "environmentMaintenanceHoursPerMonth", label: "Environment maintenance hours per month", defaultValue: 78, min: 0, step: 1, suffix: "hours" },
       ],
     },
     {
-      key: "improvements",
-      title: "Improvement assumptions",
+      key: "futureState",
+      title: "Future-state cost inputs",
+      description: "Model how the support burden changes under the future operating model.",
       fields: [
-        {
-          key: "provisioningReductionPct",
-          label: "Provisioning effort reduction",
-          defaultValue: 0.45,
-          min: 0,
-          max: 0.95,
-          step: 0.01,
-          kind: "percent",
-        },
-        {
-          key: "incidentReductionPct",
-          label: "Incident effort reduction",
-          defaultValue: 0.3,
-          min: 0,
-          max: 0.95,
-          step: 0.01,
-          kind: "percent",
-        },
-        {
-          key: "supportReductionPct",
-          label: "Environment support reduction",
-          defaultValue: 0.25,
-          min: 0,
-          max: 0.95,
-          step: 0.01,
-          kind: "percent",
-        },
-        {
-          key: "turnaroundReductionPct",
-          label: "Request turnaround reduction",
-          defaultValue: 0.4,
-          min: 0,
-          max: 0.95,
-          step: 0.01,
-          kind: "percent",
-          advanced: true,
-        },
+        { key: "provisioningReductionPct", label: "Provisioning effort reduction", defaultValue: 0.42, min: 0, max: 0.95, step: 0.01, kind: "percent" },
+        { key: "incidentReductionPct", label: "Troubleshooting effort reduction", defaultValue: 0.28, min: 0, max: 0.95, step: 0.01, kind: "percent" },
+        { key: "governanceReductionPct", label: "Governance and reporting effort reduction", defaultValue: 0.36, min: 0, max: 0.95, step: 0.01, kind: "percent" },
+        { key: "futureEnvironmentMaintenanceHoursPerMonth", label: "Future environment maintenance hours per month", defaultValue: 42, min: 0, step: 1, suffix: "hours" },
       ],
     },
     {
-      key: "financial",
-      title: "Financial assumptions",
+      key: "support",
+      title: "Support and tooling cost inputs",
+      description: "Include direct labor and tooling costs for the current and future models.",
       fields: [
-        {
-          key: "itHourlyCost",
-          label: "IT operations hourly cost",
-          defaultValue: 130,
-          min: 0,
-          step: 5,
-          prefix: "$",
-        },
-        {
-          key: "valuePerTurnaroundDay",
-          label: "Business value per day of faster turnaround",
-          defaultValue: 600,
-          min: 0,
-          step: 25,
-          prefix: "$",
-          advanced: true,
-        },
-        {
-          key: "platformInvestment",
-          label: "Annual platform investment",
-          defaultValue: 120000,
-          min: 0,
-          step: 1000,
-          prefix: "$",
-        },
+        { key: "itHourlyCost", label: "IT operations hourly cost", defaultValue: 132, min: 0, step: 5, prefix: "$" },
+        { key: "currentToolingCost", label: "Current annual tooling and platform support cost", defaultValue: 210000, min: 0, step: 5000, prefix: "$" },
+        { key: "futureToolingCost", label: "Future annual tooling and platform support cost", defaultValue: 165000, min: 0, step: 5000, prefix: "$" },
+        { key: "currentSecurityComplianceCost", label: "Current annual security and compliance tooling cost", defaultValue: 95000, min: 0, step: 5000, prefix: "$" },
+        { key: "futureSecurityComplianceCost", label: "Future annual security and compliance tooling cost", defaultValue: 82000, min: 0, step: 5000, prefix: "$" },
+      ],
+    },
+    {
+      key: "transition",
+      title: "Transition cost inputs",
+      description: "Model one-time training, migration, or operating-model transition cost.",
+      fields: [
+        { key: "transitionTrainingCost", label: "Migration and operating-model transition cost", defaultValue: 140000, min: 0, step: 5000, prefix: "$" },
       ],
     },
   ],
-  calculate: calculateItOperationsEfficiency,
+  calculate: calculateItOperationsTco,
 });

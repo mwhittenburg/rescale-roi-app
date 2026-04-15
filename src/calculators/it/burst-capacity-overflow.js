@@ -1,179 +1,121 @@
-import {
-  clampPercent,
-  createInteractiveCalculator,
-  safeDivide,
-} from "../shared";
+import { clampPercent, createInteractiveCalculator } from "../shared";
 
-function calculateBurstCapacityOverflow(values) {
-  const delayReduction = clampPercent(values.delayReductionPct);
-  const laborReduction = clampPercent(values.manualSupportReductionPct);
-  const fixedCapacityAvoidance = clampPercent(values.fixedCapacityAvoidancePct);
+function calculateInfrastructureTco(values) {
+  const annualizedHardwareRefresh =
+    values.hardwareRefreshCost / Math.max(values.depreciationYears, 1);
+  const currentInfrastructureBase =
+    annualizedHardwareRefresh +
+    values.maintenanceSupportContracts +
+    values.dataCenterColoCost +
+    values.storageBackupCost +
+    values.networkEgressCost +
+    values.licensingCost +
+    values.securityComplianceCost;
+  const currentAdminSupportCost =
+    values.adminSupportHoursPerMonth * 12 * values.adminHourlyCost;
+  const currentAnnualCost = currentInfrastructureBase + currentAdminSupportCost;
 
-  const annualPeakWindows = values.peakWindowsPerYear;
-  const annualOverflowJobs = annualPeakWindows * values.jobsImpactedPerPeakWindow;
-  const cycleTimeReduction = values.averageDelayPerJob * delayReduction;
-  const annualHoursSaved =
-    annualPeakWindows *
-    values.hoursAffectedPerPeakWindow *
-    laborReduction;
-  const capacityUnlocked = annualOverflowJobs * delayReduction;
+  const cloudCommitmentDiscount = clampPercent(values.cloudCommitmentDiscountPct);
+  const onPremShare = clampPercent(values.workloadShareStayingOnPremPct);
+  const currentFixedInfraRetained = currentInfrastructureBase * onPremShare;
+  const discountedCloudCost =
+    values.cloudInfrastructureCost * 12 * (1 - cloudCommitmentDiscount);
+  const futureAdminSupportCost =
+    values.futureAdminSupportHoursPerMonth * 12 * values.adminHourlyCost;
+  const futureAnnualCost =
+    currentFixedInfraRetained +
+    discountedCloudCost +
+    values.futureLicensingCost +
+    values.futureSecurityComplianceCost +
+    values.futureStorageDrCost +
+    futureAdminSupportCost;
 
-  const laborSavings = annualHoursSaved * values.technicalHourlyCost;
-  const delaySavings =
-    annualOverflowJobs * cycleTimeReduction * values.valuePerDelayDay;
-  const annualOverflowSpend =
-    annualPeakWindows * values.overflowComputeSpendPerPeakWindow;
-  const avoidedFixedCapacity =
-    values.annualFixedCapacityCost * fixedCapacityAvoidance;
-  const annualEconomicImpact =
-    laborSavings + delaySavings + avoidedFixedCapacity - annualOverflowSpend;
-  const paybackPeriodMonths =
-    annualEconomicImpact > 0
-      ? (values.platformInvestment / annualEconomicImpact) * 12
-      : 0;
-  const roiPercent =
-    values.platformInvestment > 0
-      ? ((annualEconomicImpact - values.platformInvestment) /
-          values.platformInvestment) *
-        100
+  const annualCostDifference = currentAnnualCost - futureAnnualCost;
+  const fixedCostAvoided = currentInfrastructureBase - currentFixedInfraRetained;
+  const idleCapacityCostReduced =
+    currentInfrastructureBase * clampPercent(values.idleCapacityReductionPct);
+  const adminSupportHoursReduced =
+    (values.adminSupportHoursPerMonth - values.futureAdminSupportHoursPerMonth) * 12;
+  const migrationPaybackMonths =
+    annualCostDifference > 0
+      ? ((values.migrationCutoverCost + values.parallelRunCost) /
+          annualCostDifference) *
+        12
       : 0;
 
   return {
-    annualHoursSaved,
-    cycleTimeReduction,
-    capacityUnlocked,
-    capacityUnit: "overflow jobs per year",
-    annualEconomicImpact,
-    paybackPeriodMonths,
-    roiPercent,
+    currentAnnualCost,
+    futureAnnualCost,
+    annualCostDifference,
+    fixedCostAvoided,
+    idleCapacityCostReduced,
+    adminSupportHoursReduced,
+    migrationPaybackMonths,
+    extraOutputs: [
+      { label: "Cloud annual cost", value: `$${Math.round(discountedCloudCost).toLocaleString()}` },
+      { label: "On-prem retained", value: `$${Math.round(currentFixedInfraRetained).toLocaleString()}` },
+      { label: "Admin hours reduced", value: `${Math.round(adminSupportHoursReduced).toLocaleString()} hours` },
+    ],
   };
 }
 
-export const burstCapacityOverflow = createInteractiveCalculator("it", {
-  id: "burst-capacity-overflow",
-  name: "Burst Capacity / Overflow ROI",
+export const infrastructureTco = createInteractiveCalculator("it", {
+  id: "infrastructure-tco",
+  valueModel: "tco",
+  name: "Infrastructure TCO",
   teaser:
-    "Model ROI from handling peak workload demand without overbuilding fixed infrastructure.",
+    "Compare the total cost of fixed on-prem infrastructure against a more elastic cloud or hybrid operating model.",
   businessOutcome:
-    "Show how elastic overflow capacity can reduce queue delay and avoid the cost of capacity that sits idle outside peak periods.",
+    "Compare current-state total cost against future-state cloud or hybrid total cost, including migration and support burden.",
   sections: [
     {
       key: "currentState",
-      title: "Current-state inputs",
+      title: "Current-state cost inputs",
+      description: "Start with the annual costs the IT team carries today.",
       fields: [
-        {
-          key: "peakWindowsPerYear",
-          label: "Peak demand windows per year",
-          defaultValue: 10,
-          min: 0,
-          step: 1,
-        },
-        {
-          key: "jobsImpactedPerPeakWindow",
-          label: "Jobs impacted per peak window",
-          defaultValue: 140,
-          min: 0,
-          step: 1,
-        },
-        {
-          key: "averageDelayPerJob",
-          label: "Average delay per job",
-          defaultValue: 1.8,
-          min: 0,
-          step: 0.1,
-          suffix: "days",
-        },
-        {
-          key: "hoursAffectedPerPeakWindow",
-          label: "Technical team hours affected per peak window",
-          defaultValue: 70,
-          min: 0,
-          step: 1,
-          suffix: "hours",
-        },
-        {
-          key: "overflowComputeSpendPerPeakWindow",
-          label: "Overflow compute spend per peak window",
-          defaultValue: 18000,
-          min: 0,
-          step: 500,
-          prefix: "$",
-        },
+        { key: "hardwareRefreshCost", label: "Hardware refresh cost", defaultValue: 1200000, min: 0, step: 10000, prefix: "$" },
+        { key: "depreciationYears", label: "Depreciation window", defaultValue: 4, min: 1, step: 1, suffix: "years" },
+        { key: "maintenanceSupportContracts", label: "Maintenance and support contracts", defaultValue: 180000, min: 0, step: 5000, prefix: "$" },
+        { key: "dataCenterColoCost", label: "Data center or colo cost", defaultValue: 220000, min: 0, step: 5000, prefix: "$" },
+        { key: "storageBackupCost", label: "Storage, backup, and disaster recovery cost", defaultValue: 160000, min: 0, step: 5000, prefix: "$" },
+        { key: "networkEgressCost", label: "Network and egress cost", defaultValue: 70000, min: 0, step: 5000, prefix: "$" },
       ],
     },
     {
-      key: "improvements",
-      title: "Improvement assumptions",
+      key: "futureState",
+      title: "Future-state cost inputs",
+      description: "Model the annual cost of the proposed cloud or hybrid operating model.",
       fields: [
-        {
-          key: "delayReductionPct",
-          label: "Delay reduction",
-          defaultValue: 0.65,
-          min: 0,
-          max: 0.95,
-          step: 0.01,
-          kind: "percent",
-        },
-        {
-          key: "manualSupportReductionPct",
-          label: "Manual support time reduction",
-          defaultValue: 0.25,
-          min: 0,
-          max: 0.95,
-          step: 0.01,
-          kind: "percent",
-        },
-        {
-          key: "fixedCapacityAvoidancePct",
-          label: "Fixed capacity cost avoided",
-          defaultValue: 0.45,
-          min: 0,
-          max: 0.95,
-          step: 0.01,
-          kind: "percent",
-          advanced: true,
-        },
+        { key: "cloudInfrastructureCost", label: "Cloud infrastructure cost per month", defaultValue: 95000, min: 0, step: 1000, prefix: "$" },
+        { key: "cloudCommitmentDiscountPct", label: "Commitment discount assumption", defaultValue: 0.18, min: 0, max: 0.95, step: 0.01, kind: "percent" },
+        { key: "workloadShareStayingOnPremPct", label: "Share of workloads staying on-prem or in hybrid", defaultValue: 0.35, min: 0, max: 0.95, step: 0.01, kind: "percent" },
+        { key: "futureLicensingCost", label: "Future-state licensing cost", defaultValue: 210000, min: 0, step: 5000, prefix: "$" },
+        { key: "futureSecurityComplianceCost", label: "Future-state security and compliance tooling cost", defaultValue: 90000, min: 0, step: 5000, prefix: "$" },
+        { key: "futureStorageDrCost", label: "Future-state storage and DR cost", defaultValue: 130000, min: 0, step: 5000, prefix: "$" },
       ],
     },
     {
-      key: "financial",
-      title: "Financial assumptions",
+      key: "support",
+      title: "Support and utilization assumptions",
+      description: "Include labor and capacity assumptions that affect the TCO story.",
       fields: [
-        {
-          key: "technicalHourlyCost",
-          label: "Technical team hourly cost",
-          defaultValue: 140,
-          min: 0,
-          step: 5,
-          prefix: "$",
-        },
-        {
-          key: "valuePerDelayDay",
-          label: "Business value per delay day avoided",
-          defaultValue: 850,
-          min: 0,
-          step: 25,
-          prefix: "$",
-        },
-        {
-          key: "annualFixedCapacityCost",
-          label: "Annual fixed capacity cost that could be avoided",
-          defaultValue: 240000,
-          min: 0,
-          step: 5000,
-          prefix: "$",
-          advanced: true,
-        },
-        {
-          key: "platformInvestment",
-          label: "Annual platform investment",
-          defaultValue: 150000,
-          min: 0,
-          step: 1000,
-          prefix: "$",
-        },
+        { key: "adminSupportHoursPerMonth", label: "Current admin and support hours per month", defaultValue: 280, min: 0, step: 5, suffix: "hours" },
+        { key: "futureAdminSupportHoursPerMonth", label: "Future admin and support hours per month", defaultValue: 180, min: 0, step: 5, suffix: "hours" },
+        { key: "adminHourlyCost", label: "Admin and support hourly cost", defaultValue: 125, min: 0, step: 5, prefix: "$" },
+        { key: "idleCapacityReductionPct", label: "Idle capacity cost reduced", defaultValue: 0.28, min: 0, max: 0.95, step: 0.01, kind: "percent", advanced: true },
+        { key: "licensingCost", label: "Current licensing cost", defaultValue: 240000, min: 0, step: 5000, prefix: "$" },
+        { key: "securityComplianceCost", label: "Current security and compliance tooling cost", defaultValue: 85000, min: 0, step: 5000, prefix: "$" },
+      ],
+    },
+    {
+      key: "transition",
+      title: "Transition or migration cost inputs",
+      description: "Model one-time costs needed to move from the current model to the future model.",
+      fields: [
+        { key: "migrationCutoverCost", label: "Migration and cutover cost", defaultValue: 320000, min: 0, step: 10000, prefix: "$" },
+        { key: "parallelRunCost", label: "Parallel run or dual-operation cost", defaultValue: 90000, min: 0, step: 5000, prefix: "$", advanced: true },
       ],
     },
   ],
-  calculate: calculateBurstCapacityOverflow,
+  calculate: calculateInfrastructureTco,
 });

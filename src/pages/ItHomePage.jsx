@@ -6,24 +6,24 @@ export function ItHomePage({ itPath, onNavigate }) {
   return (
     <>
       <PageHeader
-        eyebrow="Build ROI For IT"
-        title="Choose the IT ROI story that fits the conversation."
+        eyebrow="Build TCO For IT"
+        title="Choose the IT TCO model that fits the conversation."
         description={itPath.summary}
         breadcrumbs={[
           { label: "Home", path: buildHomePath() },
-          { label: "Build ROI for IT" },
+          { label: "Build TCO for IT" },
         ]}
         onNavigate={onNavigate}
       />
 
       <section className="panel intro-panel">
         <div>
-          <p className="section-kicker">IT Use Case Library</p>
-          <h2>Choose the calculator that best matches the infrastructure, operations, or governance conversation.</h2>
+          <p className="section-kicker">IT TCO Calculator Library</p>
+          <h2>Choose the calculator that best matches the infrastructure or operating-model conversation.</h2>
         </div>
         <p className="panel-copy">
-          Every calculator opens with sample inputs and a live ROI summary, so you
-          can move directly into the IT buyer story without going through the
+          Every calculator opens with sample inputs and a live TCO summary, so
+          you can move directly into the IT buyer story without going through the
           industry workflow path first.
         </p>
       </section>

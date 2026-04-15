@@ -14,10 +14,10 @@ export function HomePage({ onNavigate }) {
           <p className="section-kicker">ROI Calculator Platform</p>
           <h1>Choose the buyer path that fits the conversation.</h1>
           <p className="hero-text">
-            Start with the ROI story you need to build. Line of Business opens the
-            existing industry and workflow calculators. IT opens a parallel path
-            focused on infrastructure, operations, governance, and capacity
-            economics.
+            Start with the economic story you need to build. Line of Business
+            opens the existing industry and workflow ROI calculators. IT opens a
+            parallel TCO path focused on infrastructure, operations, governance,
+            and capacity economics.
           </p>
         </div>
       </section>
