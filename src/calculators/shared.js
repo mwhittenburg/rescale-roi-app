@@ -444,6 +444,31 @@ function inferConfidenceTag(sectionKey, field) {
   return "estimated";
 }
 
+function normalizeConfidenceTag(confidenceTag) {
+  if (typeof confidenceTag === "string") {
+    return {
+      key: confidenceTag,
+      label: STANDARD_CONFIDENCE_TAGS[confidenceTag] ?? confidenceTag,
+    };
+  }
+
+  if (confidenceTag && typeof confidenceTag === "object") {
+    return {
+      key: confidenceTag.key ?? "estimated",
+      label:
+        confidenceTag.label ??
+        STANDARD_CONFIDENCE_TAGS[confidenceTag.key] ??
+        confidenceTag.key ??
+        "Estimated",
+    };
+  }
+
+  return {
+    key: "estimated",
+    label: STANDARD_CONFIDENCE_TAGS.estimated,
+  };
+}
+
 function inferHelperText(sectionKey, field) {
   if (field.helperText) {
     return field.helperText;
@@ -513,17 +538,14 @@ function inferFieldHelp(field) {
 }
 
 function normalizeField(sectionKey, field) {
-  const confidenceKey = inferConfidenceTag(sectionKey, field);
+  const confidenceTag = normalizeConfidenceTag(inferConfidenceTag(sectionKey, field));
 
   return {
     ...field,
     defaultValue: resolveDefaultValue(field),
     helperText: inferHelperText(sectionKey, field),
     helpTooltip: inferFieldHelp(field),
-    confidenceTag: {
-      key: confidenceKey,
-      label: STANDARD_CONFIDENCE_TAGS[confidenceKey] ?? confidenceKey,
-    },
+    confidenceTag,
   };
 }
 

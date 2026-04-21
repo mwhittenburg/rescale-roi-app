@@ -511,6 +511,27 @@ function buildRoiValueCategories(calculator, values, results) {
     });
   }
 
+  const scientistTouchFactorField = fieldMap.scientistTouchFactor;
+  const laborRecoveryFactorField = fieldMap.laborRecoveryFactor;
+  if (
+    results.recoveredLaborValue > 0 &&
+    engineerRateField &&
+    scientistTouchFactorField &&
+    laborRecoveryFactorField
+  ) {
+    const inputs = [engineerRateField, scientistTouchFactorField, laborRecoveryFactorField];
+    categories.push({
+      id: "queue-friction",
+      title: "Recovered scientist time",
+      shortLabel: "Recovered scientist time",
+      value: results.recoveredLaborValue,
+      formula:
+        "Queue days reduced × 8 hours × scientist touch factor × labor recovery factor × burdened labor rate",
+      sourceFields: inputs,
+      confidenceScore: averageConfidenceScore(inputs),
+    });
+  }
+
   const computeCostField = findFirstField(allFields, /compute cost/);
   const computeReductionField = findFirstField(allFields, /compute.*reduction|compute efficiency/);
   if (computeCostField && computeReductionField && baseVolumeField) {
@@ -694,6 +715,12 @@ function applyRoiScenario(results, multiplier, realizationFactor) {
   const annualHoursSaved = (results.annualHoursSaved ?? 0) * valueMultiplier;
   const cycleTimeReduction = (results.cycleTimeReduction ?? 0) * multiplier;
   const capacityUnlocked = (results.capacityUnlocked ?? 0) * multiplier;
+  const queueDaysReduced = (results.queueDaysReduced ?? 0) * multiplier;
+  const recoveredScientistHours =
+    (results.recoveredScientistHours ?? 0) * valueMultiplier;
+  const recoveredLaborValue = (results.recoveredLaborValue ?? 0) * valueMultiplier;
+  const throughputPotentialCampaigns =
+    (results.throughputPotentialCampaigns ?? 0) * multiplier;
   const annualInvestment = results.annualInvestment ?? 0;
   const paybackPeriodMonths =
     annualEconomicImpact > 0 && annualInvestment > 0
@@ -709,6 +736,10 @@ function applyRoiScenario(results, multiplier, realizationFactor) {
     annualEconomicImpact,
     annualHoursSaved,
     cycleTimeReduction,
+    queueDaysReduced,
+    recoveredScientistHours,
+    recoveredLaborValue,
+    throughputPotentialCampaigns,
     capacityUnlocked,
     paybackPeriodMonths,
     roiPercent,
@@ -1120,6 +1151,36 @@ function InteractiveCalculatorPage({
           value: formatMonths(results.migrationPaybackMonths),
         },
       ]
+    : calculator.id === "virtual-screening-docking"
+      ? [
+          {
+            label: "Cycle-time improvement (primary)",
+            value: formatDays(adjustedResults.cycleTimeReduction),
+          },
+          {
+            label: "Queue-related days reduced per year",
+            value: formatDays(adjustedResults.queueDaysReduced),
+          },
+          {
+            label: "Recovered scientist time (modeled, partial)",
+            value: formatHours(adjustedResults.recoveredScientistHours),
+          },
+          {
+            label: "Iteration / throughput capacity (directional)",
+            value: formatCapacity(
+              adjustedResults.throughputPotentialCampaigns,
+              "campaigns per year",
+            ),
+          },
+          {
+            label: "Annual economic impact",
+            value: formatCompactCurrency(adjustedResults.annualEconomicImpact),
+          },
+          {
+            label: "Payback period",
+            value: formatMonths(adjustedResults.paybackPeriodMonths),
+          },
+        ]
     : [
         {
           label: "Annual hours saved",

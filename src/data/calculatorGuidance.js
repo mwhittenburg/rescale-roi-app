@@ -4,17 +4,17 @@ export const calculatorGuidanceById = {
     askTheseFirst: [
       "How many screening campaigns run in a typical year?",
       "How long does one campaign take from setup to hit review today?",
-      "Where does delay show up most: queue time, scientist review, or both?",
+      "How much of that cycle time is queue-related delay versus active review and interpretation?",
       "How many scientist hours go into setup and review for each campaign?",
       "What happens when a promising campaign waits too long for a decision?",
     ],
     howToRead: {
       topDrivers:
-        "Campaign volume, scenarios per campaign, and scientist review effort usually drive the result most.",
+        "Campaign volume, queue-related cycle delay, and scientist review effort usually drive the result most.",
       biggestAssumptions:
-        "The output is sensitive to the assumed queue reduction and the value of moving hit review earlier.",
+        "The output is sensitive to the queue-delay reduction assumption, and recovered scientist time is intentionally modeled as only a partial effect rather than 1:1 idle time.",
       validateNext:
-        "Confirm annual campaign count, current turnaround, and where scientist time is really being spent.",
+        "Confirm annual campaign count, current end-to-end turnaround, and how much delay is really caused by backlog or resource contention.",
     },
   },
   "molecular-dynamics": {
