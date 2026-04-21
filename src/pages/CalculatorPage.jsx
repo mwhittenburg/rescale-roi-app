@@ -1501,9 +1501,9 @@ function InteractiveCalculatorPage({
               <div className="selector-header">
                 <div className="choice-copy">
                   <p className="section-kicker">Start Here</p>
-                  <h2>Choose the primary value case you want to estimate first.</h2>
+                  <h2>Pick the value story, then work through the estimate in the order below.</h2>
                   <p className="panel-copy">
-                    Start with the narrowest value story that fits the conversation. You can pressure-test the math later in Finance Review.
+                    Start with the narrowest value case that fits the conversation. Guided Estimate gets you to a first answer fast, then Finance Review and Executive Output help you pressure-test and package it.
                   </p>
                 </div>
               </div>
@@ -1520,31 +1520,171 @@ function InteractiveCalculatorPage({
                   </button>
                 ))}
               </div>
+              <div className="mode-switch-inline">
+                <div className="mode-switch-header">
+                  <div>
+                    <p className="section-kicker">Workflow</p>
+                    <h2>{ROI_MODE_OPTIONS.find((option) => option.id === activeMode)?.label}</h2>
+                  </div>
+                  <p className="panel-copy">{buildProgressSignal(activeMode)}</p>
+                </div>
+                <div className="mode-switch-grid compact-mode-grid">
+                  {ROI_MODE_OPTIONS.map((option) => (
+                    <button
+                      key={option.id}
+                      type="button"
+                      className={`mode-chip ${activeMode === option.id ? "active" : ""}`}
+                      onClick={() => setActiveMode(option.id)}
+                    >
+                      <span>{option.step}</span>
+                      <strong>{option.label}</strong>
+                      <small>{option.description}</small>
+                    </button>
+                  ))}
+                </div>
+              </div>
             </section>
 
-            <section className="panel mode-switch-panel">
-              <div className="mode-switch-header">
-                <div>
-                  <p className="section-kicker">Workflow</p>
-                  <h2>{ROI_MODE_OPTIONS.find((option) => option.id === activeMode)?.label}</h2>
+            <details className="advanced-block optional-context-panel">
+              <summary>Optional session context, saved scenarios, and export settings</summary>
+              <section className="panel working-session-panel nested-panel">
+                <p className="panel-copy optional-context-copy">
+                  Skip this for now if you just want a first estimate. Use it when you want to save working assumptions, add account context, or choose the PDF format.
+                </p>
+                <div className="working-session-grid">
+                  <label className="selector-field">
+                    <span className="field-label">Customer</span>
+                    <input
+                      className="session-input"
+                      type="text"
+                      value={sessionContext.customerName}
+                      onChange={(event) =>
+                        updateSessionContext("customerName", event.target.value)
+                      }
+                      placeholder="Owens Corning"
+                    />
+                  </label>
+
+                  <label className="selector-field">
+                    <span className="field-label">Account or program</span>
+                    <input
+                      className="session-input"
+                      type="text"
+                      value={sessionContext.accountName}
+                      onChange={(event) =>
+                        updateSessionContext("accountName", event.target.value)
+                      }
+                      placeholder="Aero design modernization"
+                    />
+                  </label>
+
+                  <label className="selector-field">
+                    <span className="field-label">Prepared by</span>
+                    <input
+                      className="session-input"
+                      type="text"
+                      value={sessionContext.preparedBy}
+                      onChange={(event) =>
+                        updateSessionContext("preparedBy", event.target.value)
+                      }
+                      placeholder="Seller or account team"
+                    />
+                  </label>
+
+                  <label className="selector-field selector-field-wide">
+                    <span className="field-label">Opportunity or working notes</span>
+                    <textarea
+                      className="session-input session-textarea"
+                      value={sessionContext.notes}
+                      onChange={(event) =>
+                        updateSessionContext("notes", event.target.value)
+                      }
+                      placeholder="Capture the program context, source of inputs, or follow-up items."
+                      rows={3}
+                    />
+                  </label>
                 </div>
-                <p className="panel-copy">{buildProgressSignal(activeMode)}</p>
-              </div>
-              <div className="mode-switch-grid">
-                {ROI_MODE_OPTIONS.map((option) => (
-                  <button
-                    key={option.id}
-                    type="button"
-                    className={`mode-chip ${activeMode === option.id ? "active" : ""}`}
-                    onClick={() => setActiveMode(option.id)}
-                  >
-                    <span>{option.step}</span>
-                    <strong>{option.label}</strong>
-                    <small>{option.description}</small>
+
+                <div className="scenario-toolbar">
+                  <label className="selector-field">
+                    <span className="field-label-group">
+                      <span className="field-label">Scenario name</span>
+                      <FieldHelpTooltip
+                        label="Scenario name"
+                        help={workspaceHelp.scenarioName}
+                      />
+                    </span>
+                    <input
+                      className="session-input"
+                      type="text"
+                      value={scenarioName}
+                      onChange={(event) => setScenarioName(event.target.value)}
+                      placeholder="Customer current-state baseline"
+                    />
+                  </label>
+
+                  <label className="selector-field">
+                    <span className="field-label-group">
+                      <span className="field-label">Saved scenarios</span>
+                      <FieldHelpTooltip
+                        label="Saved scenarios"
+                        help={workspaceHelp.savedScenarios}
+                      />
+                    </span>
+                    <select
+                      value={selectedScenarioName}
+                      onChange={(event) => {
+                        setSelectedScenarioName(event.target.value);
+                        setScenarioName(event.target.value);
+                      }}
+                    >
+                      <option value="">Choose one</option>
+                      {savedScenarios.map((scenario) => (
+                        <option key={scenario.name} value={scenario.name}>
+                          {scenario.name}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+
+                  <label className="selector-field">
+                    <span className="field-label-group">
+                      <span className="field-label">PDF mode</span>
+                      <FieldHelpTooltip label="PDF mode" help={workspaceHelp.pdfMode} />
+                    </span>
+                    <select
+                      value={pdfMode}
+                      onChange={(event) => setPdfMode(event.target.value)}
+                    >
+                      <option value="customer">Customer-ready</option>
+                      <option value="internal">Internal working version</option>
+                    </select>
+                  </label>
+                </div>
+
+                <div className="recommendation-actions">
+                  <button type="button" className="ghost-button" onClick={saveScenario}>
+                    Save scenario
                   </button>
-                ))}
-              </div>
-            </section>
+                  <button
+                    type="button"
+                    className="ghost-button"
+                    onClick={loadSelectedScenario}
+                    disabled={!selectedScenarioName}
+                  >
+                    Load selected
+                  </button>
+                  <button
+                    type="button"
+                    className="ghost-button"
+                    onClick={deleteSelectedScenario}
+                    disabled={!selectedScenarioName}
+                  >
+                    Delete selected
+                  </button>
+                </div>
+              </section>
+            </details>
 
             <section className="calculator-layout">
               <div className="calculator-main">
@@ -1910,173 +2050,31 @@ function InteractiveCalculatorPage({
                   </>
                 ) : null}
 
-                <details className="advanced-block working-session-collapse">
-                  <summary>Session context, scenarios, and export settings</summary>
-                  <section className="panel working-session-panel nested-panel">
-                    <div className="working-session-grid">
-                      <label className="selector-field">
-                        <span className="field-label">Customer</span>
-                        <input
-                          className="session-input"
-                          type="text"
-                          value={sessionContext.customerName}
-                          onChange={(event) =>
-                            updateSessionContext("customerName", event.target.value)
-                          }
-                          placeholder="Owens Corning"
-                        />
-                      </label>
-
-                      <label className="selector-field">
-                        <span className="field-label">Account or program</span>
-                        <input
-                          className="session-input"
-                          type="text"
-                          value={sessionContext.accountName}
-                          onChange={(event) =>
-                            updateSessionContext("accountName", event.target.value)
-                          }
-                          placeholder="Aero design modernization"
-                        />
-                      </label>
-
-                      <label className="selector-field">
-                        <span className="field-label">Prepared by</span>
-                        <input
-                          className="session-input"
-                          type="text"
-                          value={sessionContext.preparedBy}
-                          onChange={(event) =>
-                            updateSessionContext("preparedBy", event.target.value)
-                          }
-                          placeholder="Seller or account team"
-                        />
-                      </label>
-
-                      <label className="selector-field selector-field-wide">
-                        <span className="field-label">Opportunity or working notes</span>
-                        <textarea
-                          className="session-input session-textarea"
-                          value={sessionContext.notes}
-                          onChange={(event) =>
-                            updateSessionContext("notes", event.target.value)
-                          }
-                          placeholder="Capture the program context, source of inputs, or follow-up items."
-                          rows={3}
-                        />
-                      </label>
-                    </div>
-
-                    <div className="scenario-toolbar">
-                      <label className="selector-field">
-                        <span className="field-label-group">
-                          <span className="field-label">Scenario name</span>
-                          <FieldHelpTooltip
-                            label="Scenario name"
-                            help={workspaceHelp.scenarioName}
-                          />
-                        </span>
-                        <input
-                          className="session-input"
-                          type="text"
-                          value={scenarioName}
-                          onChange={(event) => setScenarioName(event.target.value)}
-                          placeholder="Customer current-state baseline"
-                        />
-                      </label>
-
-                      <label className="selector-field">
-                        <span className="field-label-group">
-                          <span className="field-label">Saved scenarios</span>
-                          <FieldHelpTooltip
-                            label="Saved scenarios"
-                            help={workspaceHelp.savedScenarios}
-                          />
-                        </span>
-                        <select
-                          value={selectedScenarioName}
-                          onChange={(event) => {
-                            setSelectedScenarioName(event.target.value);
-                            setScenarioName(event.target.value);
-                          }}
-                        >
-                          <option value="">Choose one</option>
-                          {savedScenarios.map((scenario) => (
-                            <option key={scenario.name} value={scenario.name}>
-                              {scenario.name}
-                            </option>
-                          ))}
-                        </select>
-                      </label>
-
-                      <label className="selector-field">
-                        <span className="field-label-group">
-                          <span className="field-label">PDF mode</span>
-                          <FieldHelpTooltip label="PDF mode" help={workspaceHelp.pdfMode} />
-                        </span>
-                        <select
-                          value={pdfMode}
-                          onChange={(event) => setPdfMode(event.target.value)}
-                        >
-                          <option value="customer">Customer-ready</option>
-                          <option value="internal">Internal working version</option>
-                        </select>
-                      </label>
-                    </div>
-
-                    <div className="recommendation-actions">
-                      <button type="button" className="ghost-button" onClick={saveScenario}>
-                        Save scenario
-                      </button>
-                      <button
-                        type="button"
-                        className="ghost-button"
-                        onClick={loadSelectedScenario}
-                        disabled={!selectedScenarioName}
-                      >
-                        Load selected
-                      </button>
-                      <button
-                        type="button"
-                        className="ghost-button"
-                        onClick={deleteSelectedScenario}
-                        disabled={!selectedScenarioName}
-                      >
-                        Delete selected
-                      </button>
-                    </div>
-                  </section>
-                </details>
               </div>
 
               <aside className="panel summary-panel">
                 <div className="summary-top">
-                  <p className="section-kicker">Persistent Results Summary</p>
-                  <h2>Decision summary</h2>
-                  <p className="panel-copy">
-                    Keep this panel in view while you edit assumptions. It shows the expected-case answer first, then lets you pressure-test it.
-                  </p>
-                  <div className="summary-actions">
-                    <button type="button" className="ghost-button" onClick={exportPdf}>
-                      Export PDF
-                    </button>
-                    <button type="button" className="ghost-button" onClick={resetToDefaults}>
-                      Reset to defaults
-                    </button>
+                  <div className="summary-toolbar">
+                    <div className="summary-toolbar-copy">
+                      <p className="section-kicker">Persistent Results Summary</p>
+                      <h2>Decision summary</h2>
+                    </div>
+                    <div className="segmented-control compact-segmented-control">
+                      {ROI_SCENARIO_OPTIONS.map((scenario) => (
+                        <button
+                          key={scenario.id}
+                          type="button"
+                          className={activeScenario === scenario.id ? "active" : ""}
+                          onClick={() => setActiveScenario(scenario.id)}
+                        >
+                          {scenario.label}
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                </div>
-
-                <div className="segmented-control compact-segmented-control">
-                  {ROI_SCENARIO_OPTIONS.map((scenario) => (
-                    <button
-                      key={scenario.id}
-                      type="button"
-                      className={activeScenario === scenario.id ? "active" : ""}
-                      onClick={() => setActiveScenario(scenario.id)}
-                    >
-                      {scenario.label}
-                    </button>
-                  ))}
+                  <p className="panel-copy">
+                    This panel keeps the current answer in view while you adjust assumptions. Start with the expected case, then pressure-test the band if needed.
+                  </p>
                 </div>
 
                 <div className="summary-signal-grid">
@@ -2100,7 +2098,7 @@ function InteractiveCalculatorPage({
                   />
                 </div>
 
-                <div className="estimate-bridge">
+                <div className="estimate-bridge summary-bridge-card">
                   <p className="section-kicker">What This Estimates</p>
                   <p className="panel-copy">
                     {withDirectionalNote(calculator.sellerGuidance.whatThisEstimates)}
@@ -2113,18 +2111,21 @@ function InteractiveCalculatorPage({
                   ))}
                 </div>
 
-                <div className="extra-output-grid">
-                  <MetricCard
-                    label="Realization factor"
-                    value={`${Math.round(realizationFactor * 100)}%`}
-                  />
-                  {displayCategories.slice(0, 2).map((category) => (
-                    <MetricCard
-                      key={category.id}
-                      label={category.title}
-                      value={formatCompactCurrency(category.displayValue)}
-                    />
+                <div className="guidance-detail-card summary-driver-list">
+                  <p className="guidance-detail-title">Top drivers in this view</p>
+                  {displayCategories.slice(0, 3).map((category, index) => (
+                    <div key={category.id} className="summary-driver-row">
+                      <span>{index + 1}. {category.title}</span>
+                      <strong>{formatCompactCurrency(category.displayValue)}</strong>
+                    </div>
                   ))}
+                  <p className="panel-copy">
+                    Mode lens: {activeMode === "guided"
+                      ? "Use this to get to a fast first answer."
+                      : activeMode === "finance"
+                        ? "Use this to inspect the assumptions and scenario bands."
+                        : "Use this to package the result into a business case."}
+                  </p>
                 </div>
 
                 {howToRead ? (
@@ -2145,6 +2146,15 @@ function InteractiveCalculatorPage({
                     </div>
                   </div>
                 ) : null}
+
+                <div className="summary-footer-actions">
+                  <button type="button" className="ghost-button" onClick={exportPdf}>
+                    Export PDF
+                  </button>
+                  <button type="button" className="ghost-button" onClick={resetToDefaults}>
+                    Reset to defaults
+                  </button>
+                </div>
               </aside>
             </section>
           </>

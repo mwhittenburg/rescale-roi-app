@@ -453,7 +453,8 @@ p {
 }
 
 .start-here-panel,
-.mode-switch-panel {
+.mode-switch-panel,
+.optional-context-panel {
   margin-top: 24px;
 }
 
@@ -507,6 +508,18 @@ p {
   gap: 16px;
   align-items: end;
   margin-bottom: 14px;
+}
+
+.mode-switch-inline {
+  display: grid;
+  gap: 14px;
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(18, 32, 51, 0.08);
+}
+
+.compact-mode-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .guided-field-grid {
@@ -648,8 +661,12 @@ p {
   color: #8c2a2a;
 }
 
-.working-session-collapse {
-  margin-top: 8px;
+.optional-context-panel summary {
+  color: var(--text);
+}
+
+.optional-context-copy {
+  margin-bottom: 14px;
 }
 
 .buyer-tag-list,
@@ -983,6 +1000,16 @@ p {
   top: 24px;
 }
 
+.summary-toolbar {
+  display: grid;
+  gap: 12px;
+}
+
+.summary-toolbar-copy {
+  display: grid;
+  gap: 8px;
+}
+
 .summary-top h2 {
   margin-top: 8px;
   font-size: 1.4rem;
@@ -995,20 +1022,15 @@ p {
   padding-top: 2px;
 }
 
-.summary-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: flex-start;
-}
-
 .metric-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
-.extra-output-grid {
-  display: grid;
-  gap: 14px;
+.summary-bridge-card {
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.74);
 }
 
 .metric-card {
@@ -1045,6 +1067,35 @@ p {
   color: var(--accent);
   text-transform: uppercase;
   letter-spacing: 0.06em;
+}
+
+.summary-driver-list {
+  gap: 12px;
+}
+
+.summary-driver-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(18, 32, 51, 0.08);
+  color: var(--text);
+}
+
+.summary-driver-row:last-of-type {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.summary-driver-row strong {
+  white-space: nowrap;
+}
+
+.summary-footer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-start;
 }
 
 .screen-only {
@@ -1191,11 +1242,11 @@ button:focus-visible,
   .selector-grid,
   .working-session-grid,
   .scenario-toolbar,
+  .compact-mode-grid,
   .metric-grid,
   .summary-signal-grid,
   .finance-controls-grid,
   .impact-highlight,
-  .extra-output-grid,
   .print-meta-grid,
   .print-metric-grid,
   .print-assumption-grid,
@@ -1208,7 +1259,8 @@ button:focus-visible,
   }
 
   .mode-switch-header,
-  .assumption-row {
+  .assumption-row,
+  .summary-driver-row {
     flex-direction: column;
     align-items: flex-start;
   }
