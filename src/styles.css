@@ -452,6 +452,206 @@ p {
   margin-top: 24px;
 }
 
+.start-here-panel,
+.mode-switch-panel {
+  margin-top: 24px;
+}
+
+.value-case-grid,
+.mode-switch-grid,
+.summary-signal-grid,
+.finance-controls-grid,
+.assumption-table,
+.guided-section-stack {
+  display: grid;
+  gap: 14px;
+}
+
+.value-case-grid {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.value-case-card,
+.mode-chip {
+  display: grid;
+  gap: 8px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.72);
+  text-align: left;
+  cursor: pointer;
+}
+
+.value-case-card strong,
+.mode-chip strong {
+  font-size: 1rem;
+  line-height: 1.35;
+}
+
+.value-case-card.active,
+.mode-chip.active {
+  border-color: rgba(31, 92, 168, 0.3);
+  background: linear-gradient(135deg, rgba(231, 240, 251, 0.96), rgba(255, 255, 255, 0.92));
+  box-shadow: 0 12px 28px rgba(31, 92, 168, 0.08);
+}
+
+.mode-chip small {
+  color: var(--muted);
+  font-size: 0.84rem;
+}
+
+.mode-switch-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: end;
+  margin-bottom: 14px;
+}
+
+.guided-field-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.guided-field-card {
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.84);
+}
+
+.guided-slider-shell {
+  display: grid;
+  gap: 12px;
+}
+
+.guided-slider-shell input[type="range"] {
+  width: 100%;
+}
+
+.guided-slider-value {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.guided-slider-value strong {
+  font-size: 1.05rem;
+}
+
+.guided-slider-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.nested-panel {
+  background: rgba(255, 255, 255, 0.64);
+}
+
+.segmented-control {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.segmented-control button {
+  border-radius: 999px;
+  padding: 10px 14px;
+  background: rgba(18, 32, 51, 0.06);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.segmented-control button.active {
+  background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+  color: #ffffff;
+}
+
+.compact-segmented-control {
+  margin-top: 4px;
+}
+
+.summary-signal-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.summary-signal {
+  display: grid;
+  gap: 8px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: #ffffff;
+}
+
+.summary-signal strong {
+  font-size: 1.15rem;
+}
+
+.summary-signal-accent {
+  background: linear-gradient(135deg, rgba(231, 240, 251, 0.96), rgba(255, 255, 255, 0.92));
+}
+
+.summary-signal-high strong {
+  color: #145f3d;
+}
+
+.summary-signal-moderate strong {
+  color: #8a5d12;
+}
+
+.summary-signal-low strong {
+  color: #8c2a2a;
+}
+
+.finance-controls-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.assumption-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(18, 32, 51, 0.08);
+}
+
+.assumption-row:first-child {
+  padding-top: 0;
+}
+
+.assumption-row:last-child {
+  border-bottom: 0;
+}
+
+.assumption-row-meta {
+  display: grid;
+  justify-items: end;
+  gap: 8px;
+}
+
+.inline-confidence {
+  font-weight: 700;
+}
+
+.inline-confidence.high {
+  color: #145f3d;
+}
+
+.inline-confidence.moderate {
+  color: #8a5d12;
+}
+
+.inline-confidence.low {
+  color: #8c2a2a;
+}
+
+.working-session-collapse {
+  margin-top: 8px;
+}
+
 .buyer-tag-list,
 .guidance-detail-grid {
   display: grid;
@@ -987,10 +1187,13 @@ button:focus-visible,
   }
 
   .field-grid,
+  .guided-field-grid,
   .selector-grid,
   .working-session-grid,
   .scenario-toolbar,
   .metric-grid,
+  .summary-signal-grid,
+  .finance-controls-grid,
   .impact-highlight,
   .extra-output-grid,
   .print-meta-grid,
@@ -1002,6 +1205,16 @@ button:focus-visible,
 
   .hero-helper-card .choice-copy .panel-copy {
     white-space: normal;
+  }
+
+  .mode-switch-header,
+  .assumption-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .assumption-row-meta {
+    justify-items: start;
   }
 
   .field-label-row {

@@ -403,6 +403,25 @@ const FIELD_HELP_RULES = [
       example: "35% retained because of data gravity, licensing, or performance constraints.",
     },
   },
+  {
+    test: (field) =>
+      /\beffective core-hour cost\b/i.test(field.label) ||
+      /\bburdened labor rate\b/i.test(field.label) ||
+      /\brealization factor\b/i.test(field.label) ||
+      /\bconfidence band\b/i.test(field.label) ||
+      /\bthroughput gain\b/i.test(field.label) ||
+      /\brerun rate\b/i.test(field.label),
+    help: {
+      what:
+        "Represents a modeled efficiency or financial concept that needs to be interpreted in practical terms.",
+      include:
+        "Only the delivered cost, captured value, or repeat-work rate that reflects what happens in practice rather than a theoretical maximum.",
+      exclude:
+        "Theoretical capacity, fully unrealized value capture, or overly optimistic repeatability assumptions.",
+      example:
+        "Effective core-hour cost means the real delivered compute cost after utilization and inefficiency, not the theoretical cost at full capacity.",
+    },
+  },
 ];
 
 function lowerCaseLabel(label) {
