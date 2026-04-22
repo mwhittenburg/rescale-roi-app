@@ -1,9 +1,16 @@
 const STANDARD_SECTION_DESCRIPTIONS = {
-  currentState: "Start with the current baseline your customer recognizes today.",
+  currentState:
+    "Start with how the workflow works today. Use directional values if exact numbers are not available yet.",
   improvements:
-    "Use benchmark assumptions first, then refine them together during the working session.",
+    "Start with the few improvements that matter most. You can refine assumptions later if needed.",
   financial:
-    "Keep the value story grounded with simple cost and business-value assumptions.",
+    "Use the cost and value assumptions needed to turn the workflow change into a business case.",
+};
+
+const SECTION_TITLE_OVERRIDES = {
+  "Current-state inputs": "How this works today",
+  "Improvement assumptions": "What could improve",
+  "Financial assumptions": "Cost and value assumptions",
 };
 
 const STANDARD_CONFIDENCE_TAGS = {
@@ -552,6 +559,7 @@ function normalizeField(sectionKey, field) {
 function normalizeSection(section) {
   return {
     ...section,
+    title: SECTION_TITLE_OVERRIDES[section.title] ?? section.title,
     description:
       section.description ?? STANDARD_SECTION_DESCRIPTIONS[section.key] ?? "",
     fields: section.fields.map((field) => normalizeField(section.key, field)),
@@ -604,7 +612,7 @@ export function createInteractiveCalculator(industryId, config) {
     industryId,
     calculatorType: "interactive",
     valueModel: "roi",
-    advancedSectionLabel: "Advanced inputs",
+    advancedSectionLabel: "Refine the estimate",
     ...config,
     sections,
     defaultValues: buildDefaultValues(sections),

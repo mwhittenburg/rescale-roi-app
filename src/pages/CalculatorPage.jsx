@@ -254,20 +254,20 @@ function buildRecommendedNextSteps({
 const ROI_MODE_OPTIONS = [
   {
     id: "guided",
-    step: "Step 1",
-    label: "Guided Estimate",
+    step: "Step 1 of 3",
+    label: "Build a quick estimate",
     description: "Fast first-pass estimate with the fewest inputs.",
   },
   {
     id: "finance",
-    step: "Step 2",
-    label: "Finance Review",
+    step: "Step 2 of 3",
+    label: "Review assumptions and math",
     description: "Inspect assumptions, formulas, and scenario bands.",
   },
   {
     id: "executive",
-    step: "Step 3",
-    label: "Executive Output",
+    step: "Step 3 of 3",
+    label: "Prepare a summary",
     description: "Turn the result into a concise business case.",
   },
 ];
@@ -1562,9 +1562,9 @@ function InteractiveCalculatorPage({
               <div className="selector-header">
                 <div className="choice-copy">
                   <p className="section-kicker">Start Here</p>
-                  <h2>Pick the value story, then work through the estimate in the order below.</h2>
+                  <h2>What are you trying to evaluate?</h2>
                   <p className="panel-copy">
-                    Start with the narrowest value case that fits the conversation. Guided Estimate gets you to a first answer fast, then Finance Review and Executive Output help you pressure-test and package it.
+                    We’ll show a fast first-pass estimate using only the inputs most likely to move the result. You can review the math and package the summary after that.
                   </p>
                 </div>
               </div>
@@ -1584,7 +1584,7 @@ function InteractiveCalculatorPage({
               <div className="mode-switch-inline">
                 <div className="mode-switch-header">
                   <div>
-                    <p className="section-kicker">Workflow</p>
+                    <p className="section-kicker">Journey</p>
                     <h2>{ROI_MODE_OPTIONS.find((option) => option.id === activeMode)?.label}</h2>
                   </div>
                   <p className="panel-copy">{buildProgressSignal(activeMode)}</p>
@@ -1610,7 +1610,7 @@ function InteractiveCalculatorPage({
               <summary>Optional session context, saved scenarios, and export settings</summary>
               <section className="panel working-session-panel nested-panel">
                 <p className="panel-copy optional-context-copy">
-                  Skip this for now if you just want a first estimate. Use it when you want to save working assumptions, add account context, or choose the PDF format.
+                  Skip this for now if you just want a first estimate. Come back when you want to save this version of the estimate, compare scenarios, or choose a sharing format.
                 </p>
                 <div className="working-session-grid">
                   <label className="selector-field">
@@ -1686,7 +1686,7 @@ function InteractiveCalculatorPage({
 
                   <label className="selector-field">
                     <span className="field-label-group">
-                      <span className="field-label">Saved scenarios</span>
+                      <span className="field-label">Saved estimate versions</span>
                       <FieldHelpTooltip
                         label="Saved scenarios"
                         help={workspaceHelp.savedScenarios}
@@ -1720,12 +1720,15 @@ function InteractiveCalculatorPage({
                       <option value="customer">Customer-ready</option>
                       <option value="internal">Internal working version</option>
                     </select>
+                    <span className="field-helper">
+                      Customer-ready is cleaner for sharing. Internal keeps working assumptions and notes visible.
+                    </span>
                   </label>
                 </div>
 
                 <div className="recommendation-actions">
                   <button type="button" className="ghost-button" onClick={saveScenario}>
-                    Save scenario
+                    Save this version
                   </button>
                   <button
                     type="button"
@@ -1733,7 +1736,7 @@ function InteractiveCalculatorPage({
                     onClick={loadSelectedScenario}
                     disabled={!selectedScenarioName}
                   >
-                    Load selected
+                    Open selected
                   </button>
                   <button
                     type="button"
@@ -1754,6 +1757,9 @@ function InteractiveCalculatorPage({
                     <section className="guidance-grid calculator-guidance-grid">
                       <article className="panel guidance-card guidance-card-primary">
                         <p className="section-kicker">Start Here</p>
+                        <p className="panel-copy">
+                          Start by asking these few questions. They are the fastest way to get to a directional estimate.
+                        </p>
                         <ul className="guidance-list">
                           {calculator.sellerGuidance.askTheseFirst.map((item) => (
                             <li key={item}>{item}</li>
@@ -1781,9 +1787,9 @@ function InteractiveCalculatorPage({
 
                     <section className="panel calc-section">
                       <header className="panel-header">
-                        <h2>Guided Estimate</h2>
+                        <h2>Enter a few current-state inputs</h2>
                         <p className="section-copy">
-                          These are the few inputs most likely to move the result for this value case.
+                          Start with how the workflow works today. Use directional values if exact numbers are not available yet.
                         </p>
                       </header>
                       <div className="field-grid guided-field-grid">
@@ -1797,7 +1803,7 @@ function InteractiveCalculatorPage({
                         ))}
                       </div>
                       <details className="advanced-block">
-                        <summary>More inputs and manual overrides</summary>
+                        <summary>Optional refinements and manual overrides</summary>
                         <div className="guided-section-stack">
                           {calculator.sections.map((section) => (
                             <section key={section.key} className="panel nested-panel">
@@ -1829,9 +1835,9 @@ function InteractiveCalculatorPage({
                   <>
                     <section className="panel calc-section">
                       <header className="panel-header">
-                        <h2>Finance Review</h2>
+                        <h2>Review assumptions and math</h2>
                         <p className="section-copy">
-                          Inspect the assumptions, realization factor, and low / expected / high scenario bands behind the estimate.
+                          Use this view to inspect the assumptions, formulas, and scenario bands behind the estimate.
                         </p>
                       </header>
                       <div className="finance-controls-grid">
@@ -1898,7 +1904,7 @@ function InteractiveCalculatorPage({
 
                     <section className="panel calc-section">
                       <header className="panel-header">
-                        <h2>Value categories and formulas</h2>
+                        <h2>How the value is calculated</h2>
                         <p className="section-copy">
                           Each category shows the formula, source mix, and confidence level used in the model.
                         </p>
@@ -1933,7 +1939,7 @@ function InteractiveCalculatorPage({
 
                     <section className="panel calc-section">
                       <header className="panel-header">
-                        <h2>Scenario bands</h2>
+                        <h2>Low / expected / high views</h2>
                         <p className="section-copy">
                           Low / Expected / High views keep the model transparent without pretending to be more precise than the inputs support.
                         </p>
@@ -1953,7 +1959,7 @@ function InteractiveCalculatorPage({
 
                     <section className="panel calc-section">
                       <header className="panel-header">
-                        <h2>Assumption table</h2>
+                        <h2>Assumptions at a glance</h2>
                         <p className="section-copy">
                           Customer-provided inputs are separated from benchmark and directional assumptions.
                         </p>
@@ -2010,9 +2016,9 @@ function InteractiveCalculatorPage({
                   <>
                     <section className="panel calc-section">
                       <header className="panel-header">
-                        <h2>Executive Output</h2>
+                        <h2>Prepare a summary</h2>
                         <p className="section-copy">
-                          Presentation-ready framing of the current state, modeled improvement, and what would need to be true.
+                          Turn the estimate into a concise business case you can review internally or share more broadly.
                         </p>
                       </header>
                       <div className="segmented-control">
@@ -2031,7 +2037,7 @@ function InteractiveCalculatorPage({
 
                     <section className="panel calc-section">
                       <header className="panel-header">
-                        <h2>Story of the result</h2>
+                        <h2>Why the result looks this way</h2>
                       </header>
                       <div className="guidance-detail-grid">
                         <GuidanceDetail title="Baseline" body={executiveStory.baseline} />
@@ -2044,14 +2050,14 @@ function InteractiveCalculatorPage({
                     </section>
 
                     <section className="panel calc-section impact-panel">
-                      <header className="panel-header">
-                        <h2>
-                          {executiveView === "seller"
-                            ? "Seller Summary"
-                            : executiveView === "finance"
-                              ? "Finance Appendix"
-                              : "Executive Summary"}
-                        </h2>
+                        <header className="panel-header">
+                          <h2>
+                            {executiveView === "seller"
+                              ? "Seller Summary"
+                              : executiveView === "finance"
+                                ? "Finance Appendix"
+                                : "Executive Summary"}
+                          </h2>
                         <p className="section-copy">
                           {executiveView === "seller"
                             ? "Use this to summarize the result quickly in an internal follow-up or account review."
@@ -2096,7 +2102,7 @@ function InteractiveCalculatorPage({
                     {executiveView === "executive" ? (
                       <section className="panel calc-section">
                         <header className="panel-header">
-                          <h2>What would need to be true</h2>
+                          <h2>What to validate before using this</h2>
                           <p className="section-copy">
                             These are the major assumptions driving the modeled result.
                           </p>
@@ -2117,7 +2123,7 @@ function InteractiveCalculatorPage({
                 <div className="summary-top">
                   <div className="summary-toolbar">
                     <div className="summary-toolbar-copy">
-                      <p className="section-kicker">Persistent Results Summary</p>
+                      <p className="section-kicker">Current result</p>
                       <h2>Decision summary</h2>
                     </div>
                     <div className="segmented-control compact-segmented-control">
@@ -2134,7 +2140,7 @@ function InteractiveCalculatorPage({
                     </div>
                   </div>
                   <p className="panel-copy">
-                    This panel keeps the current answer in view while you adjust assumptions. Start with the expected case, then pressure-test the band if needed.
+                    Based on the current inputs, this workflow shows a directional annual value of {formatCompactCurrency(adjustedResults.annualEconomicImpact)} with payback in {formatMonths(adjustedResults.paybackPeriodMonths)}.
                   </p>
                 </div>
 
@@ -2160,7 +2166,7 @@ function InteractiveCalculatorPage({
                 </div>
 
                 <div className="estimate-bridge summary-bridge-card">
-                  <p className="section-kicker">What This Estimates</p>
+                  <p className="section-kicker">What this result means</p>
                   <p className="panel-copy">
                     {withDirectionalNote(calculator.sellerGuidance.whatThisEstimates)}
                   </p>
@@ -2192,9 +2198,9 @@ function InteractiveCalculatorPage({
                 {howToRead ? (
                   <div className="how-to-read-block">
                     <div className="how-to-read-header">
-                      <p className="section-kicker">How To Read This</p>
+                      <p className="section-kicker">How to interpret the result</p>
                       <p className="panel-copy">
-                        Directional output designed for working conversations, not false precision.
+                        This is your current modeled result based on the inputs on this page.
                       </p>
                     </div>
                     <div className="guidance-detail-grid">
