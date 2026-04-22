@@ -238,6 +238,7 @@ export const itOperationsTco = createInteractiveCalculator("it", {
           max: 0.95,
           step: 0.01,
           kind: "percent",
+          uiControl: "slider",
         },
         {
           key: "incidentReductionPct",
@@ -247,6 +248,7 @@ export const itOperationsTco = createInteractiveCalculator("it", {
           max: 0.95,
           step: 0.01,
           kind: "percent",
+          uiControl: "slider",
         },
         {
           key: "environmentReductionPct",
@@ -256,6 +258,7 @@ export const itOperationsTco = createInteractiveCalculator("it", {
           max: 0.95,
           step: 0.01,
           kind: "percent",
+          uiControl: "slider",
           advanced: true,
         },
         {
@@ -266,6 +269,7 @@ export const itOperationsTco = createInteractiveCalculator("it", {
           max: 0.95,
           step: 0.01,
           kind: "percent",
+          uiControl: "slider",
           advanced: true,
         },
         {
@@ -276,6 +280,7 @@ export const itOperationsTco = createInteractiveCalculator("it", {
           max: 0.95,
           step: 0.01,
           kind: "percent",
+          uiControl: "slider",
           advanced: true,
         },
         {
@@ -286,6 +291,7 @@ export const itOperationsTco = createInteractiveCalculator("it", {
           max: 0.95,
           step: 0.01,
           kind: "percent",
+          uiControl: "slider",
           advanced: true,
         },
         {

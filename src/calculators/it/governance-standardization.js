@@ -129,6 +129,7 @@ export const peakCapacityTco = createInteractiveCalculator("it", {
           max: 0.95,
           step: 0.01,
           kind: "percent",
+          uiControl: "slider",
         },
         {
           key: "peakUtilizationPct",
@@ -138,6 +139,7 @@ export const peakCapacityTco = createInteractiveCalculator("it", {
           max: 0.99,
           step: 0.01,
           kind: "percent",
+          uiControl: "slider",
         },
         {
           key: "burstWindowsPerYear",
@@ -219,6 +221,7 @@ export const peakCapacityTco = createInteractiveCalculator("it", {
           max: 0.95,
           step: 0.01,
           kind: "percent",
+          uiControl: "slider",
           advanced: true,
         },
         {

@@ -227,6 +227,7 @@ export const infrastructureTco = createInteractiveCalculator("it", {
           max: 0.95,
           step: 0.01,
           kind: "percent",
+          uiControl: "slider",
           advanced: true,
         },
       ],
@@ -265,6 +266,7 @@ export const infrastructureTco = createInteractiveCalculator("it", {
           max: 0.95,
           step: 0.01,
           kind: "percent",
+          uiControl: "slider",
           helperText:
             "Use the share of workload you expect to retain outside a full cloud move because of performance, governance, data, or licensing constraints.",
         },
@@ -276,6 +278,7 @@ export const infrastructureTco = createInteractiveCalculator("it", {
           max: 0.95,
           step: 0.01,
           kind: "percent",
+          uiControl: "slider",
         },
         {
           key: "futureLicensingCost",
@@ -330,6 +333,7 @@ export const infrastructureTco = createInteractiveCalculator("it", {
           max: 0.95,
           step: 0.01,
           kind: "percent",
+          uiControl: "slider",
           advanced: true,
         },
         {
@@ -340,6 +344,7 @@ export const infrastructureTco = createInteractiveCalculator("it", {
           max: 0.35,
           step: 0.01,
           kind: "percent",
+          uiControl: "slider",
           advanced: true,
         },
       ],

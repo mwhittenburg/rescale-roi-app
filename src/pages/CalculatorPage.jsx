@@ -169,6 +169,7 @@ function formatFieldValue(field, value) {
 function FieldInput({ field, value, onChange }) {
   const inputId = useId();
   const isPercent = field.kind === "percent";
+  const useSlider = field.uiControl === "slider";
   const displayValue = isPercent ? Number(value) * 100 : value;
   const step = isPercent ? (field.step ?? 0.01) * 100 : field.step ?? 1;
   const min = isPercent ? (field.min ?? 0) * 100 : field.min;
@@ -185,25 +186,49 @@ function FieldInput({ field, value, onChange }) {
           {field.confidenceTag.label}
         </span>
       </div>
-      <div className="input-shell">
-        {field.prefix ? <span className="input-prefix">{field.prefix}</span> : null}
-        <input
-          id={inputId}
-          type="number"
-          value={displayValue}
-          min={min}
-          max={max}
-          step={step}
-          onChange={(event) => {
-            const nextValue = Number(event.target.value);
-            onChange(field, isPercent ? nextValue / 100 : nextValue);
-          }}
-        />
-        {field.kind === "percent" ? <span className="input-suffix">%</span> : null}
-        {field.suffix && !field.kind ? (
-          <span className="input-suffix">{field.suffix}</span>
-        ) : null}
-      </div>
+      {useSlider ? (
+        <div className="guided-slider-shell field-slider-shell">
+          <input
+            id={inputId}
+            type="range"
+            value={displayValue}
+            min={min}
+            max={max}
+            step={step}
+            onChange={(event) => {
+              const nextValue = Number(event.target.value);
+              onChange(field, isPercent ? nextValue / 100 : nextValue);
+            }}
+          />
+          <div className="guided-slider-value">
+            <strong>{formatFieldValue(field, value)}</strong>
+          </div>
+          <div className="guided-slider-meta">
+            <span>{isPercent ? `${Math.round(min)}%` : formatFieldValue(field, min)}</span>
+            <span>{isPercent ? `${Math.round(max)}%` : formatFieldValue(field, max)}</span>
+          </div>
+        </div>
+      ) : (
+        <div className="input-shell">
+          {field.prefix ? <span className="input-prefix">{field.prefix}</span> : null}
+          <input
+            id={inputId}
+            type="number"
+            value={displayValue}
+            min={min}
+            max={max}
+            step={step}
+            onChange={(event) => {
+              const nextValue = Number(event.target.value);
+              onChange(field, isPercent ? nextValue / 100 : nextValue);
+            }}
+          />
+          {field.kind === "percent" ? <span className="input-suffix">%</span> : null}
+          {field.suffix && !field.kind ? (
+            <span className="input-suffix">{field.suffix}</span>
+          ) : null}
+        </div>
+      )}
       <span className="field-helper">{field.helperText}</span>
     </div>
   );
