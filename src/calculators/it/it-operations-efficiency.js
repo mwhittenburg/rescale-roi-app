@@ -1,5 +1,14 @@
 import { clampPercent, createInteractiveCalculator } from "../shared";
 
+const CURRENT_CATEGORY_WORKLOAD_DEFAULTS = {
+  sharedModeratelyControlledOnPremResearch: {
+    environmentManagementHoursPerMonth: 40,
+    governanceComplianceHoursPerMonth: 8,
+    backupRestoreHoursPerMonth: 12,
+    patchingSecurityHoursPerMonth: 24,
+  },
+};
+
 function annualizeThreeYears(value) {
   return value * 3;
 }
@@ -153,7 +162,8 @@ export const itOperationsTco = createInteractiveCalculator("it", {
     {
       key: "currentState",
       title: "Current-state workload inputs",
-      description: "Start with the operating workload the platform or infrastructure team handles today.",
+      description:
+        "Start with the operating workload the platform or infrastructure team handles today. Representative modeled defaults, validate with customer when possible.",
       advancedSectionLabel: "Current category workload",
       fields: [
         {
@@ -189,38 +199,106 @@ export const itOperationsTco = createInteractiveCalculator("it", {
         {
           key: "environmentManagementHoursPerMonth",
           label: "Environment management hours per month",
-          defaultValue: 52,
+          defaultValue:
+            CURRENT_CATEGORY_WORKLOAD_DEFAULTS
+              .sharedModeratelyControlledOnPremResearch
+              .environmentManagementHoursPerMonth,
           min: 0,
           step: 1,
           suffix: "hours",
           advanced: true,
+          confidenceTag: {
+            key: "estimated",
+            label: "Representative default",
+          },
+          helperText:
+            "Use a representative monthly estimate for image, software, scheduler, storage, and cluster environment upkeep.",
+          helpTooltip: {
+            what:
+              "Ongoing operational time tied to maintaining the research compute environment, including software stacks, images, scheduler settings, storage, and configuration upkeep.",
+            include:
+              "Routine effort for software stacks, images, scheduler settings, storage, and configuration upkeep.",
+            exclude:
+              "One-time migration work, unrelated end-user support, or broader IT overhead not tied to environment upkeep.",
+          },
         },
         {
           key: "governanceComplianceHoursPerMonth",
           label: "Governance and compliance hours per month",
-          defaultValue: 54,
+          defaultValue:
+            CURRENT_CATEGORY_WORKLOAD_DEFAULTS
+              .sharedModeratelyControlledOnPremResearch
+              .governanceComplianceHoursPerMonth,
           min: 0,
           step: 1,
           suffix: "hours",
           advanced: true,
+          confidenceTag: {
+            key: "estimated",
+            label: "Representative default",
+          },
+          helperText:
+            "Use a representative monthly estimate for controls, reporting, change review, evidence collection, and audit-readiness activity.",
+          helpTooltip: {
+            what:
+              "Ongoing operational time tied to monitoring controls, documenting changes, supporting reviews, and maintaining audit-ready evidence.",
+            include:
+              "Controls monitoring, reporting, change review, evidence collection, and audit-readiness activity.",
+            exclude:
+              "Broader legal, procurement, or enterprise risk work that is not specific to the modeled environment.",
+          },
         },
         {
           key: "backupRestoreHoursPerMonth",
           label: "Backup and restore hours per month",
-          defaultValue: 18,
+          defaultValue:
+            CURRENT_CATEGORY_WORKLOAD_DEFAULTS
+              .sharedModeratelyControlledOnPremResearch
+              .backupRestoreHoursPerMonth,
           min: 0,
           step: 1,
           suffix: "hours",
           advanced: true,
+          confidenceTag: {
+            key: "estimated",
+            label: "Representative default",
+          },
+          helperText:
+            "Use a representative monthly estimate for backup administration, integrity checks, and periodic restore validation.",
+          helpTooltip: {
+            what:
+              "Ongoing operational time tied to backup administration, checking backup integrity, and validating recovery through restore testing.",
+            include:
+              "Backup administration, integrity checks, and periodic restore validation work.",
+            exclude:
+              "Full-scale disaster recovery exercises or unrelated storage engineering work unless they are in scope.",
+          },
         },
         {
           key: "patchingSecurityHoursPerMonth",
           label: "Patching and security operations hours per month",
-          defaultValue: 26,
+          defaultValue:
+            CURRENT_CATEGORY_WORKLOAD_DEFAULTS
+              .sharedModeratelyControlledOnPremResearch
+              .patchingSecurityHoursPerMonth,
           min: 0,
           step: 1,
           suffix: "hours",
           advanced: true,
+          confidenceTag: {
+            key: "estimated",
+            label: "Representative default",
+          },
+          helperText:
+            "Use a representative monthly estimate for vulnerability review, patch testing, deployment, verification, and routine security hygiene.",
+          helpTooltip: {
+            what:
+              "Ongoing operational time tied to vulnerability review, patch planning, testing, rollout, verification, and routine security operations.",
+            include:
+              "Vulnerability review, patch planning, testing, rollout, verification, and routine security hygiene.",
+            exclude:
+              "Major incident response, one-time remediation projects, or unrelated enterprise security programs.",
+          },
         },
       ],
     },
