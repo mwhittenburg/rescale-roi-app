@@ -125,6 +125,23 @@ function formatDirectionalCurrency(value) {
   return "$0";
 }
 
+function buildTcoConclusion(results) {
+  if (results.annualCostDifference > 0) {
+    const payback =
+      results.migrationPaybackMonths > 0
+        ? ` and recover transition cost in ${formatMonths(results.migrationPaybackMonths)}`
+        : "";
+
+    return `Based on the current assumptions, the future model is estimated to lower annual cost by ${formatCompactCurrency(results.annualCostDifference)}${payback}.`;
+  }
+
+  if (results.annualCostDifference < 0) {
+    return `Based on the current assumptions, the future model is estimated to increase annual cost by ${formatCompactCurrency(Math.abs(results.annualCostDifference))} per year before considering any non-cost benefits.`;
+  }
+
+  return "Based on the current assumptions, the current and future models are estimated to be cost-neutral on an annual basis.";
+}
+
 function formatCapacity(value, unit) {
   return `${value.toFixed(1)} ${unit}`;
 }
@@ -1479,8 +1496,9 @@ function InteractiveCalculatorPage({
                 <div className="summary-top">
                   <p className="section-kicker">Live Summary</p>
                   <h2>Estimated TCO comparison</h2>
+                  <p className="panel-copy start-here-copy">{buildTcoConclusion(results)}</p>
                   <p className="panel-copy">
-                    Sample values are already loaded so the page is reviewable on first open. Adjust the assumptions during the session to show how the total cost picture changes.
+                    Sample values are already loaded so the page is reviewable on first open. Adjust the assumptions during the session to pressure-test the current-state, future-state, and transition picture.
                   </p>
                   <div className="summary-actions">
                     <button type="button" className="ghost-button" onClick={exportPdf}>

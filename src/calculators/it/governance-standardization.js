@@ -79,6 +79,14 @@ function calculatePeakCapacityTco(values) {
         value: `$${Math.round(values.annualPeakBuiltCapacityCost).toLocaleString()}`,
       },
       {
+        label: "Future steady-state baseline cost",
+        value: `$${Math.round(discountedHybridBaseline).toLocaleString()}`,
+      },
+      {
+        label: "Annual elastic burst cost",
+        value: `$${Math.round(futureElasticBurstAnnualCost).toLocaleString()}`,
+      },
+      {
         label: "Annual blended baseline + burst cost",
         value: `$${Math.round(futureAnnualCost).toLocaleString()}`,
       },
@@ -191,7 +199,7 @@ export const peakCapacityTco = createInteractiveCalculator("it", {
           step: 5,
           prefix: "$",
           helperText:
-            "Use your estimated cost of serving one burst hour with elastic or overflow capacity.",
+            "Use your estimated cost of serving one burst hour with elastic or overflow capacity. Keep this directional unless workload-hour pricing has been validated.",
           helpTooltip: {
             what:
               "Represents the incremental cost of serving one peak hour with elastic capacity on top of the future steady-state baseline.",
@@ -200,7 +208,7 @@ export const peakCapacityTco = createInteractiveCalculator("it", {
             exclude:
               "The future baseline cost that already exists year-round or one-time migration cost.",
             example:
-              "If a typical burst hour costs about $190 in elastic infrastructure, use that hourly amount here.",
+              "If a typical burst hour costs about $190 in elastic infrastructure, use that hourly amount here. Treat it as a planning assumption until workload-hour pricing is validated.",
           },
         },
         {

@@ -4,6 +4,14 @@ function annualizeThreeYears(value) {
   return value * 3;
 }
 
+function resolveFutureCategoryHours(currentAnnualHours, reductionPct, futureHoursPerMonthOverride) {
+  if (futureHoursPerMonthOverride > 0) {
+    return futureHoursPerMonthOverride * 12;
+  }
+
+  return currentAnnualHours * (1 - reductionPct);
+}
+
 function calculateItOperationsTco(values) {
   const provisioningReduction = clampPercent(values.provisioningReductionPct);
   const incidentReduction = clampPercent(values.incidentReductionPct);
@@ -23,12 +31,36 @@ function calculateItOperationsTco(values) {
   const currentBackupHours = values.backupRestoreHoursPerMonth * 12;
   const currentPatchingHours = values.patchingSecurityHoursPerMonth * 12;
 
-  const futureProvisioningHours = currentProvisioningHours * (1 - provisioningReduction);
-  const futureIncidentHours = currentIncidentHours * (1 - incidentReduction);
-  const futureEnvironmentHours = currentEnvironmentHours * (1 - environmentReduction);
-  const futureGovernanceHours = currentGovernanceHours * (1 - governanceReduction);
-  const futureBackupHours = currentBackupHours * (1 - backupReduction);
-  const futurePatchingHours = currentPatchingHours * (1 - patchingReduction);
+  const futureProvisioningHours = resolveFutureCategoryHours(
+    currentProvisioningHours,
+    provisioningReduction,
+    values.futureProvisioningHoursPerMonthOverride,
+  );
+  const futureIncidentHours = resolveFutureCategoryHours(
+    currentIncidentHours,
+    incidentReduction,
+    values.futureSupportIncidentHoursPerMonthOverride,
+  );
+  const futureEnvironmentHours = resolveFutureCategoryHours(
+    currentEnvironmentHours,
+    environmentReduction,
+    values.futureEnvironmentManagementHoursPerMonthOverride,
+  );
+  const futureGovernanceHours = resolveFutureCategoryHours(
+    currentGovernanceHours,
+    governanceReduction,
+    values.futureGovernanceComplianceHoursPerMonthOverride,
+  );
+  const futureBackupHours = resolveFutureCategoryHours(
+    currentBackupHours,
+    backupReduction,
+    values.futureBackupRestoreHoursPerMonthOverride,
+  );
+  const futurePatchingHours = resolveFutureCategoryHours(
+    currentPatchingHours,
+    patchingReduction,
+    values.futurePatchingSecurityHoursPerMonthOverride,
+  );
 
   const currentAdminSupportHours =
     currentProvisioningHours +
@@ -195,8 +227,8 @@ export const itOperationsTco = createInteractiveCalculator("it", {
     {
       key: "futureState",
       title: "Future-state effort inputs",
-      description: "Model how much manual operations effort remains under the future operating model.",
-      advancedSectionLabel: "Category-specific reductions",
+      description: "Model how much manual operations effort remains under the future operating model. Use reduction percentages for a fast pass, or enter explicit future hours in the advanced section when you have them.",
+      advancedSectionLabel: "Category reductions and explicit future hours",
       fields: [
         {
           key: "provisioningReductionPct",
@@ -255,6 +287,72 @@ export const itOperationsTco = createInteractiveCalculator("it", {
           step: 0.01,
           kind: "percent",
           advanced: true,
+        },
+        {
+          key: "futureProvisioningHoursPerMonthOverride",
+          label: "Future provisioning hours per month (optional override)",
+          defaultValue: 0,
+          min: 0,
+          step: 1,
+          suffix: "hours",
+          advanced: true,
+          helperText:
+            "Optional explicit future-state estimate. Leave at 0 to keep using the reduction assumption above.",
+        },
+        {
+          key: "futureSupportIncidentHoursPerMonthOverride",
+          label: "Future troubleshooting hours per month (optional override)",
+          defaultValue: 0,
+          min: 0,
+          step: 1,
+          suffix: "hours",
+          advanced: true,
+          helperText:
+            "Optional explicit future-state estimate. Leave at 0 to keep using the reduction assumption above.",
+        },
+        {
+          key: "futureEnvironmentManagementHoursPerMonthOverride",
+          label: "Future environment management hours per month (optional override)",
+          defaultValue: 0,
+          min: 0,
+          step: 1,
+          suffix: "hours",
+          advanced: true,
+          helperText:
+            "Optional explicit future-state estimate. Leave at 0 to keep using the reduction assumption above.",
+        },
+        {
+          key: "futureGovernanceComplianceHoursPerMonthOverride",
+          label: "Future governance and compliance hours per month (optional override)",
+          defaultValue: 0,
+          min: 0,
+          step: 1,
+          suffix: "hours",
+          advanced: true,
+          helperText:
+            "Optional explicit future-state estimate. Leave at 0 to keep using the reduction assumption above.",
+        },
+        {
+          key: "futureBackupRestoreHoursPerMonthOverride",
+          label: "Future backup and restore hours per month (optional override)",
+          defaultValue: 0,
+          min: 0,
+          step: 1,
+          suffix: "hours",
+          advanced: true,
+          helperText:
+            "Optional explicit future-state estimate. Leave at 0 to keep using the reduction assumption above.",
+        },
+        {
+          key: "futurePatchingSecurityHoursPerMonthOverride",
+          label: "Future patching and security hours per month (optional override)",
+          defaultValue: 0,
+          min: 0,
+          step: 1,
+          suffix: "hours",
+          advanced: true,
+          helperText:
+            "Optional explicit future-state estimate. Leave at 0 to keep using the reduction assumption above.",
         },
       ],
     },

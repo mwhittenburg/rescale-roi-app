@@ -91,6 +91,14 @@ function calculateInfrastructureTco(values) {
     migrationPaybackMonths,
     extraOutputs: [
       {
+        label: "Retained on-prem annual cost",
+        value: `$${Math.round(currentFixedInfraRetained).toLocaleString()}`,
+      },
+      {
+        label: "Future cloud annual baseline",
+        value: `$${Math.round(discountedCloudCost).toLocaleString()}`,
+      },
+      {
         label: "Installed core-hour cost",
         value: `${installedCoreHourCost.toFixed(2)} per core-hour`,
       },
@@ -236,6 +244,18 @@ export const infrastructureTco = createInteractiveCalculator("it", {
           min: 0,
           step: 1000,
           prefix: "$",
+          helperText:
+            "Use the expected monthly run-state cloud or hybrid infrastructure baseline for the future model before the add-on cost buckets below.",
+          helpTooltip: {
+            what:
+              "Represents the expected monthly infrastructure baseline for the future cloud or hybrid model.",
+            include:
+              "Core run-state cloud or hybrid infrastructure needed to serve the target workload mix before separate storage, network, licensing, security, and tooling add-ons below.",
+            exclude:
+              "One-time migration cost, retained on-prem cost already modeled separately, or future add-on buckets that are entered in their own fields below.",
+            example:
+              "A directional monthly cloud baseline that covers the primary future workload footprint before storage, egress, and tooling are layered in.",
+          },
         },
         {
           key: "workloadShareStayingOnPremPct",
@@ -245,6 +265,8 @@ export const infrastructureTco = createInteractiveCalculator("it", {
           max: 0.95,
           step: 0.01,
           kind: "percent",
+          helperText:
+            "Use the share of workload you expect to retain outside a full cloud move because of performance, governance, data, or licensing constraints.",
         },
         {
           key: "cloudCommitmentDiscountPct",

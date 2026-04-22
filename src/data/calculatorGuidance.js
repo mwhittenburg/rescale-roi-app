@@ -337,9 +337,9 @@ export const calculatorGuidanceById = {
       topDrivers:
         "Hardware refresh, workload placement, productive utilization, and future cloud or hybrid spend drive the comparison most.",
       biggestAssumptions:
-        "The output is sensitive to workload placement, commitment discounts, productive utilization, and the amount of fixed cost that can truly be avoided.",
+        "The output is sensitive to workload placement, commitment discounts, productive utilization, and which future cloud costs are already included in the baseline versus added as separate operating buckets.",
       validateNext:
-        "Validate current annual cost, installed capacity utilization, future cloud pricing assumptions, and the share of workloads expected to stay on-prem.",
+        "Validate the largest current-state cost bucket, the future cloud baseline assumption, and the share of workloads expected to stay on-prem.",
     },
   },
   "peak-capacity-tco": {
@@ -355,9 +355,9 @@ export const calculatorGuidanceById = {
       topDrivers:
         "Peak-built capacity cost, the peak-to-average utilization profile, burst duration, and elastic overflow pricing are the biggest drivers in the model.",
       biggestAssumptions:
-        "The largest assumptions are how often burst windows happen, how long they last, and how much of today’s fixed capacity exists only for the peak.",
+        "The largest assumptions are how often burst windows happen, how long they last, and whether the elastic burst price has been validated from a real workload-hour or provider pricing basis.",
       validateNext:
-        "Validate average versus peak utilization, annual burst frequency, burst duration, and the real baseline cost needed outside those peaks.",
+        "Validate average versus peak utilization, annual burst frequency, burst duration, and the pricing basis behind the elastic burst assumption.",
     },
   },
   "it-operations-tco": {
@@ -373,9 +373,9 @@ export const calculatorGuidanceById = {
       topDrivers:
         "Provisioning labor, troubleshooting effort, environment management burden, and governance overhead drive the result most.",
       biggestAssumptions:
-        "The model depends on how much manual effort can realistically be removed by category and what future-state tooling will cost.",
+        "The model depends on how much manual effort can realistically be removed by category and whether the future state is expressed as reduction percentages or explicit future hours by category.",
       validateNext:
-        "Validate monthly request volume, current category hours, and the transition cost required to reach the future operating model.",
+        "Validate monthly request volume, the current category with the largest hours burden, and the explicit future-hours assumptions if the team has them.",
     },
   },
 };
