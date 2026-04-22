@@ -158,7 +158,7 @@ function FieldInput({ field, value, onChange }) {
   const max = isPercent ? (field.max ?? 999999) * 100 : field.max;
 
   return (
-    <div className="field-card">
+    <div className="field-card guided-field-card">
       <div className="field-label-row">
         <label className="field-label-group" htmlFor={inputId}>
           <span className="field-label">{field.label}</span>

@@ -533,6 +533,23 @@ p {
   background: rgba(255, 255, 255, 0.84);
 }
 
+.guided-field-card .field-label-row {
+  align-items: flex-start;
+  flex-direction: column;
+}
+
+.guided-field-card .field-label-group {
+  display: inline-flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.guided-field-card .confidence-tag {
+  justify-self: start;
+  white-space: normal;
+  line-height: 1.25;
+}
+
 .guided-slider-shell {
   display: grid;
   gap: 12px;
