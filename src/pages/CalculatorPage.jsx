@@ -166,6 +166,56 @@ function formatFieldValue(field, value) {
   return Number(value).toLocaleString();
 }
 
+function pickTcoQuickFields(calculator) {
+  const preferredSections = ["currentState", "futureState", "support", "transition"];
+  const fields = [];
+
+  for (const sectionKey of preferredSections) {
+    const section = calculator.sections.find((entry) => entry.key === sectionKey);
+    if (!section) continue;
+
+    for (const field of section.fields) {
+      if (field.advanced) continue;
+      fields.push({
+        ...field,
+        sectionKey: section.key,
+        sectionTitle: section.title,
+      });
+      if (fields.length >= 6) {
+        return fields;
+      }
+    }
+  }
+
+  return fields;
+}
+
+function getTcoSectionTitle(section) {
+  const mapping = {
+    currentState: "What this costs today",
+    futureState: "What the future model could cost",
+    support: "Team and tooling cost",
+    transition: "One-time transition cost",
+  };
+
+  return mapping[section.key] ?? section.title;
+}
+
+function getTcoSectionDescription(section) {
+  const mapping = {
+    currentState:
+      "Start with the current baseline the team already recognizes. Use directional placeholders if exact numbers are not available yet.",
+    futureState:
+      "Enter the future-state cost assumptions you want to compare against today’s model.",
+    support:
+      "Capture the recurring team and tooling burden that changes between the current and future model.",
+    transition:
+      "Include the one-time migration, cutover, or training cost needed to get to the future model.",
+  };
+
+  return mapping[section.key] ?? section.description;
+}
+
 function FieldInput({ field, value, onChange }) {
   const inputId = useId();
   const isPercent = field.kind === "percent";
@@ -1110,6 +1160,10 @@ function InteractiveCalculatorPage({
     () => (isTcoModel ? [] : pickGuidedFields(calculator, valueCase)),
     [calculator, isTcoModel, valueCase],
   );
+  const tcoQuickFields = useMemo(
+    () => (isTcoModel ? pickTcoQuickFields(calculator) : []),
+    [calculator, isTcoModel],
+  );
   const scenarioMultiplier =
     ROI_SCENARIO_OPTIONS.find((scenario) => scenario.id === activeScenario)
       ?.multiplier ?? 1;
@@ -1264,204 +1318,224 @@ function InteractiveCalculatorPage({
           <>
             <section className="panel intro-panel calculator-intro-panel">
               <div>
-                <p className="section-kicker">How To Use This Calculator</p>
+                <p className="section-kicker">Start Here</p>
                 <h2>
-                  Start with the example costs, then adjust the current-state, future-state, and migration inputs that matter most.
+                  Start by entering what this costs today and what you think the future model could cost.
                 </h2>
               </div>
               <p className="panel-copy start-here-copy">
-                The page updates live as you edit the cost assumptions, so you can compare the current operating model against the future-state model in real time.
+                Use directional placeholders if exact cost data is not available yet. You can refine the model after you have a first answer.
               </p>
             </section>
 
-            <section className="panel working-session-panel">
-              <div className="selector-header">
-                <div className="choice-copy">
-                  <p className="section-kicker">Working Session</p>
-                  <h2>Capture the account context and save the scenarios you want to keep.</h2>
-                  <p className="panel-copy">
-                    Keep the calculator grounded in the actual customer conversation,
-                    then save named scenarios for follow-up and sharing.
-                  </p>
-                </div>
-              </div>
-
-              <div className="working-session-grid">
-                <label className="selector-field">
-                  <span className="field-label">Customer</span>
-                  <input
-                    className="session-input"
-                    type="text"
-                    value={sessionContext.customerName}
-                    onChange={(event) =>
-                      updateSessionContext("customerName", event.target.value)
-                    }
-                    placeholder="Owens Corning"
-                  />
-                </label>
-
-                <label className="selector-field">
-                  <span className="field-label">Account or program</span>
-                  <input
-                    className="session-input"
-                    type="text"
-                    value={sessionContext.accountName}
-                    onChange={(event) =>
-                      updateSessionContext("accountName", event.target.value)
-                    }
-                    placeholder="Aero design modernization"
-                  />
-                </label>
-
-                <label className="selector-field">
-                  <span className="field-label">Prepared by</span>
-                  <input
-                    className="session-input"
-                    type="text"
-                    value={sessionContext.preparedBy}
-                    onChange={(event) =>
-                      updateSessionContext("preparedBy", event.target.value)
-                    }
-                    placeholder="Seller or account team"
-                  />
-                </label>
-
-                <label className="selector-field selector-field-wide">
-                  <span className="field-label">Opportunity or working notes</span>
-                  <textarea
-                    className="session-input session-textarea"
-                    value={sessionContext.notes}
-                    onChange={(event) =>
-                      updateSessionContext("notes", event.target.value)
-                    }
-                    placeholder="Capture the program context, source of inputs, or follow-up items."
-                    rows={3}
-                  />
-                </label>
-              </div>
-
-              <div className="scenario-toolbar">
-                <label className="selector-field">
-                  <span className="field-label-group">
-                    <span className="field-label">Scenario name</span>
-                    <FieldHelpTooltip
-                      label="Scenario name"
-                      help={workspaceHelp.scenarioName}
-                    />
-                  </span>
-                  <input
-                    className="session-input"
-                    type="text"
-                    value={scenarioName}
-                    onChange={(event) => setScenarioName(event.target.value)}
-                    placeholder="Customer current-state baseline"
-                  />
-                </label>
-
-                <label className="selector-field">
-                  <span className="field-label-group">
-                    <span className="field-label">Saved scenarios</span>
-                    <FieldHelpTooltip
-                      label="Saved scenarios"
-                      help={workspaceHelp.savedScenarios}
-                    />
-                  </span>
-                  <select
-                    value={selectedScenarioName}
-                    onChange={(event) => {
-                      setSelectedScenarioName(event.target.value);
-                      setScenarioName(event.target.value);
-                    }}
-                  >
-                    <option value="">Choose one</option>
-                    {savedScenarios.map((scenario) => (
-                      <option key={scenario.name} value={scenario.name}>
-                        {scenario.name}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-
-                <label className="selector-field">
-                  <span className="field-label-group">
-                    <span className="field-label">PDF mode</span>
-                    <FieldHelpTooltip label="PDF mode" help={workspaceHelp.pdfMode} />
-                  </span>
-                  <select
-                    value={pdfMode}
-                    onChange={(event) => setPdfMode(event.target.value)}
-                  >
-                    <option value="customer">Customer-ready</option>
-                    <option value="internal">Internal working version</option>
-                  </select>
-                </label>
-              </div>
-
-              <div className="recommendation-actions">
-                <button type="button" className="ghost-button" onClick={saveScenario}>
-                  Save scenario
-                </button>
-                <button
-                  type="button"
-                  className="ghost-button"
-                  onClick={loadSelectedScenario}
-                  disabled={!selectedScenarioName}
-                >
-                  Load selected
-                </button>
-                <button
-                  type="button"
-                  className="ghost-button"
-                  onClick={deleteSelectedScenario}
-                  disabled={!selectedScenarioName}
-                >
-                  Delete selected
-                </button>
-              </div>
-            </section>
-
-            <section className="guidance-grid calculator-guidance-grid">
-              <article className="panel guidance-card guidance-card-primary">
-                <p className="section-kicker">Start Here</p>
-                <ul className="guidance-list">
-                  {calculator.sellerGuidance.askTheseFirst.map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
-              </article>
-              <article className="panel guidance-card">
-                <p className="section-kicker">Best Fit When</p>
-                <p className="panel-copy">{calculator.sellerGuidance.bestFitWhen}</p>
-              </article>
-              <article className="panel guidance-card">
-                <p className="section-kicker">Typical Buyer</p>
-                <div className="buyer-tag-list">
-                  {typicalBuyerTags.map((tag) => (
-                    <span key={tag} className="buyer-tag">
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-                <p className="confidence-copy">
-                  Inputs are tagged as <strong>customer-provided</strong>,{" "}
-                  <strong>benchmark</strong>, or <strong>estimated</strong> so the
-                  team can see what should be validated before sharing the result.
+            <section className="panel calc-section">
+              <header className="panel-header">
+                <h2>Start with these inputs</h2>
+                <p className="section-copy">
+                  These are the fastest inputs to get to a usable first-pass estimate.
                 </p>
-              </article>
+              </header>
+              <div className="field-grid guided-field-grid">
+                {tcoQuickFields.map((field) => (
+                  <FieldInput
+                    key={field.key}
+                    field={field}
+                    value={values[field.key]}
+                    onChange={updateValue}
+                  />
+                ))}
+              </div>
             </section>
+
+            <details className="advanced-block optional-context-panel">
+              <summary>Optional context, saved versions, and guidance</summary>
+              <section className="panel working-session-panel nested-panel">
+                <p className="panel-copy optional-context-copy">
+                  Skip this for now if you just want a first estimate. Come back when you want to save this version, add account context, or review the guidance in more detail.
+                </p>
+
+                <div className="working-session-grid">
+                  <label className="selector-field">
+                    <span className="field-label">Customer</span>
+                    <input
+                      className="session-input"
+                      type="text"
+                      value={sessionContext.customerName}
+                      onChange={(event) =>
+                        updateSessionContext("customerName", event.target.value)
+                      }
+                      placeholder="Owens Corning"
+                    />
+                  </label>
+
+                  <label className="selector-field">
+                    <span className="field-label">Account or program</span>
+                    <input
+                      className="session-input"
+                      type="text"
+                      value={sessionContext.accountName}
+                      onChange={(event) =>
+                        updateSessionContext("accountName", event.target.value)
+                      }
+                      placeholder="Aero design modernization"
+                    />
+                  </label>
+
+                  <label className="selector-field">
+                    <span className="field-label">Prepared by</span>
+                    <input
+                      className="session-input"
+                      type="text"
+                      value={sessionContext.preparedBy}
+                      onChange={(event) =>
+                        updateSessionContext("preparedBy", event.target.value)
+                      }
+                      placeholder="Seller or account team"
+                    />
+                  </label>
+
+                  <label className="selector-field selector-field-wide">
+                    <span className="field-label">Opportunity or working notes</span>
+                    <textarea
+                      className="session-input session-textarea"
+                      value={sessionContext.notes}
+                      onChange={(event) =>
+                        updateSessionContext("notes", event.target.value)
+                      }
+                      placeholder="Capture the program context, source of inputs, or follow-up items."
+                      rows={3}
+                    />
+                  </label>
+                </div>
+
+                <div className="scenario-toolbar">
+                  <label className="selector-field">
+                    <span className="field-label-group">
+                      <span className="field-label">Scenario name</span>
+                      <FieldHelpTooltip
+                        label="Scenario name"
+                        help={workspaceHelp.scenarioName}
+                      />
+                    </span>
+                    <input
+                      className="session-input"
+                      type="text"
+                      value={scenarioName}
+                      onChange={(event) => setScenarioName(event.target.value)}
+                      placeholder="Customer current-state baseline"
+                    />
+                  </label>
+
+                  <label className="selector-field">
+                    <span className="field-label-group">
+                      <span className="field-label">Saved estimate versions</span>
+                      <FieldHelpTooltip
+                        label="Saved scenarios"
+                        help={workspaceHelp.savedScenarios}
+                      />
+                    </span>
+                    <select
+                      value={selectedScenarioName}
+                      onChange={(event) => {
+                        setSelectedScenarioName(event.target.value);
+                        setScenarioName(event.target.value);
+                      }}
+                    >
+                      <option value="">Choose one</option>
+                      {savedScenarios.map((scenario) => (
+                        <option key={scenario.name} value={scenario.name}>
+                          {scenario.name}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+
+                  <label className="selector-field">
+                    <span className="field-label-group">
+                      <span className="field-label">PDF mode</span>
+                      <FieldHelpTooltip label="PDF mode" help={workspaceHelp.pdfMode} />
+                    </span>
+                    <select
+                      value={pdfMode}
+                      onChange={(event) => setPdfMode(event.target.value)}
+                    >
+                      <option value="customer">Customer-ready</option>
+                      <option value="internal">Internal working version</option>
+                    </select>
+                    <span className="field-helper">
+                      Customer-ready is cleaner for sharing. Internal keeps working assumptions and notes visible.
+                    </span>
+                  </label>
+                </div>
+
+                <div className="recommendation-actions">
+                  <button type="button" className="ghost-button" onClick={saveScenario}>
+                    Save this version
+                  </button>
+                  <button
+                    type="button"
+                    className="ghost-button"
+                    onClick={loadSelectedScenario}
+                    disabled={!selectedScenarioName}
+                  >
+                    Open selected
+                  </button>
+                  <button
+                    type="button"
+                    className="ghost-button"
+                    onClick={deleteSelectedScenario}
+                    disabled={!selectedScenarioName}
+                  >
+                    Delete selected
+                  </button>
+                </div>
+
+                <section className="guidance-grid calculator-guidance-grid">
+                  <article className="panel guidance-card guidance-card-primary">
+                    <p className="section-kicker">Start Here</p>
+                    <ul className="guidance-list">
+                      {calculator.sellerGuidance.askTheseFirst.map((item) => (
+                        <li key={item}>{item}</li>
+                      ))}
+                    </ul>
+                  </article>
+                  <article className="panel guidance-card">
+                    <p className="section-kicker">Best Fit When</p>
+                    <p className="panel-copy">{calculator.sellerGuidance.bestFitWhen}</p>
+                  </article>
+                  <article className="panel guidance-card">
+                    <p className="section-kicker">Typical Buyer</p>
+                    <div className="buyer-tag-list">
+                      {typicalBuyerTags.map((tag) => (
+                        <span key={tag} className="buyer-tag">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                    <p className="confidence-copy">
+                      Inputs are tagged as <strong>customer-provided</strong>,{" "}
+                      <strong>benchmark</strong>, or <strong>estimated</strong> so the
+                      team can see what should be validated before sharing the result.
+                    </p>
+                  </article>
+                </section>
+              </section>
+            </details>
 
             <section className="calculator-layout">
               <div className="calculator-main">
                 {calculator.sections.map((section) => {
                   const requiredFields = section.fields.filter((field) => !field.advanced);
                   const advancedFields = section.fields.filter((field) => field.advanced);
+                  const sectionTitle = getTcoSectionTitle(section);
+                  const sectionDescription = getTcoSectionDescription(section);
 
                   return (
                     <section key={section.key} className="panel calc-section">
                       <header className="panel-header">
-                        <h2>{section.title}</h2>
-                        {section.description ? (
-                          <p className="section-copy">{section.description}</p>
+                        <h2>{sectionTitle}</h2>
+                        {sectionDescription ? (
+                          <p className="section-copy">{sectionDescription}</p>
                         ) : null}
                       </header>
 
@@ -1499,7 +1573,7 @@ function InteractiveCalculatorPage({
 
                 <section className="panel calc-section impact-panel">
                   <header className="panel-header">
-                    <h2>Estimated cost comparison</h2>
+                    <h2>Current answer</h2>
                   </header>
                   <p className="panel-copy">
                     These estimates update as you adjust the current-state, future-state, and transition assumptions in the calculator.
