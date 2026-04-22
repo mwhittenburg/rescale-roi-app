@@ -1227,7 +1227,7 @@ function InteractiveCalculatorPage({
                   Start with the example costs, then adjust the current-state, future-state, and migration inputs that matter most.
                 </h2>
               </div>
-              <p className="panel-copy">
+              <p className="panel-copy start-here-copy">
                 The page updates live as you edit the cost assumptions, so you can compare the current operating model against the future-state model in real time.
               </p>
             </section>
@@ -1563,7 +1563,7 @@ function InteractiveCalculatorPage({
                 <div className="choice-copy">
                   <p className="section-kicker">Start Here</p>
                   <h2>What are you trying to evaluate?</h2>
-                  <p className="panel-copy">
+                  <p className="panel-copy start-here-copy">
                     We’ll show a fast first-pass estimate using only the inputs most likely to move the result. You can review the math and package the summary after that.
                   </p>
                 </div>
