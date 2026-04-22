@@ -125,7 +125,7 @@ p {
 .section-kicker {
   display: inline-block;
   font-size: 0.78rem;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--accent);
@@ -208,6 +208,7 @@ p {
 .workflow-sidebar h2 {
   margin-top: 8px;
   font-size: 1.42rem;
+  font-weight: 800;
 }
 
 .industry-grid {
@@ -836,7 +837,8 @@ p {
 }
 
 .panel-header h2 {
-  font-size: 1.08rem;
+  font-size: 1.16rem;
+  font-weight: 800;
 }
 
 .calculator-main {
@@ -1036,7 +1038,8 @@ p {
 
 .summary-top h2 {
   margin-top: 8px;
-  font-size: 1.4rem;
+  font-size: 1.48rem;
+  font-weight: 800;
 }
 
 .estimate-bridge,
@@ -1086,8 +1089,8 @@ p {
 }
 
 .guidance-detail-title {
-  font-size: 0.84rem;
-  font-weight: 700;
+  font-size: 0.88rem;
+  font-weight: 800;
   color: var(--accent);
   text-transform: uppercase;
   letter-spacing: 0.06em;
